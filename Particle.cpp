@@ -796,7 +796,7 @@ namespace Entity
             vel.x = 0;
             RotateVector(vel,45*movement);
             
-            if(World::GetInstance()->Timer(*this,60.0f, NODELAY)){
+            if(World::GetInstance()->Timer(*this,50000.0f, NODELAY)){
                 
                 frame_pos = (frame_pos >= 5) ? 0 : frame_pos+1;
                 if(frame_pos == 1 || frame_pos == 4) World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_step"); 
@@ -2520,7 +2520,7 @@ namespace Entity
     
     Slime::Slime() : Enemy()
     {
-        objectSprite.setTextureRect(sf::IntRect (0,16,24,21));
+        objectSprite.setTextureRect(sf::IntRect (0,0,24,21));
         SetCharacterOrigin();
         SetShadow();
         moveType = JUMPER;
@@ -2529,7 +2529,7 @@ namespace Entity
     
     Star::Star() : Enemy()
     {
-        objectSprite.setTextureRect(sf::IntRect (0,58,28,26));
+        objectSprite.setTextureRect(sf::IntRect (0,21,28,26));
         SetCharacterOrigin();
         SetShadow();
         moveType = NORMAL;
@@ -2541,14 +2541,13 @@ namespace Entity
     
     Squid::Squid() : Enemy()
     {
-        objectSprite.setTextureRect(sf::IntRect (0,84,33,27));
+        objectSprite.setTextureRect(sf::IntRect (0,47,33,27));
         SetCharacterOrigin();
         SetShadow();
         moveType = NORMAL;
         speed = 0.5;
         health = 30;
         hasAttack = true;
-        
         SetHitBox(sf::Vector2f(20,20),1);
     
     }
@@ -2556,6 +2555,7 @@ namespace Entity
     Boss::Boss()
     {
         std::cout << "Boss created" << std::endl;
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses.png"));
         healthBar.setSize(sf::Vector2f(0,8));
         healthBar.setFillColor(sf::Color::Yellow);
         bossName.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
@@ -2565,19 +2565,26 @@ namespace Entity
     
     Mozza::Mozza(){
         
-        objectSprite.setTextureRect(sf::IntRect (0,111,116,88));
+        objectSprite.setTextureRect(sf::IntRect (0,140,140,140));
+		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses.png"));
+		wings.setTextureRect(sf::IntRect(0,0, 140, 140));
         speed = 0.5;
         maxhealth = 200;
         health = maxhealth;
         moveType = NORMAL;
-        SetCharacterOrigin();
-        SetHitBox(sf::Vector2f(50,50),1);
+		sf::Sprite *mysprite = &wings;
+        SetCharacterOrigin(&mysprite,true);
+        SetHitBox(sf::Vector2f(70,70));
         SetShadow();
         hasAttack = true;
         bossName.setString("Mozza");
         targetPlayer = false;
+	
     }
     
+	void Enemy::MoveElse() {
+
+	}
     
     // Update Functions
     
@@ -2623,6 +2630,8 @@ namespace Entity
             }
             
         }
+
+		MoveElse();
         
         //remove this below to activate angle rotation (this makes the enemy always look to player)
         
@@ -2641,7 +2650,7 @@ namespace Entity
             Move();
             if(hasAttack) Attack();
             UpdateShadow();
-            objectSprite.setScale(Sine(),Sine());
+            //objectSprite.setScale(Sine(),Sine());
             
         }
         
@@ -2657,23 +2666,28 @@ namespace Entity
             
         }
         
-        if(hurt){
-            
-            if(World::GetInstance()->Timer(*this,400.0f)){
-                hurt = false;
-                hurtPos.y = 0;
-                hurtPos.x = 0;
-            }
-            
-            else{
-            hurtPos.x = RandomNumber(4);
-            hurtPos.y = RandomNumber(4);
-            objectSprite.move(hurtPos);
-            }
-            
-        }
+		isHurt();
 
     }
+
+	void Enemy::isHurt() {
+
+		if (hurt) {
+
+			if (World::GetInstance()->Timer(*this, 400.0f)) {
+				hurt = false;
+				hurtPos.y = 0;
+				hurtPos.x = 0;
+			}
+
+			else {
+				hurtPos.x = RandomNumber(4);
+				hurtPos.y = RandomNumber(4);
+				objectSprite.move(hurtPos);
+			}
+
+		}
+	}
     
     
     void Enemy::Update()
@@ -2732,6 +2746,40 @@ namespace Entity
         }
         
     }
+
+	void Mozza::isHurt() {
+
+		if (hurt) {
+
+			if (World::GetInstance()->Timer(*this, 400.0f)) {
+				hurt = false;
+				hurtPos.y = 0;
+				hurtPos.x = 0;
+			}
+
+			else {
+				hurtPos.x = RandomNumber(4);
+				hurtPos.y = RandomNumber(4);
+				objectSprite.move(hurtPos);
+				wings.move(hurtPos);
+			}
+
+		}
+	}
+
+	void Mozza::MoveElse() {
+
+		if (World::GetInstance()->Timer(*this, 30)) {
+
+			wingFrames++;
+			wings.setTextureRect(sf::IntRect(0, wingFrames*280, 140, 140));
+			if (wingFrames >= 3) wingFrames = 0;
+
+		}
+
+		wings.setPosition(objectSprite.getPosition());
+
+	}
     
     void Mozza::Attack(){
         
@@ -2776,6 +2824,15 @@ namespace Entity
 
         
     }
+
+	void Mozza::Draw(sf::RenderTarget& window) {
+
+		World::GetInstance()->DrawObject(objectSprite);
+		//World::GetInstance()->DrawObject(objectHitBox);
+		World::GetInstance()->DrawObject(healthBar);
+		World::GetInstance()->DrawObject(bossName);
+		World::GetInstance()->DrawObject(wings);
+	}
     
     void Boss::Draw(sf::RenderTarget& window){
         
@@ -2975,9 +3032,12 @@ namespace Entity
         
     }
     
-    void Object::SetCharacterOrigin(){
+    void Object::SetCharacterOrigin(sf::Sprite** object,bool center){
         
-        objectSprite.setOrigin(objectSprite.getTextureRect().width/2,objectSprite.getTextureRect().height);
+		int origin = 1;
+		origin += center;
+        objectSprite.setOrigin(objectSprite.getTextureRect().width/2,objectSprite.getTextureRect().height/origin);
+		if(object != NULL) (*object)->setOrigin(objectSprite.getTextureRect().width / 2, objectSprite.getTextureRect().height/origin);
         
     }
     

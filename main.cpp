@@ -67,7 +67,7 @@ int main()
         window.setView(*World::GetInstance()->GetView());
         window.display();
         
-        timestamp = clock.restart().asMilliseconds();
+        timestamp = clock.restart().asMicroseconds();
         
     }
     

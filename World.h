@@ -198,7 +198,7 @@ class World{
     std::shared_ptr<SceneScript> CurrentScene;
     
     template<class T, typename I = int, typename O = int>
-    bool Timer(T& obj, I time = 60, O type = DELAY)
+    bool Timer(T& obj, I time = 50000, O type = DELAY)
     {
         std::stringstream ss;
         ss << std::hex << &obj;

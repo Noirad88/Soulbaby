@@ -107,8 +107,7 @@ namespace Entity
         bool active = false;
         std::string type = "Object";
         std::string zone;
-        
-        void SetCharacterOrigin();
+        void SetCharacterOrigin(sf::Sprite** object = NULL, bool center = false);
         void SetEffectOrigin();
         void SetHitBox(sf::Vector2f size,int originPos = 0);
         void UpdateHitBox();
@@ -650,7 +649,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 150;
+        int maxEnemies = 10;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
@@ -669,6 +668,8 @@ namespace Entity
         void isDamaged(int damage = 0);
         void isCollided(int var);
         void Act();
+		virtual void isHurt();
+		virtual void MoveElse();
         void Draw(sf::RenderTarget& window);
         virtual void Attack();
         void Damaged();
@@ -746,7 +747,12 @@ namespace Entity
     public:
         Mozza();
         ~Mozza();
+		sf::Sprite wings;
+		void isHurt();
         void Attack();
+		void MoveElse();
+		int wingFrames = 0;
+		void Draw(sf::RenderTarget& window);
     };
     
     struct sortByYPos
