@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="17" height="41" tilewidth="16" tileheight="16" nextobjectid="2">
+ <properties>
+  <property name="isCollidable" type="bool" value="false"/>
+ </properties>
+ <tileset firstgid="1" name="tx_tile" tilewidth="16" tileheight="16" tilecount="104" columns="13">
+  <image source="tx_tile.png" trans="ff029e" width="208" height="128"/>
+  <tile id="0">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="7">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="9">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="10">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="12">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="13">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="14">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="15">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="16">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="18">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="20">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="21">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="22">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="23">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="24">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="25">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="26">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="27">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="28">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="29">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="30">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="31">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="32">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="33">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="34">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="35">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="36">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="37">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="38">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="39">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="40">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="41">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="42">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="43">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="44">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="45">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="46">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="47">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="48">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="49">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="50">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="51">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="52">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="53">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="54">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="55">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="56">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="57">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="58">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="59">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="60">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="61">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="62">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="63">
+   <properties>
+    <property name="Path" value="room2"/>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="64">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="65">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="66">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="67">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="68">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="69">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="70">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="71">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="72">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="73">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="74">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="75">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="76">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="77">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="78">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="79">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="80">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="81">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="82">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="83">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="84">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="85">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="86">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="87">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="88">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="89">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="90">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="91">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="92">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="93">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="94">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="95">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="96">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="97">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="98">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="99">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="100">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="101">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="102">
+   <properties>
+    <property name="isCollidable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="103">
+   <properties>
+    <property name="isCollidable" type="bool" value="false"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Floor" width="17" height="41">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,
+0,0,2,2,1,2,0,0,0,0,0,0,0,0,0,0,0,
+0,0,1,2,1,1,0,0,0,0,0,0,0,0,0,0,0,
+0,0,1,1,2,2,0,0,0,0,0,0,0,0,0,0,0,
+0,0,2,1,2,1,0,0,0,0,0,0,0,0,0,0,0,
+0,0,1,1,2,1,2,2,2,2,2,2,2,1,1,0,0,
+0,0,2,2,2,1,1,1,1,2,1,1,2,2,1,0,0,
+0,0,2,2,2,1,1,1,1,1,2,2,2,2,1,0,0,
+0,0,2,2,2,1,1,1,2,2,2,2,2,2,2,0,0,
+0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,
+0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,
+0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,
+0,0,0,0,0,0,0,0,0,0,0,2,1,1,1,0,0,
+0,0,0,0,0,0,0,0,0,0,0,1,2,1,1,0,0,
+0,0,0,0,0,0,0,0,0,0,0,2,1,1,1,0,0,
+0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,
+0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,
+0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,
+0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
+0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
+0,0,1,1,1,1,1,1,1,2,1,1,1,1,1,0,0,
+0,0,1,1,1,1,1,1,2,1,1,1,1,1,1,0,0,
+0,0,0,0,0,0,0,1,2,1,1,1,1,1,1,0,0,
+0,0,0,0,0,0,0,2,1,1,1,1,1,2,2,0,0,
+0,0,0,0,0,0,0,2,1,1,2,2,2,1,1,0,0,
+0,0,0,0,0,0,0,2,2,2,1,1,1,1,1,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer name="Walls" width="17" height="41">
+  <data encoding="csv">
+30,29,29,29,27,27,27,28,28,29,27,27,29,27,27,29,31,
+21,26,16,15,15,16,25,32,32,32,32,32,32,32,32,32,24,
+21,22,45,46,47,48,19,32,32,32,32,32,32,32,32,32,24,
+21,22,58,59,60,61,19,32,32,32,32,32,32,32,32,32,23,
+19,22,71,72,73,74,19,32,32,32,32,32,32,32,32,32,23,
+19,23,84,85,86,87,19,34,32,34,32,33,33,33,32,32,22,
+19,23,97,98,99,100,14,15,16,17,15,16,15,16,17,25,22,
+19,23,0,0,0,0,43,40,41,42,44,45,46,47,48,19,23,
+19,24,90,0,0,0,56,53,54,55,57,58,59,60,61,21,23,
+19,23,103,0,0,0,69,66,67,68,70,71,72,73,74,19,23,
+19,24,0,0,0,0,82,79,80,81,83,84,85,86,87,19,23,
+19,23,0,0,0,0,95,92,93,94,96,97,98,99,100,20,22,
+19,22,0,0,0,0,0,0,0,0,0,0,0,0,0,19,23,
+19,22,0,0,0,0,0,0,0,0,0,0,0,0,0,19,23,
+19,23,0,0,0,0,90,0,0,0,0,0,0,0,0,20,22,
+19,23,0,0,0,0,103,0,0,0,0,0,0,0,0,19,22,
+19,36,27,29,27,29,28,28,27,27,31,0,0,0,0,19,23,
+19,34,32,32,33,32,34,32,33,33,22,0,0,0,0,21,22,
+19,32,34,32,32,32,34,32,32,33,22,0,0,0,0,19,23,
+19,26,17,16,17,17,17,15,16,17,18,0,0,0,0,19,23,
+19,23,47,48,49,44,45,46,47,48,49,0,0,0,0,20,23,
+19,23,60,61,62,57,58,59,60,61,62,0,0,0,0,20,24,
+19,23,73,74,75,70,71,72,73,74,75,0,0,0,0,20,23,
+19,23,86,87,88,83,84,85,86,87,88,0,0,0,0,19,23,
+19,23,99,100,101,96,97,98,99,100,101,0,0,0,0,19,23,
+19,23,0,0,0,0,0,0,0,0,0,0,0,0,0,19,22,
+19,23,0,0,0,0,0,0,0,0,0,0,0,0,0,21,23,
+19,23,0,0,0,0,0,0,0,0,0,0,0,0,0,19,23,
+19,23,0,0,0,0,0,0,0,0,0,0,0,0,0,19,23,
+19,36,29,29,29,29,31,0,0,0,0,0,0,0,0,19,23,
+19,33,32,32,33,32,23,0,0,0,0,90,0,0,0,19,23,
+19,32,32,34,33,33,23,0,0,0,0,103,0,0,0,19,23,
+19,34,32,34,32,33,23,0,0,0,0,0,0,0,0,19,23,
+19,32,32,33,32,34,36,27,27,27,28,29,27,27,29,37,23,
+19,32,32,32,34,32,32,32,34,32,32,32,32,33,34,32,23,
+14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,18,
+43,48,49,44,45,46,47,48,47,48,49,44,45,46,47,48,50,
+56,61,62,57,58,59,60,61,60,61,62,57,58,59,60,61,63,
+69,74,75,70,71,72,73,74,73,74,75,70,71,72,73,74,76,
+82,87,88,83,84,85,86,87,86,87,88,83,84,85,86,87,89,
+95,100,101,96,97,98,99,100,99,100,101,96,97,98,99,100,102
+</data>
+ </layer>
+</map>
