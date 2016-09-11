@@ -30,6 +30,14 @@
 #define WINDOW_Y 270*3
 #endif
 
+#define VERY_SLOW 100000.0
+#define SLOW 70000.0
+#define NORMAL 50000
+#define FAST 25000.0
+#define VERY_FAST 10000.0
+
+
+
 class Audio;
 class Container;
 
@@ -198,7 +206,7 @@ class World{
     std::shared_ptr<SceneScript> CurrentScene;
     
     template<class T, typename I = int, typename O = int>
-    bool Timer(T& obj, I time = 50000, O type = DELAY)
+    bool Timer(T& obj, I time = NORMAL, O type = DELAY)
     {
         std::stringstream ss;
         ss << std::hex << &obj;
