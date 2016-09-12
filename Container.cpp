@@ -530,9 +530,11 @@ void Container::CheckCollisions(){
             
             if((*enemy)->objectHitBox.getGlobalBounds().intersects(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds()) && (*enemy)->active)
             {
-                (*enemy)->isCollided(ObjectContainer.at(typeInZone.at(i))->damage);
-                ObjectContainer.at(typeInZone.at(i))->isCollided();
-                
+
+				Entity::Object* obj = ObjectContainer.at(typeInZone.at(i)).get();
+				Entity::Projectile* pobj = dynamic_cast<Entity::Projectile*>(obj);
+				pobj->HasCollided(*enemy);
+
             }
             
         }

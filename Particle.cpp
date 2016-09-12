@@ -10,6 +10,11 @@
 #include "ResourcePath.hpp"
 #include <math.h>
 
+#define VERY_SLOW 200000.0
+#define SLOW 100000.0
+#define NORMAL 50000
+#define FAST 25000.0
+#define VERY_FAST 10000.0
 
 namespace Entity
 {
@@ -163,7 +168,7 @@ namespace Entity
         
         int currentScreen = menuContainer.size()-1;
         
-        if(World::GetInstance()->Timer(*this,30.0f)){
+        if(World::GetInstance()->Timer(*this,FAST)){
         
             if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])){
                 
@@ -444,7 +449,7 @@ namespace Entity
         
         if(newScript.length() != scriptLength && script.length() != 0){
             
-            if(World::GetInstance()->Timer(*this,30.0f, NODELAY)){
+            if(World::GetInstance()->Timer(*this,FAST, NODELAY)){
                 
                 // if end of text has been reach, stop progress until player presses action
                 
@@ -465,7 +470,7 @@ namespace Entity
                     else if(!strncmp(&script.at(0),">",1)){
                     
                         
-                        if(World::GetInstance()->Timer(*this,60.0f)){
+                        if(World::GetInstance()->Timer(*this,FAST)){
                         
                             if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])){
                             
@@ -476,7 +481,7 @@ namespace Entity
                             
                         }
                         
-                        if(World::GetInstance()->Timer(*this,300.0f)){
+                        if(World::GetInstance()->Timer(*this,SLOW)){
                             
                             int left = boxArrow.getTextureRect().left == 15 ? 20 : 15;
                             std::cout << left << std::endl;
@@ -493,7 +498,7 @@ namespace Entity
                         
                         //if player presses "Z" while progressing, this takes the text the trigger character
                         
-                        if(World::GetInstance()->Timer(*this,40.0f, NODELAY)){
+                        if(World::GetInstance()->Timer(*this,FAST, NODELAY)){
                             
                             /*
                             if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[buttonA])){
@@ -531,7 +536,7 @@ namespace Entity
         
         else{
             
-            if(World::GetInstance()->Timer(*this,40.0f)){
+            if(World::GetInstance()->Timer(*this,FAST)){
                 
                 if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])) misDestroyed = true;
                 
@@ -570,7 +575,7 @@ namespace Entity
     
     void Door::Update(){
         
-        if (World::GetInstance()->Timer(*this,20.0f)){ 
+        if (World::GetInstance()->Timer(*this,FAST)){ 
             
             objectSprite.setTextureRect(sf::IntRect(16*framePos,42+(32*0),16,32));
             framePos = (framePos > 1) ? 0 : ++framePos;
@@ -794,10 +799,11 @@ namespace Entity
             
             vel.y = 1;
             vel.x = 0;
-            RotateVector(vel,45*movement);
-            
-            if(World::GetInstance()->Timer(*this,50000.0f, NODELAY)){
-                
+			RotateVector(vel, 45 * movement);
+
+            if(World::GetInstance()->Timer(*this,NORMAL, NODELAY)){
+				 
+				std::cout << NORMAL << std::endl;
                 frame_pos = (frame_pos >= 5) ? 0 : frame_pos+1;
                 if(frame_pos == 1 || frame_pos == 4) World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_step"); 
                 objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, movement * FRAME, spriteWidth, spriteHeight));
@@ -844,15 +850,6 @@ namespace Entity
         
         if(!World::GetInstance()->WorldScene.transition){
             
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && World::GetInstance()->Timer(*this,60.0f, NODELAY)){
-                
-                itemQueue textbox;
-                textbox.properties["itemType"] = "Textbox";
-                textbox.properties["ActorName"] = std::to_string(3);
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(textbox);
-                
-            }
-
         
         if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = swest;
         
@@ -883,7 +880,7 @@ namespace Entity
             vel.x = 0;
             RotateVector(vel,45*movement);
             
-            if(World::GetInstance()->Timer(*this,30.0f,NODELAY)){
+            if(World::GetInstance()->Timer(*this,FAST,NODELAY)){
                 
                 frame_pos = (frame_pos >= 5) ? 0 : frame_pos+1;
     
@@ -913,7 +910,7 @@ namespace Entity
             
             // repeater
         
-            if(World::GetInstance()->GlobalMembers.playerWeapon == 0 && World::GetInstance()->Timer(*this,100.0f,NODELAY)){
+            if(World::GetInstance()->GlobalMembers.playerWeapon == 0 && World::GetInstance()->Timer(*this,SLOW,NODELAY)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -929,7 +926,7 @@ namespace Entity
             
             // cannon
             
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 1 && PlayerBomb::totalBombs < 2 && World::GetInstance()->Timer(*this,100.0f,NODELAY)){
+            else if(World::GetInstance()->GlobalMembers.playerWeapon == 1 && PlayerBomb::totalBombs < 4 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -945,7 +942,7 @@ namespace Entity
             
             // rail
             
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 2 && PlayerBomb::totalBombs < 2 && World::GetInstance()->Timer(*this,2000.0f,NODELAY)){
+            else if(World::GetInstance()->GlobalMembers.playerWeapon == 2 && PlayerBomb::totalBombs < 2 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -961,7 +958,7 @@ namespace Entity
             
             // spreader
             
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 3 && World::GetInstance()->Timer(*this,100.0f,NODELAY)){
+            else if(World::GetInstance()->GlobalMembers.playerWeapon == 3 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -986,7 +983,7 @@ namespace Entity
             
             // boomerang
             
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 4 && PlayerBoomerang::totalBoomerangs < 3 && World::GetInstance()->Timer(*this,200.0f,NODELAY)){
+            else if(World::GetInstance()->GlobalMembers.playerWeapon == 4 && PlayerBoomerang::totalBoomerangs < 6 && World::GetInstance()->Timer(*this,SLOW,NODELAY)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -1107,7 +1104,7 @@ namespace Entity
         RotateVector(vel,RandomNumber(180));
         SetEffectOrigin();
         maxFrame = 4;
-        animSpeed = 40.0f;
+        animSpeed = FAST;
         deacceleration = 0.5;
         
     }
@@ -1121,7 +1118,7 @@ namespace Entity
         objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
         objectSprite.setTextureRect(sf::IntRect(0,42+(32*0),16,32));
         maxFrame = 3;
-        animSpeed = 1000.0f;
+        animSpeed = 1000000.0;
         World::GetInstance()->SetCameraTarget(*this);
     }
     
@@ -1132,7 +1129,7 @@ namespace Entity
         RotateVector(vel,RandomNumber(180));
         SetEffectOrigin();
         maxFrame = 4;
-        animSpeed = 200.0f;
+        animSpeed = VERY_SLOW;
         deacceleration = 0.5;
         
     }
@@ -1147,7 +1144,7 @@ namespace Entity
         objectSprite.move(x,y);
         SetEffectOrigin();
         maxFrame = 4;
-        animSpeed = 30.0f;
+        animSpeed = FAST;
 
     }
     
@@ -1156,7 +1153,7 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect(0, 145, 25, 25));
         SetEffectOrigin();
         maxFrame = 2;
-        animSpeed = 30.0f;
+        animSpeed = FAST;
         
     }
     
@@ -1165,7 +1162,7 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect(0, 191, 50, 50));
         SetEffectOrigin();
         maxFrame = 8;
-        animSpeed = 40.0f;
+        animSpeed = NORMAL;
         deacceleration = 0.15;
         spdReduceRate = 0.25f;
         
@@ -1178,8 +1175,8 @@ namespace Entity
         vel.y = 8;
         SetEffectOrigin();
         maxFrame = 4;
-        maxTime = 800.0f;
-        animSpeed = 10.0f;
+        maxTime = 600000.0;
+		animSpeed = VERY_FAST;
         deacceleration = 0.25;
         
     }
@@ -1244,7 +1241,7 @@ namespace Entity
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png")));
         objectSprite.setTextureRect(sf::IntRect(0, 5, 11, 30));
         maxFrame = 5;
-        animSpd = 100.0f;
+        animSpd = SLOW;
         frame = RandomNumber(5);
         
     }
@@ -1292,7 +1289,7 @@ namespace Entity
         
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
         objectSprite.setTextureRect(sf::IntRect(0, 0, 25, 4));
-        damage = 3;
+        damage = 6;
         
     }
     
@@ -1304,7 +1301,7 @@ namespace Entity
         objectSprite.setOrigin(5,5);
         SetEffectOrigin();
         vel.y = 4;
-        damage = 7;
+        damage = 14;
         SetHitBox(sf::Vector2f(4,4));
         
     }
@@ -1316,8 +1313,9 @@ namespace Entity
         objectSprite.setOrigin(10,10);
         SetEffectOrigin();
         vel.y = 12;
-        damage = 4;
+        damage = 6;
         SetHitBox(sf::Vector2f(12,12));
+		destroyOnImpact = false;
         totalBoomerangs++;
         
         
@@ -1345,7 +1343,8 @@ namespace Entity
         SetEffectOrigin();
         vel.y = 0;
         damage = 20;
-        SetHitBox(sf::Vector2f(80,80));
+        SetHitBox(sf::Vector2f(70,70));
+		destroyOnImpact = false;
         
     }
     
@@ -1446,7 +1445,7 @@ namespace Entity
     
     void SpriteClone::Update(){
         
-        if(World::GetInstance()->Timer(*this,30.0f,NODELAY)){
+        if(World::GetInstance()->Timer(*this,FAST,NODELAY)){
             
             if(objectSprite.getColor().a - 30 <= 0) misDestroyed = true;
             
@@ -1484,7 +1483,7 @@ namespace Entity
             
         }
         
-        if(World::GetInstance()->Timer(*this,100.0f)){
+        if(World::GetInstance()->Timer(*this,NORMAL)){
             
             World::GetInstance()->ScreenShake(5);
             World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_quake");
@@ -1583,7 +1582,7 @@ namespace Entity
     {
         sf::Vector2f prevPos = objectSprite.getPosition();
         
-        if(World::GetInstance()->Timer(*this,5.0f))
+        if(World::GetInstance()->Timer(*this,VERY_FAST))
         {
             
             if(isAnimated){
@@ -1625,7 +1624,7 @@ namespace Entity
     void Projectile::Update()
     {
         
-        if(World::GetInstance()->Timer(*this,30.0f))
+        if(World::GetInstance()->Timer(*this,VERY_FAST))
         {
             
             objectSprite.setTextureRect(sf::IntRect(frame * objectSprite.getTextureRect().width,
@@ -1669,7 +1668,7 @@ namespace Entity
     
     void EnemyBlip::Update(){
         
-        if(World::GetInstance()->Timer(*this,10.0f))
+        if(World::GetInstance()->Timer(*this,VERY_FAST))
         {
             
             
@@ -1693,7 +1692,7 @@ namespace Entity
     
     void PlayerBoomerang::Update(){
         
-        if(World::GetInstance()->Timer(*this,10.0f))
+        if(World::GetInstance()->Timer(*this,VERY_FAST))
         {
         
             objectSprite.setTextureRect(sf::IntRect((frame * 20),32,20,20));
@@ -1715,26 +1714,26 @@ namespace Entity
         
         newPos.x += (World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x - objectSprite.getPosition().x) / timeCurve;
         newPos.y += (World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y - objectSprite.getPosition().y) / timeCurve;
-        if(World::GetInstance()->Timer(*this,30.0f)) if(timeCurve > 10) timeCurve -= 4;
+        if(World::GetInstance()->Timer(*this,FAST)) if(timeCurve > 10) timeCurve -= 4;
     
         objectSprite.setPosition(newPos.x + vel.x,newPos.y + vel.y);
         
-        if(World::GetInstance()->Timer(*this,100.0f))
+        if(World::GetInstance()->Timer(*this,NORMAL))
         {
             vel.x *= 0.5;
             vel.y *= 0.5;
         }
         
-        if(World::GetInstance()->Timer(*this,2000.0f)) misDestroyed = true;
+        if(World::GetInstance()->Timer(*this,2000000.0)) misDestroyed = true;
         
-        if(World::GetInstance()->Timer(*this,60.0f)) CreateClone(objectSprite);
+        if(World::GetInstance()->Timer(*this,FAST)) CreateClone(objectSprite);
         
     }
     
     void PlayerLaser::Update(){
         
         
-        if(World::GetInstance()->Timer(*this,10.0f))
+        if(World::GetInstance()->Timer(*this,VERY_FAST))
         {
             
             
@@ -1753,14 +1752,6 @@ namespace Entity
         }
         
         
-        if(World::GetInstance()->Timer(*this,700.0f))
-        {
-            misDestroyed = true;
-            
-        }
-        
-
-        
         objectSprite.move(vel.x,vel.y);
 
 
@@ -1769,16 +1760,16 @@ namespace Entity
     void PlayerRepeater::Update(){
         
         
-        if(World::GetInstance()->Timer(*this,10.0f))
+        if(World::GetInstance()->Timer(*this,VERY_FAST))
         {
             
             
-            objectSprite.setTextureRect(sf::IntRect(((frame) * 7),25,7,7));
+            objectSprite.setTextureRect(sf::IntRect(((frame+1) * 7),25,7,7));
             objectSprite.setOrigin(2,0);
             
             frame++;
             
-            if(frame > maxFrame+1)
+            if(frame > maxFrame)
             {
                 
                 frame = 0;
@@ -1788,7 +1779,7 @@ namespace Entity
         }
         
         
-        if(World::GetInstance()->Timer(*this,1400.0f))
+        if(World::GetInstance()->Timer(*this,1000000.0))
         {
             misDestroyed = true;
             
@@ -1823,7 +1814,7 @@ namespace Entity
     void Explosion::Update()
     {
         
-        if(World::GetInstance()->Timer(*this,0.0001f))
+        if(World::GetInstance()->Timer(*this,VERY_FAST))
         {
             
             objectSprite.setTextureRect(sf::IntRect(anim_frameX * 80,anim_frameY * 80, 80, 80));
@@ -1991,6 +1982,17 @@ namespace Entity
         if(World::GetInstance()->Timer(*this,1000)) misDestroyed = true;
         
     }
+
+	void Projectile::HasCollided(const std::unique_ptr<Entity::Object>& a) {
+
+		if (World::GetInstance()->Timer(this,NORMAL, NODELAY)) {
+
+			a->isCollided(damage);
+			misDestroyed = destroyOnImpact;
+
+		}
+
+	}
     
     // Draw functions
     
@@ -2372,7 +2374,7 @@ namespace Entity
         
         if(maxEnemies > 0){
         
-            if(World::GetInstance()->Timer(*this,1250.0f,NODELAY)){
+            if(World::GetInstance()->Timer(*this, 1500000.0,NODELAY)){
                 
                 int lvlwidth = fieldSize;
                 int lvlheight = fieldSize;;
@@ -2406,7 +2408,7 @@ namespace Entity
         
         else if( int(bg.getColor().a) != 0 ){
             
-            if(World::GetInstance()->Timer(*this,50.0f,NODELAY)){
+            if(World::GetInstance()->Timer(*this,FAST,NODELAY)){
                 
                 if(int(bg.getColor().a)-2 < 0) bg.setColor(sf::Color(255,255,255,0));     
                 else bg.setColor(sf::Color(255,255,255,int(bg.getColor().a)-2));
@@ -2474,7 +2476,7 @@ namespace Entity
         
         else if(idleBehavior == looking){
             
-            if(World::GetInstance()->Timer(*this,5000.0,DELAY)) objectSprite.setTextureRect(sf::IntRect(framePos * 16, RandomNumber(7)*24,16, 24));
+            if(World::GetInstance()->Timer(*this,VERY_SLOW,DELAY)) objectSprite.setTextureRect(sf::IntRect(framePos * 16, RandomNumber(7)*24,16, 24));
         
             }
         
@@ -2484,7 +2486,7 @@ namespace Entity
 
             if(Textbox::textboxCount == 0){
                 
-                if(World::GetInstance()->Timer(*this,100.0)){
+                if(World::GetInstance()->Timer(*this,NORMAL)){
 
                     itemQueue textbox;
                     textbox.properties["itemType"] = "Textbox";
@@ -2579,6 +2581,7 @@ namespace Entity
         hasAttack = true;
         bossName.setString("Mozza");
         targetPlayer = false;
+		moveOnAttack = true;
 	
     }
     
@@ -2601,7 +2604,13 @@ namespace Entity
             
             if(!hasAttack)objectSprite.move(vel.x,vel.y + velZ);
             
-            else if(!PlayerDistance(MID)) objectSprite.move(vel.x,vel.y + velZ);
+			else if (moveOnAttack == false) {
+
+				if (!PlayerDistance(MID)) objectSprite.move(vel.x, vel.y + velZ);
+
+			}
+
+			else objectSprite.move(vel.x, vel.y + velZ);
             
         }
         
@@ -2612,7 +2621,7 @@ namespace Entity
             RotateVector(vel,-(GetAngle(objectSprite.getPosition(),World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition())));
             
             
-            if(World::GetInstance()->Timer(*this,300,NODELAY)) velZ = -1;
+            if(World::GetInstance()->Timer(*this, 400000.0,NODELAY)) velZ = -1;
             
             if(velZ != 0) objectSprite.move(vel.x,vel.y + velZ);
             posZ -= velZ;
@@ -2656,7 +2665,7 @@ namespace Entity
         
         else{
             
-            if(World::GetInstance()->Timer(*this,30.0f,NODELAY)){
+            if(World::GetInstance()->Timer(*this,NORMAL,NODELAY)){
                 
                 if( int(objectSprite.getColor().a) < 255 ) objectSprite.setColor(sf::Color(255,255,255,int(objectSprite.getColor().a)+5));
                 else active = true;
@@ -2674,7 +2683,7 @@ namespace Entity
 
 		if (hurt) {
 
-			if (World::GetInstance()->Timer(*this, 400.0f)) {
+			if (World::GetInstance()->Timer(*this,400000.0)) {
 				hurt = false;
 				hurtPos.y = 0;
 				hurtPos.x = 0;
@@ -2703,7 +2712,7 @@ namespace Entity
         
         if(PlayerDistance(MID)){
             
-            if(World::GetInstance()->Timer(*this,1000)){
+            if(World::GetInstance()->Timer(*this, 1000000.0)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
@@ -2751,7 +2760,7 @@ namespace Entity
 
 		if (hurt) {
 
-			if (World::GetInstance()->Timer(*this, 400.0f)) {
+			if (World::GetInstance()->Timer(*this,400000.0)) {
 				hurt = false;
 				hurtPos.y = 0;
 				hurtPos.x = 0;
@@ -2769,7 +2778,7 @@ namespace Entity
 
 	void Mozza::MoveElse() {
 
-		if (World::GetInstance()->Timer(*this, 30)) {
+		if (World::GetInstance()->Timer(*this, VERY_FAST)) {
 
 			wingFrames++;
 			wings.setTextureRect(sf::IntRect(0, wingFrames*280, 140, 140));
@@ -2783,7 +2792,7 @@ namespace Entity
     
     void Mozza::Attack(){
         
-        if(World::GetInstance()->Timer(*this,100)){
+        if(World::GetInstance()->Timer(*this,SLOW)){
             
             itemQueue bullet;
             bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
@@ -2828,7 +2837,6 @@ namespace Entity
 	void Mozza::Draw(sf::RenderTarget& window) {
 
 		World::GetInstance()->DrawObject(objectSprite);
-		//World::GetInstance()->DrawObject(objectHitBox);
 		World::GetInstance()->DrawObject(healthBar);
 		World::GetInstance()->DrawObject(bossName);
 		World::GetInstance()->DrawObject(wings);
@@ -2906,7 +2914,7 @@ namespace Entity
         
         zone.clear();
         
-        int zoneSize = 32;
+        int zoneSize = 70;
         
         sf::RectangleShape tempshape (sf::Vector2f (zoneSize,zoneSize));
         
@@ -3089,7 +3097,7 @@ namespace Entity
     
     void Enemy::isCollided(int var) {
         
-        if(World::GetInstance()->Timer(*this,30.0f, NODELAY)) isDamaged(var);
+        isDamaged(var);
             
     }
     
@@ -3178,6 +3186,14 @@ namespace Entity
         
         
     }
+
+
+	void ObjectCall(const std::unique_ptr<Entity::Object>& a) {
+
+		std::cout << "got object ..." << a->vel.y << std::endl;
+
+	}
+
     
     
     

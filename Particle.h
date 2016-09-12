@@ -327,7 +327,9 @@ namespace Entity
         virtual ~Projectile();
         virtual int GetDamage();
         void Update();
+		void HasCollided(const std::unique_ptr<Entity::Object>& a);
         bool isCollided = false;
+		bool destroyOnImpact = true;
         int frame = 0;
         int maxFrame = 0;
         float time;
@@ -649,7 +651,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 10;
+        int maxEnemies = 75;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
@@ -691,6 +693,7 @@ namespace Entity
         int moveType = NORMAL;
         int enemyID = 0;
         bool hurt = false;
+		bool moveOnAttack = false;
         bool targetPlayer = true;
         sf::Vector2f hurtPos;
         
