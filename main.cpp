@@ -3,6 +3,7 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <functional>
 #include <random>
 
 #define WINDOW_X 480*3

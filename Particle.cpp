@@ -9,6 +9,7 @@
 #include "Particle.h"
 #include "ResourcePath.hpp"
 #include <math.h>
+#include <boost/function.hpp>
 
 #define VERY_SLOW 200000.0
 #define SLOW 100000.0
@@ -2323,6 +2324,8 @@ namespace Entity
     
     int Enemy::totalEnemies = 0;
     std::array<std::string,26> LevelManager::enemyList;
+	std::vector<boost::function<void(Entity::Boss*)>> Boss::MovementList(10);
+	std::vector<boost::function<void(Entity::Boss*)>> Boss::AttackList(10);
     
     LevelManager::LevelManager() : Object(){
         
@@ -2562,7 +2565,26 @@ namespace Entity
         healthBar.setFillColor(sf::Color::Yellow);
         bossName.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
         bossName.setCharacterSize(16);
-        
+
+		//maybe have to bind?
+
+		boost::function<void(Entity::Boss*)> move1;
+		boost::function<void(Entity::Boss*)> move2;
+		move1 = &Entity::Boss::FollowPlayer;
+		move2 = &Entity::Boss::Idle;
+		MovementList.push_back(move1);
+		MovementList.push_back(move2);
+
+		boost::function<void(Entity::Boss*)> attk1;
+		boost::function<void(Entity::Boss*)> attk2;
+		attk1 = &Entity::Boss::Shoot8dir;
+		attk2 = &Entity::Boss::Spawn;
+		AttackList.push_back(attk1);
+		AttackList.push_back(attk2);
+
+
+		
+		
     }
     
     Mozza::Mozza(){
@@ -2659,7 +2681,6 @@ namespace Entity
             Move();
             if(hasAttack) Attack();
             UpdateShadow();
-            //objectSprite.setScale(Sine(),Sine());
             
         }
         
@@ -2740,21 +2761,132 @@ namespace Entity
     
     void Boss::Update(){
         
+		if (World::GetInstance()->Timer(*this, 3500000.0)) {
+
+			currentBehavior = RandomNumber(1);
+			std::cout << "behavior is now at: " << currentBehavior << std::endl;
+		}
+
         Act();
-        healthBar.setPosition(World::GetInstance()->viewPos.x-((WINDOW_X/3)/2),World::GetInstance()->viewPos.y+((WINDOW_Y/3)/2-8));
-        bossName.setPosition(healthBar.getPosition().x,healthBar.getPosition().y-22);
-        currhealth += -(healthBar.getSize().x - (float(WINDOW_X)/3)/(maxhealth/health)) / 20;
-        healthBar.setSize(sf::Vector2f(currhealth,8));
-        
-        if( health <= 0){
-            
-            misDestroyed = true;
-            int currentLevel = World::GetInstance()->GlobalMembers.currentLevel;
-            World::GetInstance()->GlobalMembers.levelsCompleted.at(currentLevel) = 1;
-            
-        }
+		HUDUpdate();
+		MoveElse();
         
     }
+
+	void Boss::Move() {
+
+		//MovementList.at(currentBehavior);
+
+		boost::function<void(Entity::Boss*)> attk = MovementList.at(currentBehavior);
+		attk(this);
+
+		//comes up as empty?
+
+		//MovementList.at(currentBehavior)(this);
+	}
+
+	void Boss::Attack() {
+
+		//AttackList.at(currentBehavior);
+
+		boost::function<void(Entity::Boss*)> attk = AttackList.at(currentBehavior);
+		attk(this);
+
+		//comes up as empty?
+
+	}
+
+	void Boss::Idle() {
+
+
+	}
+
+	void Boss::FollowPlayer() {
+
+		vel.x = 0;
+		vel.y = -speed;
+
+		//set move to player
+		RotateVector(vel, -(GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition())));
+		objectSprite.move(vel.x, vel.y + velZ);
+
+	}
+
+	void Boss::Shoot8dir() {
+
+		
+		if (World::GetInstance()->Timer(*this, SLOW)) {
+
+			itemQueue bullet;
+			bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+			bullet.properties["itemType"] = "EnemyBlip";
+			bullet.properties["Speed"] = std::to_string(3);
+			bullet.properties["Direction"] = std::to_string(fireDir);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+			bullet.properties["Direction"] = std::to_string(fireDir + 45);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+			bullet.properties["Direction"] = std::to_string(fireDir + 90);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+			bullet.properties["Direction"] = std::to_string(fireDir + 135);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+			bullet.properties["Direction"] = std::to_string(fireDir + 180);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+			bullet.properties["Direction"] = std::to_string(fireDir + 225);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+			bullet.properties["Direction"] = std::to_string(fireDir + 270);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+			bullet.properties["Direction"] = std::to_string(fireDir + 315);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+			fireDir += 5;
+		}
+		
+	}
+
+	void Boss::Spawn() {
+
+		if (World::GetInstance()->Timer(*this, 1500000.0, NODELAY)) {
+
+				Entity::itemQueue enemy;
+
+				enemy.properties["itemType"] = "Squid";
+				enemy.properties["PosX"] = objectHitBox.getPosition().x;
+				enemy.properties["PosY"] = objectHitBox.getPosition().y;
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
+
+			}
+
+	}
+
+	void Boss::HUDUpdate() {
+
+		healthBar.setPosition(World::GetInstance()->viewPos.x - ((WINDOW_X / 3) / 2), World::GetInstance()->viewPos.y + ((WINDOW_Y / 3) / 2 - 8));
+		bossName.setPosition(healthBar.getPosition().x, healthBar.getPosition().y - 22);
+		currhealth += -(healthBar.getSize().x - (float(WINDOW_X) / 3) / (maxhealth / health)) / 20;
+		healthBar.setSize(sf::Vector2f(currhealth, 8));
+
+		if (health <= 0) {
+
+			misDestroyed = true;
+			int currentLevel = World::GetInstance()->GlobalMembers.currentLevel;
+			World::GetInstance()->GlobalMembers.levelsCompleted.at(currentLevel) = 1;
+
+		}
+
+	}
 
 	void Mozza::isHurt() {
 
@@ -2790,50 +2922,6 @@ namespace Entity
 
 	}
     
-    void Mozza::Attack(){
-        
-        if(World::GetInstance()->Timer(*this,SLOW)){
-            
-            itemQueue bullet;
-            bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-            bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
-            bullet.properties["itemType"] = "EnemyBlip";
-            bullet.properties["Speed"] = std::to_string(3);
-            bullet.properties["Direction"] = std::to_string(fireDir);
-            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-            
-            bullet.properties["Direction"] = std::to_string(fireDir+45);
-            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-            
-            bullet.properties["Direction"] = std::to_string(fireDir+90);
-            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-            
-            
-            bullet.properties["Direction"] = std::to_string(fireDir+135);
-            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-            
-            
-            bullet.properties["Direction"] = std::to_string(fireDir+180);
-            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-            
-            
-            bullet.properties["Direction"] = std::to_string(fireDir+225);
-            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-            
-            
-            bullet.properties["Direction"] = std::to_string(fireDir+270);
-            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-            
-            
-            bullet.properties["Direction"] = std::to_string(fireDir+315);
-            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-            
-            fireDir += 5;
-        }
-
-        
-    }
-
 	void Mozza::Draw(sf::RenderTarget& window) {
 
 		World::GetInstance()->DrawObject(objectSprite);
@@ -2878,6 +2966,9 @@ namespace Entity
     }
     
     Boss::~Boss(){
+
+		MovementList.clear();
+		AttackList.clear();
     
     }
     

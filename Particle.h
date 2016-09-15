@@ -28,6 +28,7 @@ class World;
 #include <functional>
 #include <list>
 #include <cmath>
+#include <boost/function.hpp>
 
 #define FRAME 24
 #define IDLE (FRAME * 0)
@@ -651,7 +652,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 75;
+        int maxEnemies = 10;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
@@ -666,7 +667,7 @@ namespace Entity
         Enemy();
         virtual~Enemy();
         void Update();
-        void Move();
+        virtual void Move();
         void isDamaged(int damage = 0);
         void isCollided(int var);
         void Act();
@@ -737,11 +738,31 @@ namespace Entity
         Boss();
         ~Boss();
         void Update();
+		void HUDUpdate();
+		void Move();
+		void Attack();
         void Draw(sf::RenderTarget& window);
         sf::RectangleShape healthBar;
         sf::Text bossName;
         float maxhealth = 200;
         float currhealth = 0;
+
+		static std::vector<boost::function<void(Entity::Boss*)>> MovementList;
+		static std::vector<boost::function<void(Entity::Boss*)>> AttackList;
+
+		// functions to create different behaviors for boss
+
+		//movement types
+
+		void Idle();
+		void FollowPlayer();
+
+		//attack types
+
+		void Shoot8dir();
+		void Spawn();
+
+		int currentBehavior = 0;
         
     };
     
@@ -752,7 +773,6 @@ namespace Entity
         ~Mozza();
 		sf::Sprite wings;
 		void isHurt();
-        void Attack();
 		void MoveElse();
 		int wingFrames = 0;
 		void Draw(sf::RenderTarget& window);
