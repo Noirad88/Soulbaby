@@ -652,7 +652,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 10;
+        int maxEnemies = 120;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
@@ -744,11 +744,11 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         sf::RectangleShape healthBar;
         sf::Text bossName;
-        float maxhealth = 200;
+        float maxhealth = 1200;
         float currhealth = 0;
 
-		static std::vector<boost::function<void(Entity::Boss*)>> MovementList;
-		static std::vector<boost::function<void(Entity::Boss*)>> AttackList;
+		std::vector<boost::function<void(Boss*)>> MovementList;
+		std::vector<boost::function<void(Boss*)>> AttackList;
 
 		// functions to create different behaviors for boss
 
@@ -762,7 +762,8 @@ namespace Entity
 		void Shoot8dir();
 		void Spawn();
 
-		int currentBehavior = 0;
+		int currentMovement = 0;
+		int currentAttack = 0;
         
     };
     

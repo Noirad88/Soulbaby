@@ -10,6 +10,8 @@
 #include "ResourcePath.hpp"
 #include <math.h>
 #include <boost/function.hpp>
+#include <boost/bind.hpp>
+#include <boost/ref.hpp>
 
 #define VERY_SLOW 200000.0
 #define SLOW 100000.0
@@ -1105,7 +1107,7 @@ namespace Entity
         RotateVector(vel,RandomNumber(180));
         SetEffectOrigin();
         maxFrame = 4;
-        animSpeed = FAST;
+        animSpeed = NORMAL;
         deacceleration = 0.5;
         
     }
@@ -1137,7 +1139,7 @@ namespace Entity
     
     DamageSpark::DamageSpark() : Fixed(){
         
-        //int sparkType = std::rand() % 3;
+
         int x = std::rand() % 4 + -8;
         int y = std::rand() % 4 + -8;
         
@@ -2324,8 +2326,6 @@ namespace Entity
     
     int Enemy::totalEnemies = 0;
     std::array<std::string,26> LevelManager::enemyList;
-	std::vector<boost::function<void(Entity::Boss*)>> Boss::MovementList(10);
-	std::vector<boost::function<void(Entity::Boss*)>> Boss::AttackList(10);
     
     LevelManager::LevelManager() : Object(){
         
@@ -2566,25 +2566,21 @@ namespace Entity
         bossName.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
         bossName.setCharacterSize(16);
 
-		//maybe have to bind?
+		boost::function<void(Boss*)> f;
+		boost::function<void(Boss*)> f2;
+		boost::function<void(Boss*)> f3;
+		boost::function<void(Boss*)> f4;
 
-		boost::function<void(Entity::Boss*)> move1;
-		boost::function<void(Entity::Boss*)> move2;
-		move1 = &Entity::Boss::FollowPlayer;
-		move2 = &Entity::Boss::Idle;
-		MovementList.push_back(move1);
-		MovementList.push_back(move2);
+		f = &Boss::FollowPlayer;
+		f2 = &Boss::Idle;
+		f3 = &Boss::Shoot8dir;
+		f4 = &Boss::Spawn;
 
-		boost::function<void(Entity::Boss*)> attk1;
-		boost::function<void(Entity::Boss*)> attk2;
-		attk1 = &Entity::Boss::Shoot8dir;
-		attk2 = &Entity::Boss::Spawn;
-		AttackList.push_back(attk1);
-		AttackList.push_back(attk2);
+		MovementList.push_back(f);
+		MovementList.push_back(f2);
+		AttackList.push_back(f3);
+		AttackList.push_back(f4);
 
-
-		
-		
     }
     
     Mozza::Mozza(){
@@ -2593,7 +2589,7 @@ namespace Entity
 		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses.png"));
 		wings.setTextureRect(sf::IntRect(0,0, 140, 140));
         speed = 0.5;
-        maxhealth = 200;
+        maxhealth = 1200;
         health = maxhealth;
         moveType = NORMAL;
 		sf::Sprite *mysprite = &wings;
@@ -2715,7 +2711,7 @@ namespace Entity
 				hurtPos.y = RandomNumber(4);
 				objectSprite.move(hurtPos);
 			}
-
+			 
 		}
 	}
     
@@ -2763,8 +2759,9 @@ namespace Entity
         
 		if (World::GetInstance()->Timer(*this, 3500000.0)) {
 
-			currentBehavior = RandomNumber(1);
-			std::cout << "behavior is now at: " << currentBehavior << std::endl;
+			currentMovement = RandomNumber(1);
+			currentAttack = RandomNumber(1);
+			std::cout << currentMovement << " | " << currentAttack << std::endl;
 		}
 
         Act();
@@ -2775,25 +2772,12 @@ namespace Entity
 
 	void Boss::Move() {
 
-		//MovementList.at(currentBehavior);
-
-		boost::function<void(Entity::Boss*)> attk = MovementList.at(currentBehavior);
-		attk(this);
-
-		//comes up as empty?
-
-		//MovementList.at(currentBehavior)(this);
+		MovementList[currentMovement](this);
 	}
 
 	void Boss::Attack() {
 
-		//AttackList.at(currentBehavior);
-
-		boost::function<void(Entity::Boss*)> attk = AttackList.at(currentBehavior);
-		attk(this);
-
-		//comes up as empty?
-
+		AttackList[currentAttack](this);
 	}
 
 	void Boss::Idle() {
@@ -2814,7 +2798,14 @@ namespace Entity
 
 	void Boss::Shoot8dir() {
 
-		
+		if (World::GetInstance()->Timer(*this, FAST)) {
+
+			frame++;
+			if (frame >= 3) frame = 1;
+			objectSprite.setTextureRect(sf::IntRect(0, frame * 280 + 140, 140, 140));
+
+		}
+
 		if (World::GetInstance()->Timer(*this, SLOW)) {
 
 			itemQueue bullet;
@@ -2858,16 +2849,17 @@ namespace Entity
 
 	void Boss::Spawn() {
 
-		if (World::GetInstance()->Timer(*this, 1500000.0, NODELAY)) {
+		if (World::GetInstance()->Timer(*this, 3000000.0, NODELAY)) {
 
 				Entity::itemQueue enemy;
-
-				enemy.properties["itemType"] = "Squid";
-				enemy.properties["PosX"] = objectHitBox.getPosition().x;
-				enemy.properties["PosY"] = objectHitBox.getPosition().y;
+				enemy.properties["itemType"] = "Star";
+				enemy.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
+				enemy.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
 
 			}
+
+		objectSprite.setTextureRect(sf::IntRect(0, 140, 140, 140));
 
 	}
 
@@ -2967,8 +2959,8 @@ namespace Entity
     
     Boss::~Boss(){
 
-		MovementList.clear();
-		AttackList.clear();
+		//MovementList.clear();
+		//AttackList.clear();
     
     }
     
