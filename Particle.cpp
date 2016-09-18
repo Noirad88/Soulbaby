@@ -2566,20 +2566,23 @@ namespace Entity
         bossName.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
         bossName.setCharacterSize(16);
 
+		// Create movesets
+
 		boost::function<void(Boss*)> f;
 		boost::function<void(Boss*)> f2;
 		boost::function<void(Boss*)> f3;
 		boost::function<void(Boss*)> f4;
 
-		f = &Boss::FollowPlayer;
-		f2 = &Boss::Idle;
-		f3 = &Boss::Shoot8dir;
-		f4 = &Boss::Spawn;
+		f = &Boss::Rest;
+		f2 = &Boss::Behavior4;
+		f3 = &Boss::Behavior3;
+		f4 = &Boss::Behavior2;
 
-		MovementList.push_back(f);
-		MovementList.push_back(f2);
-		AttackList.push_back(f3);
-		AttackList.push_back(f4);
+		BehaviorList.push_back(f);
+		BehaviorList.push_back(f2);
+		BehaviorList.push_back(f3);
+		BehaviorList.push_back(f4);
+
 
     }
     
@@ -2600,7 +2603,7 @@ namespace Entity
         bossName.setString("Mozza");
         targetPlayer = false;
 		moveOnAttack = true;
-	
+
     }
     
 	void Enemy::MoveElse() {
@@ -2663,6 +2666,8 @@ namespace Entity
         //remove this below to activate angle rotation (this makes the enemy always look to player)
         
         if(targetPlayer) fireDir = GetAngle(objectSprite.getPosition(),World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
+
+		if (hasAttack) Attack();
         
     }
     
@@ -2675,7 +2680,6 @@ namespace Entity
             
             if(hurt) objectSprite.move(-hurtPos);
             Move();
-            if(hasAttack) Attack();
             UpdateShadow();
             
         }
@@ -2760,7 +2764,6 @@ namespace Entity
 		if (World::GetInstance()->Timer(*this, 3500000.0)) {
 
 			currentMovement = RandomNumber(1);
-			currentAttack = RandomNumber(1);
 			std::cout << currentMovement << " | " << currentAttack << std::endl;
 		}
 
@@ -2772,16 +2775,61 @@ namespace Entity
 
 	void Boss::Move() {
 
-		MovementList[currentMovement](this);
+		BehaviorList[currentMovement](this);
+
 	}
 
 	void Boss::Attack() {
 
-		AttackList[currentAttack](this);
+
 	}
+
+	void Boss::Behavior1(){
+
+	}
+
+	void Boss::Behavior2(){
+
+	}
+
+	void Boss::Behavior3(){
+
+	}
+
+	void Boss::Behavior4(){
+
+	}
+
+	void Boss::Rest() {
+
+	}
+
 
 	void Boss::Idle() {
 
+		vel.x = 0;
+		vel.y = 0;
+
+	}
+
+	void Boss::Roam() {
+
+	}
+
+	void Boss::RoachMovement() {
+
+	}
+
+	void Boss::MoveToCenter() {
+
+		float oldx = objectHitBox.getPosition().x;
+		float oldy = objectHitBox.getPosition().y;
+
+		oldx += (300 - oldx) / 25;
+		oldy += (300 - oldy) / 25;
+
+		objectSprite.setPosition(oldx, oldy);
+		CreateClone(objectSprite, "tx_bosses.png");
 
 	}
 
@@ -2796,7 +2844,49 @@ namespace Entity
 
 	}
 
-	void Boss::Shoot8dir() {
+	void Mozza::Behavior1() {
+
+		//8 direction continous shot
+
+		// Dash & spreader
+
+		Idle();
+
+	}
+
+	void Mozza::Behavior2() {
+
+		// Spawn Spires
+
+		Idle();
+
+		if (World::GetInstance()->Timer(*this, 3000000.0, NODELAY)) {
+
+				Entity::itemQueue enemy;
+				enemy.properties["itemType"] = "Star";
+				enemy.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
+				enemy.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
+
+			}
+
+		objectSprite.setTextureRect(sf::IntRect(0, 140, 140, 140));
+
+	}
+
+	void Mozza::Behavior3() {
+
+		// Displace smog
+
+		FollowPlayer();
+
+	}
+
+	void Mozza::Behavior4() {
+
+		// 8 direction continous shot
+
+		MoveToCenter();
 
 		if (World::GetInstance()->Timer(*this, FAST)) {
 
@@ -2844,24 +2934,46 @@ namespace Entity
 
 			fireDir += 5;
 		}
+
+	}
+
+	void Mozza::Rest() {
+
+		if (World::GetInstance()->Timer(*this, 1600000.0,NODELAY)) {
+
+			int randx = RandomNumber(100,50);
+			int randy = RandomNumber(100,50);
+
+			int randabs = RandomNumber(1);
+			int randabs2 = RandomNumber(1);
+
+			if (randabs == 1) randx = -randx; 
+			if (randabs2 == 1) randy = -randy;
+
+			targetPosition.x = objectSprite.getPosition().x + randx;
+			targetPosition.y = objectSprite.getPosition().y + randy;
+
+			if (targetPosition.x < 100) targetPosition.x = 100;
+			if (targetPosition.x > 500) targetPosition.x = 500;
+			if (targetPosition.y < 100) targetPosition.y = 100;
+			if (targetPosition.y > 500) targetPosition.y = 500;
+
+			std::cout << targetPosition.x << " & " << targetPosition.y << std::endl;
+
+		}
+
+		float oldx = objectSprite.getPosition().x;
+		float oldy = objectSprite.getPosition().y;
+
+		oldx += (targetPosition.x - oldx) / 50;
+		oldy += (targetPosition.y - oldy) / 50;
+
+		objectSprite.setPosition(oldx, oldy);
 		
-	}
-
-	void Boss::Spawn() {
-
-		if (World::GetInstance()->Timer(*this, 3000000.0, NODELAY)) {
-
-				Entity::itemQueue enemy;
-				enemy.properties["itemType"] = "Star";
-				enemy.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
-				enemy.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
-
-			}
-
-		objectSprite.setTextureRect(sf::IntRect(0, 140, 140, 140));
 
 	}
+
+
 
 	void Boss::HUDUpdate() {
 

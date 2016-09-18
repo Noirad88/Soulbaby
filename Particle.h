@@ -652,7 +652,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 120;
+        int maxEnemies = 0;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
@@ -747,20 +747,23 @@ namespace Entity
         float maxhealth = 1200;
         float currhealth = 0;
 
-		std::vector<boost::function<void(Boss*)>> MovementList;
-		std::vector<boost::function<void(Boss*)>> AttackList;
+		std::vector<boost::function<void(Boss*)>> BehaviorList;
 
 		// functions to create different behaviors for boss
 
-		//movement types
+		virtual void Behavior1();
+		virtual void Behavior2();
+		virtual void Behavior3();
+		virtual void Behavior4();
+		virtual void Rest();
+
+		// stock movements
 
 		void Idle();
 		void FollowPlayer();
-
-		//attack types
-
-		void Shoot8dir();
-		void Spawn();
+		void Roam();
+		void MoveToCenter();
+		void RoachMovement();
 
 		int currentMovement = 0;
 		int currentAttack = 0;
@@ -777,6 +780,15 @@ namespace Entity
 		void MoveElse();
 		int wingFrames = 0;
 		void Draw(sf::RenderTarget& window);
+
+		void Behavior1();
+		void Behavior2();
+		void Behavior3();
+		void Behavior4();
+		void Rest();
+
+		sf::Vector2f targetPosition;
+
     };
     
     struct sortByYPos
