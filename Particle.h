@@ -741,11 +741,13 @@ namespace Entity
 		void HUDUpdate();
 		void Move();
 		void Attack();
+		void NextMovement();
         void Draw(sf::RenderTarget& window);
         sf::RectangleShape healthBar;
         sf::Text bossName;
         float maxhealth = 1200;
         float currhealth = 0;
+		int phase = 0;
 
 		std::vector<boost::function<void(Boss*)>> BehaviorList;
 

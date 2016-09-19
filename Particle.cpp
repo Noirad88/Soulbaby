@@ -2575,13 +2575,9 @@ namespace Entity
 
 		f = &Boss::Rest;
 		f2 = &Boss::Behavior4;
-		f3 = &Boss::Behavior3;
-		f4 = &Boss::Behavior2;
 
 		BehaviorList.push_back(f);
 		BehaviorList.push_back(f2);
-		BehaviorList.push_back(f3);
-		BehaviorList.push_back(f4);
 
 
     }
@@ -2761,12 +2757,6 @@ namespace Entity
     
     void Boss::Update(){
         
-		if (World::GetInstance()->Timer(*this, 3500000.0)) {
-
-			currentMovement = RandomNumber(1);
-			std::cout << currentMovement << " | " << currentAttack << std::endl;
-		}
-
         Act();
 		HUDUpdate();
 		MoveElse();
@@ -2775,6 +2765,7 @@ namespace Entity
 
 	void Boss::Move() {
 
+		if (currentMovement > BehaviorList.size()-1) currentMovement = 0;
 		BehaviorList[currentMovement](this);
 
 	}
@@ -2829,7 +2820,7 @@ namespace Entity
 		oldy += (300 - oldy) / 25;
 
 		objectSprite.setPosition(oldx, oldy);
-		CreateClone(objectSprite, "tx_bosses.png");
+		if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) CreateClone(objectSprite, "tx_bosses.png");
 
 	}
 
@@ -2886,8 +2877,6 @@ namespace Entity
 
 		// 8 direction continous shot
 
-		MoveToCenter();
-
 		if (World::GetInstance()->Timer(*this, FAST)) {
 
 			frame++;
@@ -2896,48 +2885,81 @@ namespace Entity
 
 		}
 
-		if (World::GetInstance()->Timer(*this, SLOW)) {
+		if (phase == 0) {
 
-			itemQueue bullet;
-			bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-			bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
-			bullet.properties["itemType"] = "EnemyBlip";
-			bullet.properties["Speed"] = std::to_string(3);
-			bullet.properties["Direction"] = std::to_string(fireDir);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-			bullet.properties["Direction"] = std::to_string(fireDir + 45);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-			bullet.properties["Direction"] = std::to_string(fireDir + 90);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-
-			bullet.properties["Direction"] = std::to_string(fireDir + 135);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-
-			bullet.properties["Direction"] = std::to_string(fireDir + 180);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-
-			bullet.properties["Direction"] = std::to_string(fireDir + 225);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-
-			bullet.properties["Direction"] = std::to_string(fireDir + 270);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-
-			bullet.properties["Direction"] = std::to_string(fireDir + 315);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-			fireDir += 5;
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_yes");
+			phase = 1;
+			
 		}
+
+		else if (phase == 1) {
+
+			if (World::GetInstance()->Timer(*this, 600000.0)) { 
+				
+				phase = 2;
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_dash"); 
+			
+			}
+
+		}
+
+		else if (phase == 2) {
+
+			MoveToCenter();
+			if (World::GetInstance()->Timer(*this, 1600000.0)) phase = 3;
+		}
+
+		else if (phase == 3) {
+
+			if (World::GetInstance()->Timer(*this, SLOW)) {
+
+				itemQueue bullet;
+				bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+				bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+				bullet.properties["itemType"] = "EnemyBlip";
+				bullet.properties["Speed"] = std::to_string(3);
+				bullet.properties["Direction"] = std::to_string(fireDir);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				bullet.properties["Direction"] = std::to_string(fireDir + 45);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				bullet.properties["Direction"] = std::to_string(fireDir + 90);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+				bullet.properties["Direction"] = std::to_string(fireDir + 135);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+				bullet.properties["Direction"] = std::to_string(fireDir + 180);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+				bullet.properties["Direction"] = std::to_string(fireDir + 225);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+				bullet.properties["Direction"] = std::to_string(fireDir + 270);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+				bullet.properties["Direction"] = std::to_string(fireDir + 315);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				fireDir += 10;
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_poplaser");
+			}
+
+			if (World::GetInstance()->Timer(*this, 6000000.0)) NextMovement();
+		}
+
 
 	}
 
 	void Mozza::Rest() {
+
+		objectSprite.setTextureRect(sf::IntRect(0, 140, 140, 140));
 
 		if (World::GetInstance()->Timer(*this, 1600000.0,NODELAY)) {
 
@@ -2970,7 +2992,14 @@ namespace Entity
 
 		objectSprite.setPosition(oldx, oldy);
 		
+		if (World::GetInstance()->Timer(*this, 6000000.0)) NextMovement();
 
+	}
+
+	void Boss::NextMovement() {
+
+		phase = 0;
+		currentMovement++;
 	}
 
 
