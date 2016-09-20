@@ -398,7 +398,7 @@ void World::UpdateCamera(){
             int y = rand() % quakeStrength + viewPos.y;
             
             Screen.setCenter(x,y);
-            quakeStrength--;
+            quakeStrength-= 0.5;
             
             if(quakeStrength <= 0){
                 

@@ -49,8 +49,8 @@ void Audio::PlaySFX(std::string soundName){
     
     audioIter iter = AudioContainer.find(soundName + ".wav");
     iter->second.sample.setBuffer(iter->second.buffer);
-    iter->second.sample.stop();
-    iter->second.sample.setVolume(20);
+    //iter->second.sample.stop();
+    iter->second.sample.setVolume(80);
     iter->second.sample.play();
 
 }

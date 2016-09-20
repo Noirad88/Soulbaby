@@ -38,6 +38,7 @@ class World;
 #define NODE 2
 #define CLOSE 100
 #define MID 150
+#define FAR 250
 #define LONG 400
 #define LINELENGTH 60
 #define START 'a'
@@ -344,6 +345,16 @@ namespace Entity
         ~EnemyProjectile();
         
     };
+
+	class HauzerSmog : public EnemyProjectile {
+
+	public:
+		HauzerSmog();
+		~HauzerSmog();
+		void Update();
+		int sprite;
+
+	};
     
     class EnemyBlip : public EnemyProjectile{
         
@@ -467,12 +478,13 @@ namespace Entity
         void Update();
         static int assetHeight;
         int maxFrame = 0;
-        int maxTime = 0;
+        float maxTime = 0;
         float animSpeed = 5.0f;
         float spdReduceRate = 0;
         int top = -1;
         static int spriteRotation;
         float deacceleration = 0;
+		float acceleration = 0;
         bool rotation = false;
         
     };
@@ -512,6 +524,13 @@ namespace Entity
         ~DeathPoof();
         
     };
+
+	class HauzerCharge : public Fixed {
+
+	public:
+		HauzerCharge();
+		~HauzerCharge();
+	};
     
     class DeathBoom: public Fixed{
     public:
@@ -652,7 +671,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 0;
+        int maxEnemies = 10;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
@@ -675,6 +694,7 @@ namespace Entity
 		virtual void MoveElse();
         void Draw(sf::RenderTarget& window);
         virtual void Attack();
+		void TargetPlayer();
         void Damaged();
         bool hasAttack = false;
         float health = 3;
@@ -697,6 +717,7 @@ namespace Entity
 		bool moveOnAttack = false;
         bool targetPlayer = true;
         sf::Vector2f hurtPos;
+		bool transition = true;
         
     };
     
@@ -730,6 +751,13 @@ namespace Entity
         ~Squid();
         
     };
+
+	class HauzerSpire : public Enemy {
+
+	public:
+		HauzerSpire();
+		~HauzerSpire();
+	};
     
     class Boss : public Enemy
     {
@@ -742,6 +770,7 @@ namespace Entity
 		void Move();
 		void Attack();
 		void NextMovement();
+		void NewMovementSet();
         void Draw(sf::RenderTarget& window);
         sf::RectangleShape healthBar;
         sf::Text bossName;

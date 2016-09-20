@@ -132,6 +132,15 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "HauzerCharge")
+			{
+
+				std::unique_ptr<Entity::HauzerCharge> ptr(new Entity::HauzerCharge);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "DoorDestroy")
             {
@@ -177,6 +186,21 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
 
             }
+
+			else if ((QI)->properties["itemType"] == "HauzerSmog")
+			{
+
+				std::unique_ptr<Entity::HauzerSmog> ptr(new Entity::HauzerSmog);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				if ((QI)->properties.count("Speed")>0) ptr->vel.y = stoi((QI)->properties["Speed"]);
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				ptr->vel.y = -ptr->vel.y;
+				if ((QI)->properties.count("Direction"))RotateVector(ptr->vel, (-stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "PlayerLaser")
             {
@@ -300,6 +324,15 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "HauzerSpire")
+			{
+
+				std::unique_ptr<Entity::HauzerSpire> ptr(new Entity::HauzerSpire);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "Star")
             {

@@ -1136,6 +1136,16 @@ namespace Entity
         deacceleration = 0.5;
         
     }
+
+	HauzerCharge::HauzerCharge() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(0, 241, 50, 50));
+		SetEffectOrigin();
+		animSpeed = VERY_FAST;
+		maxTime = 6000000.0;
+		maxFrame = 8;
+
+	}
     
     DamageSpark::DamageSpark() : Fixed(){
         
@@ -1199,6 +1209,7 @@ namespace Entity
         
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
         type = "Projectile";
+		velZ = -99;
         
     }
     
@@ -1216,8 +1227,18 @@ namespace Entity
         SetHitBox(sf::Vector2f(3,3));
         active = true;
 
-        
     }
+
+	HauzerSmog::HauzerSmog() : EnemyProjectile() {
+
+		sprite = 96 + (17 *RandomNumber(2));
+		objectSprite.setTextureRect(sf::IntRect(0, 96, 17, 17));
+		vel.y = RandomNumber(6,4);
+		SetEffectOrigin();
+		SetHitBox(sf::Vector2f(6, 6));
+		active = true;
+
+	}
     
     Particle::Particle() : Object ()
     {
@@ -1304,7 +1325,7 @@ namespace Entity
         objectSprite.setOrigin(5,5);
         SetEffectOrigin();
         vel.y = 4;
-        damage = 14;
+        damage = 7;
         SetHitBox(sf::Vector2f(4,4));
         
     }
@@ -1429,6 +1450,12 @@ namespace Entity
                     animSpeed -= spdReduceRate;
                     vel.x -= (vel.x * deacceleration);
                     vel.y -= (vel.y * deacceleration);
+
+					if ((acceleration != 0) && (World::GetInstance()->Timer(*this,NORMAL))) {
+
+						animSpeed -= acceleration;
+					}
+
                     if(rotation) RotateVector(vel,animSpeed);
                 
                 }
@@ -1692,6 +1719,34 @@ namespace Entity
         objectSprite.move(vel.x,vel.y);
         
     }
+
+	void HauzerSmog::Update() {
+
+		if (World::GetInstance()->Timer(*this, VERY_SLOW))
+		{
+
+			objectSprite.setTextureRect(sf::IntRect((frame * 17), sprite, 17, 17));
+
+			frame++;
+
+			if (frame >= 4)
+			{
+
+				misDestroyed = true;
+
+			}
+
+		}
+
+		if (World::GetInstance()->Timer(*this,VERY_SLOW)) {
+
+			vel.x -= (vel.x * 0.25);
+			vel.y -= (vel.y * 0.25);
+		}
+
+		objectSprite.move(vel.x, vel.y);
+
+	}
     
     void PlayerBoomerang::Update(){
         
@@ -2050,6 +2105,10 @@ namespace Entity
     EnemyBlip::~EnemyBlip(){
         
     }
+
+	HauzerSmog::~HauzerSmog() {
+
+	}
     
     
     HitNum::~HitNum()
@@ -2180,6 +2239,10 @@ namespace Entity
         
         
     }
+
+	HauzerCharge::~HauzerCharge() {
+
+	}
     
     DamageSpark::~DamageSpark(){
         
@@ -2513,6 +2576,8 @@ namespace Entity
         hurtPos.x = 0;
         hurtPos.y = 0;
         SetHitBox(sf::Vector2f(16,16),1);
+
+
     }
     
     EnemyNode::EnemyNode() : Enemy()
@@ -2556,6 +2621,20 @@ namespace Entity
         SetHitBox(sf::Vector2f(20,20),1);
     
     }
+
+	HauzerSpire::HauzerSpire() : Enemy()
+	{
+		objectSprite.setTextureRect(sf::IntRect(0, 74, 26, 47));
+		SetCharacterOrigin();
+		SetShadow();
+		moveType = 0;
+		speed = 0;
+		health = 70;
+		SetHitBox(sf::Vector2f(30, 40), 1);
+		transition = false;
+
+
+	}
     
     Boss::Boss()
     {
@@ -2574,11 +2653,14 @@ namespace Entity
 		boost::function<void(Boss*)> f4;
 
 		f = &Boss::Rest;
-		f2 = &Boss::Behavior4;
+		f2 = &Boss::Behavior2;
+		f3 = &Boss::Behavior3;
+		f4 = &Boss::Behavior4;
 
 		BehaviorList.push_back(f);
 		BehaviorList.push_back(f2);
-
+		BehaviorList.push_back(f3);
+		BehaviorList.push_back(f4);
 
     }
     
@@ -2596,6 +2678,7 @@ namespace Entity
         SetHitBox(sf::Vector2f(70,70));
         SetShadow();
         hasAttack = true;
+		speed = 1;
         bossName.setString("Mozza");
         targetPlayer = false;
 		moveOnAttack = true;
@@ -2670,7 +2753,19 @@ namespace Entity
     
     void Enemy::Act(){
         
-        
+		if (!transition && !active) {
+
+			objectSprite.setColor(sf::Color(255, 255, 255, 255));
+			active = true;
+			itemQueue particles;
+			particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+			particles.properties["itemType"] = "DeathPoof";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+		}
         
         if(active){
             
@@ -2754,6 +2849,11 @@ namespace Entity
         
         World::GetInstance()->DrawObject(objectSprite);
     }
+
+	void Enemy::TargetPlayer() {
+
+		fireDir = GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
+	}
     
     void Boss::Update(){
         
@@ -2765,7 +2865,13 @@ namespace Entity
 
 	void Boss::Move() {
 
-		if (currentMovement > BehaviorList.size()-1) currentMovement = 0;
+		if (currentMovement > BehaviorList.size() - 1) { 
+			
+			currentMovement = 0;
+			NewMovementSet();
+	
+		}
+
 		BehaviorList[currentMovement](this);
 
 	}
@@ -2811,6 +2917,33 @@ namespace Entity
 
 	}
 
+	void Boss::NewMovementSet() {
+
+		std::vector<boost::function<void(Boss*)>> tempList;
+
+		boost::function<void(Boss*)> f2;
+		boost::function<void(Boss*)> f3;
+		boost::function<void(Boss*)> f4;
+
+
+		f2 = &Boss::Behavior3;
+		f3 = &Boss::Behavior4;
+		f4 = &Boss::Behavior2;
+
+		tempList.push_back(f2);
+		tempList.push_back(f3);
+		tempList.push_back(f4);
+
+		for (int i = 1; i < BehaviorList.size(); i++) {
+
+			BehaviorList[i] = tempList[RandomNumber(2,0)];
+			std::cout << i << " for " << BehaviorList.size() << std::endl;
+				
+		}
+
+		tempList.clear();
+	}
+
 	void Boss::MoveToCenter() {
 
 		float oldx = objectHitBox.getPosition().x;
@@ -2851,25 +2984,92 @@ namespace Entity
 
 		Idle();
 
-		if (World::GetInstance()->Timer(*this, 3000000.0, NODELAY)) {
+		if (phase == 0) {
+
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_hauzercharge1");
+			Entity::itemQueue enemy;
+			enemy.properties["itemType"] = "HauzerCharge";
+			enemy.properties["PosX"] = std::to_string(objectHitBox.getPosition().x - 50);
+			enemy.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
+
+			enemy.properties["PosX"] = std::to_string(objectHitBox.getPosition().x + 50);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
+
+			phase = 1;
+
+		}
+
+		else if (phase == 1) {
+
+			if (World::GetInstance()->Timer(*this, 1600000.0)) { 
 
 				Entity::itemQueue enemy;
-				enemy.properties["itemType"] = "Star";
-				enemy.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
-				enemy.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
+				enemy.properties["itemType"] = "HauzerSpire";
+				enemy.properties["PosX"] = std::to_string(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition().x - 50);
+				enemy.properties["PosY"] = std::to_string(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition().y);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
 
+
+				enemy.properties["PosX"] = std::to_string(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition().x + 50);
+				enemy.properties["PosY"] = std::to_string(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition().y);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
+
+
+				enemy.properties["PosX"] = std::to_string(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition().x);
+				enemy.properties["PosY"] = std::to_string(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition().y - 50);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
+
+
+				enemy.properties["PosX"] = std::to_string(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition().x);
+				enemy.properties["PosY"] = std::to_string(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition().y + 50);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
+
+				World::GetInstance()->ScreenShake(20);
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_faintexp");
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_stomp");
+
+				NextMovement(); 
 			}
 
-		objectSprite.setTextureRect(sf::IntRect(0, 140, 140, 140));
-
+		}
 	}
 
 	void Mozza::Behavior3() {
 
-		// Displace smog
+		// Toxic breath
 
 		FollowPlayer();
+
+		if (World::GetInstance()->Timer(*this, FAST)) {
+
+			frame++;
+			if (frame >= 3) frame = 1;
+			objectSprite.setTextureRect(sf::IntRect(0, frame * 280 + 140, 140, 140));
+
+		}
+
+		if (PlayerDistance(FAR)) {
+
+			if (World::GetInstance()->Timer(*this, FAST,NODELAY)) {
+
+				TargetPlayer();
+				itemQueue bullet;
+				bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+				bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+				bullet.properties["itemType"] = "HauzerSmog";
+				int rand = RandomNumber(1);
+				if(rand == 0) bullet.properties["Direction"] = std::to_string(fireDir + RandomNumber(2));
+				if (rand == 1) bullet.properties["Direction"] = std::to_string(fireDir - RandomNumber(2));
+
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+			}
+
+			if (World::GetInstance()->Timer(*this, SLOW, NODELAY)) World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_hauzerbreath");
+		}
+
+		if (World::GetInstance()->Timer(*this, 3200000.0)) NextMovement();
 
 	}
 
@@ -2887,7 +3087,7 @@ namespace Entity
 
 		if (phase == 0) {
 
-			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_yes");
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_hauzerbark");
 			phase = 1;
 			
 		}
@@ -2897,7 +3097,7 @@ namespace Entity
 			if (World::GetInstance()->Timer(*this, 600000.0)) { 
 				
 				phase = 2;
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_dash"); 
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bossdash"); 
 			
 			}
 
@@ -2948,7 +3148,6 @@ namespace Entity
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
 
 				fireDir += 10;
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_poplaser");
 			}
 
 			if (World::GetInstance()->Timer(*this, 6000000.0)) NextMovement();
@@ -3104,6 +3303,10 @@ namespace Entity
 		//AttackList.clear();
     
     }
+
+	HauzerSpire::~HauzerSpire() {
+
+	}
     
     Mozza::~Mozza(){
         
