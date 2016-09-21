@@ -1081,6 +1081,7 @@ namespace Entity
     
     SpriteClone::SpriteClone() : Fixed(){
         
+		objectSprite.setColor(sf::Color::Blue);
         velZ = -99;
         SetEffectOrigin();
     }
@@ -1111,10 +1112,27 @@ namespace Entity
         deacceleration = 0.5;
         
     }
+
+	EnemySpark::EnemySpark() : Fixed() {
+
+		int randomSpark = RandomNumber(1);
+		if (randomSpark == 0) objectSprite.setTextureRect(sf::IntRect(0, 292, 7, 7));
+		else if (randomSpark == 1) objectSprite.setTextureRect(sf::IntRect(0, 299, 10, 10));
+
+		vel.y = 0;
+		SetEffectOrigin();
+		maxFrame = 3;
+		animSpeed = FAST;
+
+	}
     
     Spark::~Spark(){
         
     }
+
+	EnemySpark::~EnemySpark() {
+
+	}
     
     DoorDestroy::DoorDestroy() : Fixed(){
         
@@ -1209,7 +1227,6 @@ namespace Entity
         
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
         type = "Projectile";
-		velZ = -99;
         
     }
     
@@ -1237,6 +1254,22 @@ namespace Entity
 		SetEffectOrigin();
 		SetHitBox(sf::Vector2f(6, 6));
 		active = true;
+
+	}
+
+	HauzerSpear::HauzerSpear() : EnemyProjectile() {
+
+		objectSprite.setTextureRect(sf::IntRect(0, 69, 7, 27));
+		vel.y = 1;
+		SetEffectOrigin();
+		SetHitBox(sf::Vector2f(3, 6));
+		active = true;
+		acceleration = 0.05;
+		emitter = "EnemySpark";
+		emitTime = SLOW;
+		emitScatter = true;
+		emitCount = 3;
+		maxFrame = 1;
 
 	}
     
@@ -1479,7 +1512,7 @@ namespace Entity
             
             if(objectSprite.getColor().a - 30 <= 0) misDestroyed = true;
             
-            else objectSprite.setColor(sf::Color::Color(0,0,255,objectSprite.getColor().a - 75));
+            else objectSprite.setColor(sf::Color::Color(objectSprite.getColor().r, objectSprite.getColor().g, objectSprite.getColor().b,objectSprite.getColor().a - 75));
             
         }
     
@@ -1658,7 +1691,7 @@ namespace Entity
         {
             
             objectSprite.setTextureRect(sf::IntRect(frame * objectSprite.getTextureRect().width,
-                                                            0,
+															objectSprite.getTextureRect().top,
                                                             objectSprite.getTextureRect().width,
                                                             objectSprite.getTextureRect().height));
             frame++;
@@ -1672,17 +1705,59 @@ namespace Entity
             
         }
         
-       
-        if(vel.x < 0)
-        {
-            
-            objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().width,
-                                                    0,
-                                                    -objectSprite.getTextureRect().width,
-                                                    objectSprite.getTextureRect().height));
-            
-        }
         
+		if (deacceleration != 0) {
+
+			if (World::GetInstance()->Timer(*this, NORMAL)) {
+
+				vel.x -= (vel.x * deacceleration);
+				vel.y -= (vel.y * deacceleration);
+
+			}
+		}
+
+		if (acceleration != 0) {
+
+			if (World::GetInstance()->Timer(*this, NORMAL)) {
+
+				vel.x += (vel.x * acceleration);
+				vel.y += (vel.y * acceleration);
+
+			}
+		}
+
+		if (emitter != "") {
+
+			if (World::GetInstance()->Timer(*this, emitTime)) {
+
+				itemQueue particles;
+
+				for (int i = 0; i < emitCount; i++) {
+
+					if (emitScatter == true) {
+
+						particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x - 8 + RandomNumber(16));
+						particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 8 + RandomNumber(16));
+
+					}
+
+					else {
+
+						particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+						particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+
+					}
+
+					particles.properties["itemType"] = emitter;
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+				}
+
+			}
+
+		}
+
+
         objectSprite.move(vel.x,vel.y);
         
         
@@ -2107,6 +2182,10 @@ namespace Entity
     }
 
 	HauzerSmog::~HauzerSmog() {
+
+	}
+
+	HauzerSpear::~HauzerSpear() {
 
 	}
     
@@ -2653,7 +2732,7 @@ namespace Entity
 		boost::function<void(Boss*)> f4;
 
 		f = &Boss::Rest;
-		f2 = &Boss::Behavior2;
+		f2 = &Boss::Behavior1;
 		f3 = &Boss::Behavior3;
 		f4 = &Boss::Behavior4;
 
@@ -2924,19 +3003,22 @@ namespace Entity
 		boost::function<void(Boss*)> f2;
 		boost::function<void(Boss*)> f3;
 		boost::function<void(Boss*)> f4;
+		boost::function<void(Boss*)> f5;
 
 
 		f2 = &Boss::Behavior3;
 		f3 = &Boss::Behavior4;
 		f4 = &Boss::Behavior2;
+		f5 = &Boss::Behavior1;
 
 		tempList.push_back(f2);
 		tempList.push_back(f3);
 		tempList.push_back(f4);
+		tempList.push_back(f5);
 
 		for (int i = 1; i < BehaviorList.size(); i++) {
 
-			BehaviorList[i] = tempList[RandomNumber(2,0)];
+			BehaviorList[i] = tempList[RandomNumber(3,0)];
 			std::cout << i << " for " << BehaviorList.size() << std::endl;
 				
 		}
@@ -2953,7 +3035,7 @@ namespace Entity
 		oldy += (300 - oldy) / 25;
 
 		objectSprite.setPosition(oldx, oldy);
-		if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) CreateClone(objectSprite, "tx_bosses.png");
+		if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) CreateClone(objectSprite, "tx_bosses.png",false);
 
 	}
 
@@ -2975,6 +3057,64 @@ namespace Entity
 		// Dash & spreader
 
 		Idle();
+
+		if (World::GetInstance()->Timer(*this, FAST)) {
+
+			frame++;
+			if (frame >= 3) frame = 1;
+			objectSprite.setTextureRect(sf::IntRect(0, frame * 280 + 140, 140, 140));
+
+		}
+
+		if (phase == 0) {
+
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_hauzerbark2");
+			Entity::itemQueue enemy;
+			enemy.properties["itemType"] = "HauzerCharge";
+			enemy.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
+			enemy.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
+			phase = 1;
+
+		}
+
+		else if (phase == 1) {
+
+			if (World::GetInstance()->Timer(*this, 1000000.0)) phase = 2;
+
+		}
+
+		else if (phase == 2) {
+
+			if (World::GetInstance()->Timer(*this, VERY_SLOW)) {
+
+				TargetPlayer();
+				itemQueue bullet;
+				bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+				bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+				bullet.properties["itemType"] = "HauzerSpear";
+				bullet.properties["Speed"] = std::to_string(2);
+				bullet.properties["Direction"] = std::to_string(fireDir);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				bullet.properties["Direction"] = std::to_string(fireDir - 5);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				bullet.properties["Direction"] = std::to_string(fireDir + 5);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				bullet.properties["Direction"] = std::to_string(fireDir + 10);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				bullet.properties["Direction"] = std::to_string(fireDir + 10);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
+
+			}
+
+			if (World::GetInstance()->Timer(*this, VERY_SLOW*3)) NextMovement();
+
+		}
 
 	}
 
@@ -3117,7 +3257,7 @@ namespace Entity
 				bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
 				bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
 				bullet.properties["itemType"] = "EnemyBlip";
-				bullet.properties["Speed"] = std::to_string(3);
+				bullet.properties["Speed"] = std::to_string(2);
 				bullet.properties["Direction"] = std::to_string(fireDir);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
 
@@ -3552,13 +3692,13 @@ namespace Entity
         
     }
     
-    void CreateClone(sf::Sprite& sprite,std::string type){
+    void CreateClone(sf::Sprite& sprite,std::string type, bool color){
         
         itemQueue clone;
         clone.properties["itemType"] = "SpriteClone";
         clone.properties["PosX"] = std::to_string(sprite.getPosition().x);
         clone.properties["PosY"] = std::to_string(sprite.getPosition().y);
-        
+		if (color == false) clone.properties["Color"] = "Red";
         if (type == "") clone.properties["Sprite"] = "tx_projectiles.png";
         else clone.properties["Sprite"] = type;
         

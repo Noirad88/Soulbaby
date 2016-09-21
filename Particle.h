@@ -332,9 +332,17 @@ namespace Entity
 		void HasCollided(const std::unique_ptr<Entity::Object>& a);
         bool isCollided = false;
 		bool destroyOnImpact = true;
+		float deacceleration = 0;
+		float acceleration = 0;
         int frame = 0;
         int maxFrame = 0;
         float time;
+		bool rotation = false;
+
+		std::string emitter = "";
+		float emitTime = 0;
+		bool emitScatter = false;
+		int emitCount = 1;
         
     };
     
@@ -353,6 +361,14 @@ namespace Entity
 		~HauzerSmog();
 		void Update();
 		int sprite;
+
+	};
+
+	class HauzerSpear : public  EnemyProjectile {
+
+	public:
+		HauzerSpear();
+		~HauzerSpear();
 
 	};
     
@@ -517,6 +533,13 @@ namespace Entity
         Spark();
         ~Spark();
     };
+
+	class EnemySpark: public Fixed {
+
+	public:
+		EnemySpark();
+		~EnemySpark();
+	};
     
     class DeathPoof: public Fixed{
     public:
@@ -855,7 +878,7 @@ namespace Entity
     
     sf::Vector2f GetCharacterOrigin(Entity::Object& obj);
     void isDestroyed(Entity::Enemy& object);
-    void CreateClone(sf::Sprite& sprite,std::string type = "");
+    void CreateClone(sf::Sprite& sprite,std::string type = "", bool color = true);
     int GetRandDmg(int damage);
     bool enemyPred (const std::unique_ptr<Entity::Object>& a);
     bool enemyProjectilePred (const std::unique_ptr<Entity::Object>& a);

@@ -133,6 +133,15 @@ void Container::AddObjects()
                 
             }
 
+			else if ((QI)->properties["itemType"] == "EnemySpark")
+			{
+
+				std::unique_ptr<Entity::EnemySpark> ptr(new Entity::EnemySpark);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "HauzerCharge")
 			{
 
@@ -201,6 +210,23 @@ void Container::AddObjects()
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
+
+			else if ((QI)->properties["itemType"] == "HauzerSpear")
+			{
+
+				std::unique_ptr<Entity::HauzerSpear> ptr(new Entity::HauzerSpear);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				if ((QI)->properties.count("Speed")>0) ptr->vel.y = stoi((QI)->properties["Speed"]);
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				ptr->vel = -ptr->vel;
+
+				if ((QI)->properties.count("Direction")) RotateVector(ptr->vel, (-stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation((-stoi((QI)->properties["Direction"]))+180);
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "PlayerLaser")
             {
@@ -252,6 +278,7 @@ void Container::AddObjects()
                 ptr->objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture((QI)->properties["Sprite"]));
                 ptr->objectSprite.setTextureRect(sf::IntRect(stoi((QI)->properties["RectX"]),stoi((QI)->properties["RectY"]),stoi((QI)->properties["RectWidth"]),stoi((QI)->properties["RectHeight"])));
                 ptr->objectSprite.setOrigin(stoi((QI)->properties["SpriteOriginX"]),stoi((QI)->properties["SpriteOriginY"]));
+				if (((QI)->properties["Color"]) == "Red") ptr->objectSprite.setColor(sf::Color::Red);
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
