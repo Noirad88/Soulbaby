@@ -808,7 +808,6 @@ namespace Entity
 				 
 				std::cout << NORMAL << std::endl;
                 frame_pos = (frame_pos >= 5) ? 0 : frame_pos+1;
-                if(frame_pos == 1 || frame_pos == 4) World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_step"); 
                 objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, movement * FRAME, spriteWidth, spriteHeight));
             
             }
@@ -836,7 +835,7 @@ namespace Entity
         
         // breathing effect
         
-        objectSprite.setScale(Sine(),Sine());
+        //objectSprite.setScale(Sine(),Sine());
         
     }
     
@@ -1357,7 +1356,7 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect(0, 0, 10, 10));
         objectSprite.setOrigin(5,5);
         SetEffectOrigin();
-        vel.y = 4;
+        vel.y = 6;
         damage = 7;
         SetHitBox(sf::Vector2f(4,4));
         
@@ -2472,8 +2471,11 @@ namespace Entity
     LevelManager::LevelManager() : Object(){
         
         objectSprite.setTextureRect(sf::IntRect(0,0,0,0));
+
+		std::string level = std::to_string(World::GetInstance()->GlobalMembers.currentLevel);
+		std::cout << "Current level =" << level << std::endl;
     
-        bg.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_bg_1.png"));
+        bg.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_bg_" + level + ".png"));
         bg.setTextureRect(sf::IntRect (0,0,2000,2000));
         bg.setOrigin(2000/2,2000/2);
 
@@ -2761,6 +2763,7 @@ namespace Entity
         bossName.setString("Mozza");
         targetPlayer = false;
 		moveOnAttack = true;
+		defending = true;
 
     }
     
@@ -3058,13 +3061,7 @@ namespace Entity
 
 		Idle();
 
-		if (World::GetInstance()->Timer(*this, FAST)) {
-
-			frame++;
-			if (frame >= 3) frame = 1;
-			objectSprite.setTextureRect(sf::IntRect(0, frame * 280 + 140, 140, 140));
-
-		}
+		AnimateAttack();
 
 		if (phase == 0) {
 
@@ -3181,13 +3178,7 @@ namespace Entity
 
 		FollowPlayer();
 
-		if (World::GetInstance()->Timer(*this, FAST)) {
-
-			frame++;
-			if (frame >= 3) frame = 1;
-			objectSprite.setTextureRect(sf::IntRect(0, frame * 280 + 140, 140, 140));
-
-		}
+		AnimateAttack();
 
 		if (PlayerDistance(FAR)) {
 
@@ -3217,13 +3208,7 @@ namespace Entity
 
 		// 8 direction continous shot
 
-		if (World::GetInstance()->Timer(*this, FAST)) {
-
-			frame++;
-			if (frame >= 3) frame = 1;
-			objectSprite.setTextureRect(sf::IntRect(0, frame * 280 + 140, 140, 140));
-
-		}
+		AnimateAttack();
 
 		if (phase == 0) {
 
@@ -3339,6 +3324,19 @@ namespace Entity
 
 		phase = 0;
 		currentMovement++;
+		defending = true;
+	}
+
+	void Mozza::AnimateAttack() {
+
+		if (World::GetInstance()->Timer(*this, FAST)) {
+
+			frame++;
+			if (frame >= 3) frame = 1;
+			objectSprite.setTextureRect(sf::IntRect(0, frame * 280 + 140, 140, 140));
+			defending = false;
+
+		}
 	}
 
 
@@ -3638,28 +3636,34 @@ namespace Entity
     
     void Enemy::isDamaged(int damage){
         
-        if(active){
-            
-            if(moveType == NORMAL) vel.y = 0;
-            
-            int newDamage = GetRandDmg(damage);
-            health -= newDamage;
-            hurt = true;
-        }
-        
-        itemQueue particles;
-        particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-        particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-        particles.properties["itemType"] = "DamageSpark";
-        World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-        
-        particles.properties["itemType"] = "Spark";
-        World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-        World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-        World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-        
-        World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_fall");
-        
+		if (!defending) {
+
+			if (active) {
+
+				if (moveType == NORMAL) vel.y = 0;
+
+				int newDamage = GetRandDmg(damage);
+				health -= newDamage;
+				hurt = true;
+			}
+
+			itemQueue particles;
+			particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+			particles.properties["itemType"] = "DamageSpark";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+			particles.properties["itemType"] = "Spark";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_fall");
+
+		}
+
+		else World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_block");
+
     }
     
     void Enemy::isCollided(int var) {

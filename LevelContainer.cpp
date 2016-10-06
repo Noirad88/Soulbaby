@@ -175,6 +175,7 @@ namespace Level
         
         CreateBG();
         if(sceneName == "battle") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
+		else if (sceneName == "map2_1") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
         else World::GetInstance()->WorldScene.audioContainer.music.stop();
         
     }

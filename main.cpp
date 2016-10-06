@@ -6,8 +6,8 @@
 #include <functional>
 #include <random>
 
-#define WINDOW_X 480*3
-#define WINDOW_Y 270*3
+#define WINDOW_X 480*2
+#define WINDOW_Y 270*2
 #define PROJ_DIR "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC"
 
 #include "Container.h"

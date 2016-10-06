@@ -722,6 +722,7 @@ namespace Entity
         bool hasAttack = false;
         float health = 3;
         float maxhealth = 3;
+		bool defending = false;
         bool bttmcollision = false;
         int frame = 0;
         bool enemyDir = true;
@@ -839,6 +840,7 @@ namespace Entity
 		void Behavior2();
 		void Behavior3();
 		void Behavior4();
+		void AnimateAttack();
 		void Rest();
 
 		sf::Vector2f targetPosition;
