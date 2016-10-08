@@ -2516,6 +2516,7 @@ namespace Entity
         type = "BG";
 
     }
+
     
     void LevelManager::Update(){
         
@@ -2835,6 +2836,8 @@ namespace Entity
     
     void Enemy::Act(){
         
+		// Creates effects for enemies that lack transition (specifically for projectile enemies)
+
 		if (!transition && !active) {
 
 			objectSprite.setColor(sf::Color(255, 255, 255, 255));
