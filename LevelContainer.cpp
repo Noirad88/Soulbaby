@@ -710,7 +710,7 @@ namespace Level
                             
                             }
                             
-                            enemy.bttmcollision = true;
+                            //enemy.bttmcollision = true;
                         
                         }
                         
@@ -728,7 +728,7 @@ namespace Level
         
         else{
             
-            enemy.bttmcollision = false;
+            //enemy.bttmcollision = false;
         
         }
         

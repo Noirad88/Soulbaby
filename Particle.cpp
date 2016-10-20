@@ -2681,19 +2681,20 @@ namespace Entity
     
     Star::Star() : Enemy()
     {
-        objectSprite.setTextureRect(sf::IntRect (0,21,28,26));
+        objectSprite.setTextureRect(sf::IntRect (0,24,35,35));
         SetCharacterOrigin();
         SetShadow();
         moveType = NORMAL;
         speed = 2;
         health = 10;
         vib = 5;
+		flatAnimation = true;
         
     }
     
     Squid::Squid() : Enemy()
     {
-        objectSprite.setTextureRect(sf::IntRect (0,47,33,27));
+        objectSprite.setTextureRect(sf::IntRect (0,59,64,52));
         SetCharacterOrigin();
         SetShadow();
         moveType = NORMAL;
@@ -2701,6 +2702,7 @@ namespace Entity
         health = 30;
         hasAttack = true;
         SetHitBox(sf::Vector2f(20,20),1);
+		flatAnimation = false;
     
     }
 
@@ -2824,6 +2826,40 @@ namespace Entity
         }
 
 		MoveElse();
+
+		if (flatAnimation == true) {
+
+			if (World::GetInstance()->Timer(*this, VERY_FAST)) {
+
+				if (frame >= 4) frame = 0;
+
+				else frame++;
+
+			}
+
+			objectSprite.setTextureRect(sf::IntRect(0, (174 * frame) + spriteTop, objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
+
+		}
+
+		else {
+
+			spriteDirection = RoundUp((GetAngle(objectShadow.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition())), 45);
+			int tempdir = abs((180 - spriteDirection) / 45);
+			spriteDirection = tempdir;
+
+			//abs(((180 - actorMovement) / 45)
+
+			if (World::GetInstance()->Timer(*this,VERY_SLOW)) {
+
+				if (frame >= 3) frame = 0;
+
+				else frame++;
+
+			}
+
+			objectSprite.setTextureRect(sf::IntRect(0, (((spriteDirection * 4+frame) * 174) + spriteTop), objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
+
+		}
         
         //remove this below to activate angle rotation (this makes the enemy always look to player)
         
@@ -2836,6 +2872,8 @@ namespace Entity
     
     void Enemy::Act(){
         
+		if (spriteTop == -1) spriteTop = objectSprite.getTextureRect().top;
+
 		// Creates effects for enemies that lack transition (specifically for projectile enemies)
 
 		if (!transition && !active) {

@@ -694,7 +694,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 10;
+        int maxEnemies = 100;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
@@ -723,7 +723,6 @@ namespace Entity
         float health = 3;
         float maxhealth = 3;
 		bool defending = false;
-        bool bttmcollision = false;
         int frame = 0;
         bool enemyDir = true;
         int enemyMode = 1;
@@ -733,13 +732,18 @@ namespace Entity
         float animate = 0;
         float jump = 0;
         float speed = 1;
+		int spriteTop = -1;
         int vib = 1;
         sf::Vector2f scaleTemp;
         int moveType = NORMAL;
         int enemyID = 0;
+		int flatAnimation = false;
+		enum movement { south, swest, west, nwest, north, neast, east, seast, idle };
+		int spriteDirection = south;
         bool hurt = false;
 		bool moveOnAttack = false;
         bool targetPlayer = true;
+
         sf::Vector2f hurtPos;
 		bool transition = true;
         
