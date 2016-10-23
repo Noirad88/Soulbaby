@@ -46,8 +46,8 @@ public:
     void CheckCollisions();
     void GetCollisionArea(sf::Vector2f prevPos, sf::Vector2f currPos, sf::IntRect spriteRect);
     std::vector<int> GetProjectileObjects(std::vector<int>& vec);
+	std::vector<int> GetEnemyObjects(std::vector<int>& vec);
     std::vector<int> GetEnemyProjectileObjects(std::vector<int>& vec);
-    
     std::vector<int> GetPropObjects(std::vector<int>& vec);
 
     std::vector<int> GetObjectsInZone(std::string zone);

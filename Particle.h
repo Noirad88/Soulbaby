@@ -36,6 +36,8 @@ class World;
 #define NORMAL 0
 #define JUMPER 1
 #define NODE 2
+#define LAZYFOLLOW 3
+#define VERYCLOSE 25
 #define CLOSE 100
 #define MID 150
 #define FAR 250
@@ -694,7 +696,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 100;
+        int maxEnemies = 10;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
@@ -725,27 +727,27 @@ namespace Entity
 		bool defending = false;
         int frame = 0;
         bool enemyDir = true;
-        int enemyMode = 1;
+        int enemyMode = 0;
         bool push = true;
         float fireDir;
-        float time = 0;
         float animate = 0;
         float jump = 0;
         float speed = 1;
 		int spriteTop = -1;
-        int vib = 1;
         sf::Vector2f scaleTemp;
         int moveType = NORMAL;
         int enemyID = 0;
 		int flatAnimation = false;
 		enum movement { south, swest, west, nwest, north, neast, east, seast, idle };
 		int spriteDirection = south;
+		int currentDirection = 0;
         bool hurt = false;
 		bool moveOnAttack = false;
         bool targetPlayer = true;
 
         sf::Vector2f hurtPos;
 		bool transition = true;
+		sf::Vector2f targetPosition;
         
     };
     
@@ -846,8 +848,6 @@ namespace Entity
 		void Behavior4();
 		void AnimateAttack();
 		void Rest();
-
-		sf::Vector2f targetPosition;
 
     };
     

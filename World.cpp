@@ -566,6 +566,13 @@ int RandomNumber(int max, int min){
     
 }
 
+bool GetDistance(sf::Vector2f a, sf::Vector2f b, int distance) {
+
+	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y)) <= distance ? true : false;
+
+
+}
+
 float Sine(){
     
     return 0.06 * sin((World::clock2.getElapsedTime().asSeconds()) * 0.5 * M_PI) + 1;

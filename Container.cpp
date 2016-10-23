@@ -576,39 +576,69 @@ std::vector<int> Container::GetObjectsInZone(std::string zone){
 void Container::CheckCollisions(){
 
     
-    for (ObjectIterator enemy = ObjectContainer.begin(); enemy !=  Enemies; ++enemy)
-    {
-        // get all projectiles for enemy to check collisions to
-        
-        objectsInZone = GetObjectsInZone((*enemy)->zone);
-        typeInZone = GetProjectileObjects(objectsInZone);
-        
-        // iterate against all projectiles
-        
-        for(int i = 0; i != typeInZone.size(); i++)
-        {
-            
-            if((*enemy)->objectHitBox.getGlobalBounds().intersects(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds()) && (*enemy)->active)
-            {
+	for (ObjectIterator enemy = ObjectContainer.begin(); enemy != Enemies; ++enemy)
+	{
+		// get all projectiles for enemy to check collisions to
+
+		objectsInZone = GetObjectsInZone((*enemy)->zone);
+		typeInZone = GetProjectileObjects(objectsInZone);
+
+		// iterate against all projectiles
+
+		for (int i = 0; i != typeInZone.size(); i++)
+		{
+
+			if ((*enemy)->objectHitBox.getGlobalBounds().intersects(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds()) && (*enemy)->active)
+			{
 
 				Entity::Object* obj = ObjectContainer.at(typeInZone.at(i)).get();
 				Entity::Projectile* pobj = dynamic_cast<Entity::Projectile*>(obj);
 				pobj->HasCollided(*enemy);
 
-            }
-            
-        }
-        
-        // checking the player for enemy and enemy projectile collisions
-        
-        if((*enemy)->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && (*enemy)->active){
-            
-            World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
-            World::GetInstance()->WorldScene.audioContainer.music.stop();
-            World::GetInstance()->ReadyScene("map2_1");
-            
-        }
-        
+			}
+
+		}
+
+		// checking the player for enemy and enemy projectile collisions
+
+		if ((*enemy)->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && (*enemy)->active) {
+
+			World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
+			World::GetInstance()->WorldScene.audioContainer.music.stop();
+			World::GetInstance()->ReadyScene("map2_1");
+
+		}
+
+		/*// check enemies in zone for collision
+
+		typeInZone = GetEnemyObjects(objectsInZone);
+
+		if (typeInZone.size() != 0) 
+		{
+
+			for (int i = 0; i != typeInZone.size(); i++)
+			{
+				if (*enemy != ObjectContainer.at(typeInZone.at(i))) {
+
+					if (GetDistance((*enemy)->objectHitBox.getPosition(), ObjectContainer.at(typeInZone.at(i))->objectHitBox.getPosition()) && (*enemy)->active && ObjectContainer.at(typeInZone.at(i))->active)
+					{
+
+						(*enemy)->objectSprite.move((*enemy)->vel);
+						if (GetDistance((*enemy)->objectHitBox.getPosition(), ObjectContainer.at(typeInZone.at(i))->objectHitBox.getPosition())) 
+						{
+							(*enemy)->objectSprite.move(-(*enemy)->vel);
+							(*enemy)->objectSprite.move(-(*enemy)->vel);
+
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+        */
         
     }
     
@@ -698,6 +728,23 @@ std::vector<int> Container::GetProjectileObjects(std::vector<int>& vec){
     
     return projectilesInZone;
     
+}
+
+std::vector<int> Container::GetEnemyObjects(std::vector<int>& vec) {
+
+	int projectilesBegin = 0;
+	int projectilesSize = int(std::distance(ObjectContainer.begin(), Enemies));
+
+	std::vector<int> projectilesInZone = vec;
+	auto toRemove = std::remove_if(projectilesInZone.begin(), projectilesInZone.end(), TypeInZone(projectilesBegin, projectilesBegin + projectilesSize));
+	projectilesInZone.erase(toRemove, projectilesInZone.end());
+	std::sort(projectilesInZone.begin(), projectilesInZone.end());
+
+	std::vector<int>::iterator it = std::unique(projectilesInZone.begin(), projectilesInZone.end());
+	projectilesInZone.resize(std::distance(projectilesInZone.begin(), it));
+
+	return projectilesInZone;
+
 }
 
 std::vector<int> Container::GetEnemyProjectileObjects(std::vector<int>& vec){

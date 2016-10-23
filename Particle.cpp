@@ -2117,10 +2117,14 @@ namespace Entity
 
 	void Projectile::HasCollided(const std::unique_ptr<Entity::Object>& a) {
 
-		if (World::GetInstance()->Timer(this,NORMAL, NODELAY)) {
+		if (a->velZ == 0) {
 
-			a->isCollided(damage);
-			misDestroyed = destroyOnImpact;
+			if (World::GetInstance()->Timer(this, NORMAL, NODELAY)) {
+
+				a->isCollided(damage);
+				misDestroyed = destroyOnImpact;
+
+			}
 
 		}
 
@@ -2676,7 +2680,8 @@ namespace Entity
         SetCharacterOrigin();
         SetShadow();
         moveType = JUMPER;
-        health = 20;
+        health = 5;
+		enemyMode = 0;
     }
     
     Star::Star() : Enemy()
@@ -2685,10 +2690,10 @@ namespace Entity
         SetCharacterOrigin();
         SetShadow();
         moveType = NORMAL;
-        speed = 2;
+		speed = 1.5;
         health = 10;
-        vib = 5;
 		flatAnimation = true;
+		enemyMode = 3;
         
     }
     
@@ -2703,6 +2708,7 @@ namespace Entity
         hasAttack = true;
         SetHitBox(sf::Vector2f(20,20),1);
 		flatAnimation = false;
+		enemyMode = 1;
     
     }
 
@@ -2776,17 +2782,57 @@ namespace Entity
     
     // Update Functions
     
-    void Enemy::Move(){
-        
-        if(moveType == NORMAL){
-            
-            
-            vel.x = 0;
-            vel.y = -speed;
-            
-            //set move to player
-            RotateVector(vel,-(GetAngle(objectSprite.getPosition(),World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition())));
-            
+	void Enemy::Move() {
+
+		if (enemyMode != 3) {
+
+			vel.x = 0;
+			vel.y = -speed;
+
+		}
+
+		if (enemyMode == 0) {
+
+			//set movement in random direction
+			if (World::GetInstance()->Timer(*this, 800000.0, NODELAY) && velZ == 0) {
+
+				targetPosition.x = RandomNumber(600);
+				targetPosition.y = RandomNumber(600);
+			}
+
+			RotateVector(vel,-(GetAngle(objectSprite.getPosition(), targetPosition)));
+
+		}
+
+		else if (enemyMode == 1) {
+
+			//set move to player
+			targetPosition = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition();
+			RotateVector(vel, -(GetAngle(objectSprite.getPosition(), targetPosition)));
+		}
+
+		else if (enemyMode == 3) {
+
+			targetPosition = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition();
+
+			if (World::GetInstance()->Timer(*this, VERY_FAST, NODELAY)) {
+			
+				//set slow move to player
+
+				if (objectSprite.getPosition().x < targetPosition.x && vel.x < speed) vel.x += 0.15;
+				else if (objectSprite.getPosition().x > targetPosition.x && vel.x > -speed) vel.x -= 0.15;
+				if (objectSprite.getPosition().y < targetPosition.y && vel.y < speed) vel.y += 0.15;
+				else if (objectSprite.getPosition().y > targetPosition.y && vel.y > -speed) vel.y -= 0.15;
+		
+
+			}
+
+		
+		}
+
+
+		if (moveType == NORMAL) {
+
             if(!hasAttack)objectSprite.move(vel.x,vel.y + velZ);
             
 			else if (moveOnAttack == false) {
@@ -2799,21 +2845,15 @@ namespace Entity
             
         }
         
-        if(moveType == JUMPER){
-            
-            vel.x = 0;
-            vel.y = -speed;
-            RotateVector(vel,-(GetAngle(objectSprite.getPosition(),World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition())));
-            
-            
-            if(World::GetInstance()->Timer(*this, 400000.0,NODELAY)) velZ = -1;
-            
+		else if (moveType == JUMPER){
+
             if(velZ != 0) objectSprite.move(vel.x,vel.y + velZ);
+
             posZ -= velZ;
             
             if(objectSprite.getPosition().y < objectShadow.getPosition().y){
                 
-                velZ += 0.2;
+				if (World::GetInstance()->Timer(*this,VERY_FAST))velZ += 0.2;
                 
             }
             
@@ -2822,14 +2862,16 @@ namespace Entity
                 velZ = 0;
                 
             }
+
             
         }
+
 
 		MoveElse();
 
 		if (flatAnimation == true) {
 
-			if (World::GetInstance()->Timer(*this, VERY_FAST)) {
+			if (World::GetInstance()->Timer(*this, 1000.0)) {
 
 				if (frame >= 4) frame = 0;
 
@@ -2841,19 +2883,26 @@ namespace Entity
 
 		}
 
-		else {
+		else if (flatAnimation == false) {
 
 			spriteDirection = RoundUp((GetAngle(objectShadow.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition())), 45);
 			int tempdir = abs((180 - spriteDirection) / 45);
 			spriteDirection = tempdir;
 
-			//abs(((180 - actorMovement) / 45)
-
 			if (World::GetInstance()->Timer(*this,VERY_SLOW)) {
 
-				if (frame >= 3) frame = 0;
+				if (moveType != JUMPER) {
 
-				else frame++;
+					if (frame >= 3) frame = 0;
+					else frame++;
+				}
+
+				else {
+
+					if (frame < 3) frame++;
+					if (frame == 2) velZ = -2;
+					if (frame == 3 && velZ == 0) frame = 0;
+				}
 
 			}
 
@@ -2892,7 +2941,7 @@ namespace Entity
         
         if(active){
             
-            if(hurt) objectSprite.move(-hurtPos);
+            if(hurt == true) objectSprite.move(-hurtPos);
             Move();
             UpdateShadow();
             
@@ -2916,7 +2965,7 @@ namespace Entity
 
 	void Enemy::isHurt() {
 
-		if (hurt) {
+		if (hurt == true) {
 
 			if (World::GetInstance()->Timer(*this,400000.0)) {
 				hurt = false;
@@ -3676,40 +3725,54 @@ namespace Entity
     }
     
     void Enemy::isDamaged(int damage){
-        
-		if (!defending) {
+     
+			if (!defending) {
 
-			if (active) {
+				if (active) {
 
-				if (moveType == NORMAL) vel.y = 0;
+					if (moveType == NORMAL) vel.y = 0;
 
-				int newDamage = GetRandDmg(damage);
-				health -= newDamage;
-				hurt = true;
+					int newDamage = GetRandDmg(damage);
+					health -= newDamage;
+					hurt = true;
+				}
+
+				itemQueue particles;
+				particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+				particles.properties["itemType"] = "DamageSpark";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+				particles.properties["itemType"] = "Spark";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_fall");
+
 			}
 
-			itemQueue particles;
-			particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-			particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-			particles.properties["itemType"] = "DamageSpark";
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+			else World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_block");
 
-			particles.properties["itemType"] = "Spark";
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-
-			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_fall");
-
-		}
-
-		else World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_block");
 
     }
     
-    void Enemy::isCollided(int var) {
-        
-        isDamaged(var);
+	void Enemy::isCollided(int var) {
+
+		isDamaged(var);
+
+		if (enemyMode == 3) {
+
+			vel.x = -vel.x;
+			vel.y = -vel.y;
+		}
+
+		else {
+
+			vel.x *= 0.25;
+			vel.y *= 0.25;
+
+		}
             
     }
     
