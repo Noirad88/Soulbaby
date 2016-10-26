@@ -848,66 +848,103 @@ namespace Entity
         
     }
     
-    void BattlePlayer::Update(){
-        
-        if(!World::GetInstance()->WorldScene.transition){
-            
-        
-        if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = swest;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])) movement = nwest;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight])) movement = neast;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])) movement = seast;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])) movement = south;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = west;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])) movement = north;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight])) movement = east;
-            
-        
-        }
-        
-        if (!sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = idle;
-        
-        // Animation
-        
-        if(movement != idle){
-            
-            vel.y = 2.25;
-            vel.x = 0;
-            RotateVector(vel,45*movement);
-            
-            if(World::GetInstance()->Timer(*this,FAST,NODELAY)){
-                
-                frame_pos = (frame_pos >= 5) ? 0 : frame_pos+1;
-    
-                if(!sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsA])){
-                    
-                    objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, movement * FRAME, spriteWidth, spriteHeight));
-                    fireDir = movement;
-                    
-                }
-                
-                else objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, objectSprite.getTextureRect().top, spriteWidth, spriteHeight));
-                
-            }
-            
-            
-        }
-        
-        else{
-            
-            vel.x = 0;
-            vel.y = 0;
-            objectSprite.setTextureRect(sf::IntRect(0, objectSprite.getTextureRect().top, spriteWidth, spriteHeight));
-            
-        }
-        
+	void BattlePlayer::Update() {
+
+		if (!World::GetInstance()->WorldScene.transition && dashing == false) {
+
+
+			if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = swest;
+
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])) movement = nwest;
+
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight])) movement = neast;
+
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])) movement = seast;
+
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])) movement = south;
+
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = west;
+
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])) movement = north;
+
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight])) movement = east;
+
+
+
+
+			if (!sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = idle;
+		}
+		// Animation
+
+		if (dashing == false && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsC])) {
+
+			vel.y = 6;
+			vel.x = 0;
+			dashing = true;
+			std::cout << "movement is " << movement << std::endl;
+
+		}
+
+		if (dashing == true) {
+
+			if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) {
+
+				itemQueue particles;
+				particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+				particles.properties["itemType"] = "DeathPoof";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+			}
+
+			if (World::GetInstance()->Timer(*this, 300000.0)) {
+
+				std::cout << "dashing off" << std::endl;
+				dashing = false;
+				std::cout << "dashing is" << dashing << std::endl;
+
+			}
+			std::cout << "movement is " << movement << std::endl;
+
+		}
+
+
+		else if (movement != idle) {
+
+			vel.y = 2.5;
+			vel.x = 0;
+				
+			if (World::GetInstance()->Timer(*this, FAST, NODELAY)) {
+
+				frame_pos = (frame_pos >= 5) ? 0 : frame_pos + 1;
+
+				if (!sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsA])) {
+
+					objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, movement * FRAME, spriteWidth, spriteHeight));
+					fireDir = movement;
+
+				}
+
+				else objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, objectSprite.getTextureRect().top, spriteWidth, spriteHeight));
+
+			}
+
+
+		}
+
+		else if (movement == idle) objectSprite.setTextureRect(sf::IntRect(0, objectSprite.getTextureRect().top, spriteWidth, spriteHeight));
+
+		if (World::GetInstance()->Timer(*this, 240000.0, NODELAY)) {
+
+				vel.x *= 0.25;
+				vel.y *= 0.25;
+
+		}
+
+		// rotates speed in the correct direction
+
+		RotateVector(vel, 45 * movement);
+
         if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])){
             
             // repeater
@@ -1001,19 +1038,13 @@ namespace Entity
             }
             
         }
-        
-        vel.x = round(vel.x);
-        vel.y = round(vel.y);
+
         objectSprite.move(vel.x,vel.y);
-        //std::cout << vel.x << "|" << vel.y << std::endl;
         hotSpot.x = objectSprite.getPosition().x;
         hotSpot.y = objectSprite.getPosition().y - objectSprite.getTextureRect().height/3;
         UpdateShadow();
         *posXtemp1 = objectSprite.getPosition().x;
         *posYtemp2 = objectSprite.getPosition().y;
-        if(World::GetInstance()->Timer(*this,60.0f)) CreateClone(objectSprite,"tx_player.png");
-        
-        objectSprite.setScale(Sine(),Sine());
         
 
                 
@@ -2546,10 +2577,10 @@ namespace Entity
                     
                     if(enemyr > 2) enemyr = 2;
                     enemy.properties["itemType"] = enemyList[3 * World::GetInstance()->GlobalMembers.currentLevel + enemyr];
-                    std::cout << "calling(" << 3 * World::GetInstance()->GlobalMembers.currentLevel + enemyr << "): " << enemyList[3 * World::GetInstance()->GlobalMembers.currentLevel + enemyr] << std::endl;
+                    //std::cout << "calling(" << 3 * World::GetInstance()->GlobalMembers.currentLevel + enemyr << "): " << enemyList[3 * World::GetInstance()->GlobalMembers.currentLevel + enemyr] << std::endl;
                     enemy.properties["PosX"] = std::to_string(randomLeftwidth(mt));
                     enemy.properties["PosY"] = std::to_string(randomTopheight(mt));
-                    std::cout << "enemys left: " << maxEnemies << std:: endl;
+                    //std::cout << "enemys left: " << maxEnemies << std:: endl;
                     World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
                     maxEnemies--;
                 }
@@ -2565,7 +2596,7 @@ namespace Entity
                 if(int(bg.getColor().a)-2 < 0) bg.setColor(sf::Color(255,255,255,0));     
                 else bg.setColor(sf::Color(255,255,255,int(bg.getColor().a)-2));
                 World::GetInstance()->WorldScene.audioContainer.music.setVolume(World::GetInstance()->WorldScene.audioContainer.music.getVolume()-0.5);
-                std::cout <<  World::GetInstance()->WorldScene.audioContainer.music.getVolume() << std::endl;   
+               // std::cout <<  World::GetInstance()->WorldScene.audioContainer.music.getVolume() << std::endl;   
                 
             }
             
@@ -2578,7 +2609,7 @@ namespace Entity
             boss.properties["PosX"] = std::to_string(600/2);
             boss.properties["PosY"] = std::to_string(600/2);
             boss.properties["itemType"] = enemyList[19 + World::GetInstance()->GlobalMembers.currentLevel];;
-            std::cout << "enemys left: " << maxEnemies << std:: endl;
+            //std::cout << "enemys left: " << maxEnemies << std:: endl;
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(boss);
             World::GetInstance()->WorldScene.audioContainer.PlayMusic("boss");
                 
@@ -2676,7 +2707,7 @@ namespace Entity
     
     Slime::Slime() : Enemy()
     {
-        objectSprite.setTextureRect(sf::IntRect (0,0,24,21));
+        objectSprite.setTextureRect(sf::IntRect (0,0,24,24));
         SetCharacterOrigin();
         SetShadow();
         moveType = JUMPER;
@@ -3748,7 +3779,7 @@ namespace Entity
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_fall");
+				//World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_fall");
 
 			}
 

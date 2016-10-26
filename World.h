@@ -73,7 +73,8 @@ namespace Level{
 #define controlsDown 3
 #define controlsA 4
 #define controlsB 5
-#define controlsPause 6
+#define controlsC 6
+#define controlsPause 7
 
 #define TRANIN 0
 #define TRANOUT 1

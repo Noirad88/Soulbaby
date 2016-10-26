@@ -96,6 +96,7 @@ World::World(){
     GlobalMembers.keyboardControls[4] = sf::Keyboard::Z;
     GlobalMembers.keyboardControls[5] = sf::Keyboard::X;
     GlobalMembers.keyboardControls[6] = sf::Keyboard::C;
+	GlobalMembers.keyboardControls[7] = sf::Keyboard::P;
 	dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC";
     
 

@@ -298,6 +298,7 @@ namespace Entity
         enum movement {south,swest, west, nwest, north, neast, east, seast, idle};
         int movement = south;
         int fireDir = south;
+		bool dashing = false;
         int frame_pos = 0;
         sf::Vector2f scaleTemp;
         bool isCollided = false;
@@ -696,7 +697,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 10;
+        int maxEnemies = 100;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
