@@ -831,12 +831,6 @@ namespace Entity
         *posXtemp1 = objectSprite.getPosition().x;
         *posYtemp2 = objectSprite.getPosition().y;
         
-        //std::cout << vel.x << "|" << vel.y << std::endl;
-        
-        // breathing effect
-        
-        //objectSprite.setScale(Sine(),Sine());
-        
     }
     
     BattlePlayer::BattlePlayer(){
@@ -869,22 +863,20 @@ namespace Entity
 
 			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight])) movement = east;
 
-
-
-
 			if (!sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = idle;
 		}
 		// Animation
 
-		if (dashing == false && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsC])) {
+		if (dashing == false && movement != idle &&  sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsC])) {
 
-			vel.y = 6;
+			vel.y = 4;
 			vel.x = 0;
 			dashing = true;
-			std::cout << "movement is " << movement << std::endl;
+			RotateVector(vel, 45 * movement);
+
 
 		}
-
+	
 		if (dashing == true) {
 
 			if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) {
@@ -894,24 +886,31 @@ namespace Entity
 				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
 				particles.properties["itemType"] = "DeathPoof";
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+				CreateClone(objectSprite, "tx_player.png");
 
 			}
 
-			if (World::GetInstance()->Timer(*this, 300000.0)) {
+			if (World::GetInstance()->Timer(*this, 140000.0)) {
 
-				std::cout << "dashing off" << std::endl;
+				vel.x *= 0.5;
+				vel.y *= 0.5;
+
+			}
+
+			if (World::GetInstance()->Timer(*this, 610000.0)) {
+
 				dashing = false;
-				std::cout << "dashing is" << dashing << std::endl;
 
 			}
-			std::cout << "movement is " << movement << std::endl;
+
+			std::cout << vel.x << ", " << vel.y << std::endl;
 
 		}
 
 
 		else if (movement != idle) {
 
-			vel.y = 2.5;
+			vel.y = 2;
 			vel.x = 0;
 				
 			if (World::GetInstance()->Timer(*this, FAST, NODELAY)) {
@@ -932,18 +931,22 @@ namespace Entity
 
 		}
 
-		else if (movement == idle) objectSprite.setTextureRect(sf::IntRect(0, objectSprite.getTextureRect().top, spriteWidth, spriteHeight));
+		else if (movement == idle) { 
+			
+			objectSprite.setTextureRect(sf::IntRect(0, objectSprite.getTextureRect().top, spriteWidth, spriteHeight)); 
+			
+		}
 
-		if (World::GetInstance()->Timer(*this, 240000.0, NODELAY)) {
+		if (World::GetInstance()->Timer(*this, 140000.0, NODELAY) && dashing == false) {
 
-				vel.x *= 0.25;
-				vel.y *= 0.25;
+				vel.x *= 0.5;
+				vel.y *= 0.5;
 
 		}
 
 		// rotates speed in the correct direction
 
-		RotateVector(vel, 45 * movement);
+		if(dashing == false) RotateVector(vel, 45 * movement);
 
         if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])){
             
@@ -965,7 +968,7 @@ namespace Entity
             
             // cannon
             
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 1 && PlayerBomb::totalBombs < 4 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
+            else if(World::GetInstance()->GlobalMembers.playerWeapon == 1 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -1233,7 +1236,7 @@ namespace Entity
         
         totalBombs++;
         objectSprite.setTextureRect(sf::IntRect(0, 170, 20, 21));
-        vel.y = 8;
+        vel.y = 12;
         SetEffectOrigin();
         maxFrame = 4;
         maxTime = 600000.0;
@@ -3766,6 +3769,8 @@ namespace Entity
 					int newDamage = GetRandDmg(damage);
 					health -= newDamage;
 					hurt = true;
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
+
 				}
 
 				itemQueue particles;

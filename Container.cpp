@@ -601,7 +601,7 @@ void Container::CheckCollisions(){
 
 		// checking the player for enemy and enemy projectile collisions
 
-		if ((*enemy)->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && (*enemy)->active) {
+		if ((*enemy)->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && (*enemy)->active && World::GetInstance()->WorldScene.playerPtr->dashing == false) {
 
 			World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
 			World::GetInstance()->WorldScene.audioContainer.music.stop();
@@ -650,8 +650,11 @@ void Container::CheckCollisions(){
         for(int i = 0; i != typeInZone.size(); i++)
         {
             
-            if(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()))
-            {
+            if(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && World::GetInstance()->WorldScene.playerPtr->dashing == false) 
+		
+			
+            
+{
                 
                 World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
                 World::GetInstance()->WorldScene.audioContainer.music.stop();
