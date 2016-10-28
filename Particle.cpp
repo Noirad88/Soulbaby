@@ -869,35 +869,35 @@ namespace Entity
 
 		if (dashing == false && movement != idle &&  sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsC])) {
 
-			vel.y = 4;
+			vel.y = 6;
 			vel.x = 0;
 			dashing = true;
 			RotateVector(vel, 45 * movement);
-
+			//World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
+			itemQueue particles;
+			particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+			particles.properties["itemType"] = "DamageSpark";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 
 		}
 	
 		if (dashing == true) {
 
-			if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) {
+			if (World::GetInstance()->Timer(*this, FAST, NODELAY)) {
 
-				itemQueue particles;
-				particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-				particles.properties["itemType"] = "DeathPoof";
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 				CreateClone(objectSprite, "tx_player.png");
 
 			}
 
 			if (World::GetInstance()->Timer(*this, 140000.0)) {
 
-				vel.x *= 0.5;
-				vel.y *= 0.5;
+				vel.x *= 0.3;
+				vel.y *= 0.3;
 
 			}
 
-			if (World::GetInstance()->Timer(*this, 610000.0)) {
+			if (World::GetInstance()->Timer(*this, 510000.0)) {
 
 				dashing = false;
 
@@ -939,8 +939,8 @@ namespace Entity
 
 		if (World::GetInstance()->Timer(*this, 140000.0, NODELAY) && dashing == false) {
 
-				vel.x *= 0.5;
-				vel.y *= 0.5;
+				vel.x *= 0.25;
+				vel.y *= 0.25;
 
 		}
 
@@ -968,19 +968,34 @@ namespace Entity
             
             // cannon
             
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 1 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
-                
-                itemQueue bullet;
-                bullet.properties["PosX"] = std::to_string(hotSpot.x);
-                bullet.properties["PosY"] = std::to_string(hotSpot.y);
-                bullet.properties["Direction"] = std::to_string(fireDir);
-                bullet.properties["VelX"] = std::to_string(vel.x);
-                bullet.properties["VelY"] = std::to_string(vel.y);
-                bullet.properties["itemType"] = "PlayerBomb";
-                World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-                
+			else if (World::GetInstance()->GlobalMembers.playerWeapon == 1) {
+
+				if (PlayerBomb::totalBombs == 0) {
+
+					if (World::GetInstance()->Timer(*this, VERY_SLOW)) {
+
+					itemQueue bullet;
+					bullet.properties["PosX"] = std::to_string(hotSpot.x);
+					bullet.properties["PosY"] = std::to_string(hotSpot.y);
+					bullet.properties["Direction"] = std::to_string(fireDir);
+					bullet.properties["VelX"] = std::to_string(vel.x);
+					bullet.properties["VelY"] = std::to_string(vel.y);
+					bullet.properties["itemType"] = "PlayerBomb";
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+					}	
+
+				}
+
+				else if (PlayerBomb::totalBombs == 1) {
+
+					if (World::GetInstance()->Timer(*this, NORMAL)) PlayerBomb::totalBombs = 2;
+
+				}
+
             }
+
             
             // rail
             
@@ -1550,6 +1565,49 @@ namespace Entity
         }
     
     }
+
+	void PlayerBomb::Update() {
+
+
+		if (top == -1)top = objectSprite.getTextureRect().top;
+
+		if (World::GetInstance()->Timer(*this, animSpeed))
+		{
+
+			objectSprite.setTextureRect(sf::IntRect(0, (frame * assetHeight) + top, objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
+
+			if (frame < maxFrame) {
+
+				frame++;
+				animSpeed -= spdReduceRate;
+				vel.x -= (vel.x * deacceleration);
+				vel.y -= (vel.y * deacceleration);
+
+				if ((acceleration != 0) && (World::GetInstance()->Timer(*this, NORMAL))) {
+
+					animSpeed -= acceleration;
+				}
+
+				if (rotation) RotateVector(vel, animSpeed);
+
+			}
+
+			else if (maxTime != 0) frame = 0;
+
+			else misDestroyed = true;
+
+			if ((maxTime != 0) && (World::GetInstance()->Timer(*this, maxTime))) misDestroyed = true;
+
+
+		}
+
+		objectSprite.move(vel.x, vel.y);
+		if (PlayerBomb::totalBombs > 1) {
+
+			misDestroyed = true; 
+			PlayerBomb::totalBombs = 0;
+		}
+	}
     
     void DoorDestroy::Update(){
         
@@ -2275,7 +2333,7 @@ namespace Entity
         
         particles.properties["itemType"] = "BigExp";
         World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-        totalBombs--;
+        totalBombs = 0;
         
         World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_exp");
 
@@ -3556,7 +3614,8 @@ namespace Entity
         
         particles.properties["itemType"] = "DeathBoom";
         World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-        
+		int randnum = RandomNumber(2);
+		World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bighit" + std::to_string(randnum));
     }
     
     Boss::~Boss(){
@@ -3769,7 +3828,7 @@ namespace Entity
 					int newDamage = GetRandDmg(damage);
 					health -= newDamage;
 					hurt = true;
-					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_badhit2");
 
 				}
 
@@ -3783,8 +3842,6 @@ namespace Entity
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-
-				//World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_fall");
 
 			}
 

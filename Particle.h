@@ -581,6 +581,7 @@ namespace Entity
         
     public:
         PlayerBomb();
+		void Update();
         ~PlayerBomb();
         static int totalBombs;
         
