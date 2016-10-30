@@ -75,6 +75,7 @@ namespace Level{
 #define controlsB 5
 #define controlsC 6
 #define controlsPause 7
+#define controlsSwitch 8
 
 #define TRANIN 0
 #define TRANOUT 1
@@ -90,7 +91,8 @@ struct Attributes{
     std::array<int,7> weapons;
     std::array<sf::Keyboard::Key,7> keyboardControls;
     int currentLevel = 0;
-    int playerWeapon = 0;
+    int playerWeapon = 1;
+	int playerWeapon2 = 2;
     
 };
 

@@ -148,7 +148,7 @@ namespace Level
             // Create the boss and player
             
            
-            //CreateHud();
+          
             delete loader;
             
         }
@@ -170,6 +170,7 @@ namespace Level
             World::GetInstance()->Screen.setCenter(lvlSize.x/2,lvlSize.y/2);
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(player);
             LevelBG[0].setTextureRect(sf::IntRect(0,0,0,0));
+			CreateHud();
 
         }
         

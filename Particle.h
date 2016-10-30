@@ -193,16 +193,11 @@ namespace Entity
         
         ~Hud();
         
-        sf::Sprite hbar;
-        sf::Sprite hitem;
-        int hmaxhealth = 0;
-        int hmaxpow = 0;
-        bool hdamaged = false;
-        sf::Sprite hhealth;
-        sf::Sprite hpower;
-        sf::Text hhealthNum;
-        sf::Text hpowerNum;
-        sf::Font hnumFont;
+        sf::Sprite weapon1;
+        sf::Sprite weapon2;
+		std::array<int,2> weapon1slot;
+		std::array<int,2> weapon2slot;
+		bool switching;
         
     };
     
@@ -698,7 +693,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 100;
+        int maxEnemies = 150;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
