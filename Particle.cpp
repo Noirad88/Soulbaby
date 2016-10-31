@@ -612,6 +612,7 @@ namespace Entity
 
 		weapon1.setTextureRect(sf::IntRect(0, 271 + (15 * World::GetInstance()->GlobalMembers.playerWeapon), 21, 15));
 		weapon2.setTextureRect(sf::IntRect(0, 271 + (15 * World::GetInstance()->GlobalMembers.playerWeapon2), 21, 15));
+		std::cout << "Hud created. pw1 = " << World::GetInstance()->GlobalMembers.playerWeapon << ", pw2 = " << World::GetInstance()->GlobalMembers.playerWeapon2 << std::endl;
 
 		weapon1slot.at(0) = 0;
 		weapon1slot.at(1) = 25;
@@ -625,6 +626,7 @@ namespace Entity
     
     void Hud::Update(){
           
+		/*
 		weapon1.setPosition(weapon1.getPosition().x - (World::GetInstance()->viewPos.x - 230), 0);
 		weapon2.setPosition(weapon2.getPosition().x - (World::GetInstance()->viewPos.x - 230), 0);
 
@@ -633,8 +635,21 @@ namespace Entity
 		newPos.x += (weapon1slot.at(switching) - weapon1.getPosition().x) / 5;
 		newPos2.x += (weapon2slot.at(switching) - weapon2.getPosition().x) / 5;
 
-		weapon1.setPosition((World::GetInstance()->viewPos.x - 230) +  newPos.x, World::GetInstance()->viewPos.y - 125);
-		weapon2.setPosition((World::GetInstance()->viewPos.x - 230) + newPos2.x, World::GetInstance()->viewPos.y - 125);
+		weapon1.setPosition((World::GetInstance()->viewPos.x - 230), World::GetInstance()->viewPos.y - 125);
+		weapon2.setPosition((World::GetInstance()->viewPos.x - 230), World::GetInstance()->viewPos.y - 125);
+		weapon1.move(newPos.x, 0);
+		weapon2.move(newPos2.x, 0);
+		*/
+
+		sf::Vector2f newPos = sf::Vector2f(weapon1.getPosition().x, weapon1.getPosition().y);
+		sf::Vector2f newPos2 = sf::Vector2f(weapon2.getPosition().x, weapon2.getPosition().y);
+		newPos.x += ((World::GetInstance()->viewPos.x - 230) + (weapon1slot.at(switching)) - weapon1.getPosition().x) / 5;
+		newPos2.x += ((World::GetInstance()->viewPos.x - 230) + (weapon2slot.at(switching)) - weapon2.getPosition().x) / 5;
+
+		weapon1.setPosition(newPos.x, World::GetInstance()->viewPos.y - 125);
+		weapon2.setPosition(newPos2.x, World::GetInstance()->viewPos.y - 125);
+
+		
 
 
     }
@@ -783,7 +798,6 @@ namespace Entity
 
             if(World::GetInstance()->Timer(*this,NORMAL, NODELAY)){
 				 
-				std::cout << NORMAL << std::endl;
                 frame_pos = (frame_pos >= 5) ? 0 : frame_pos+1;
                 objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, movement * FRAME, spriteWidth, spriteHeight));
             
@@ -844,13 +858,17 @@ namespace Entity
 		}
 		// Animation
 
-		if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsSwitch])) {
+		if (movement == idle && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsC])) {
 
 			if (World::GetInstance()->Timer(*this, 160000.0)) {
 
 				World::GetInstance()->WorldScene.hudPtr->switching = !World::GetInstance()->WorldScene.hudPtr->switching;
 				std::cout << "Swtiching = " << World::GetInstance()->WorldScene.hudPtr->switching << std::endl;
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
+
+				int tempWeap = World::GetInstance()->GlobalMembers.playerWeapon;
+				World::GetInstance()->GlobalMembers.playerWeapon = World::GetInstance()->GlobalMembers.playerWeapon2;
+				World::GetInstance()->GlobalMembers.playerWeapon2 = tempWeap;
 
 
 			}
@@ -959,7 +977,7 @@ namespace Entity
             
             // cannon
             
-			else if (World::GetInstance()->GlobalMembers.playerWeapon == 1) {
+			else if (World::GetInstance()->GlobalMembers.playerWeapon == 6) {
 
 
 				if (PlayerBomb::totalBombs == 0) {
@@ -991,7 +1009,7 @@ namespace Entity
             
             // rail
             
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 2 && PlayerBomb::totalBombs < 2 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
+            else if(World::GetInstance()->GlobalMembers.playerWeapon == 3 && PlayerBomb::totalBombs < 2 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -1007,7 +1025,7 @@ namespace Entity
             
             // spreader
             
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 3 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
+            else if(World::GetInstance()->GlobalMembers.playerWeapon == 1 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -1031,8 +1049,9 @@ namespace Entity
             }
             
             // boomerang
+
             
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 4 && PlayerBoomerang::totalBoomerangs < 6 && World::GetInstance()->Timer(*this,SLOW,NODELAY)){
+            else if(World::GetInstance()->GlobalMembers.playerWeapon == 5 && PlayerBoomerang::totalBoomerangs < 6 && World::GetInstance()->Timer(*this,SLOW,NODELAY)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -2878,7 +2897,7 @@ namespace Entity
 
 			//set move to player
 			targetPosition = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition();
-			RotateVector(vel, -(GetAngle(objectSprite.getPosition(), targetPosition)));
+			RotateVector(vel, -(GetAngle(objectSprite.getPosition(), targetPosition + varyMov)));
 		}
 
 		else if (enemyMode == 3) {
@@ -2889,11 +2908,11 @@ namespace Entity
 			
 				//set slow move to player
 
-				if (objectSprite.getPosition().x < targetPosition.x && vel.x < speed) vel.x += 0.15;
-				else if (objectSprite.getPosition().x > targetPosition.x && vel.x > -speed) vel.x -= 0.15;
-				if (objectSprite.getPosition().y < targetPosition.y && vel.y < speed) vel.y += 0.15;
-				else if (objectSprite.getPosition().y > targetPosition.y && vel.y > -speed) vel.y -= 0.15;
-		
+				if (objectSprite.getPosition().x < targetPosition.x + varyMov.x && vel.x < speed) vel.x += 0.15;
+				else if (objectSprite.getPosition().x > targetPosition.x + varyMov.x && vel.x > -speed) vel.x -= 0.15;
+				if (objectSprite.getPosition().y < targetPosition.y + varyMov.y && vel.y < speed) vel.y += 0.15;
+				else if (objectSprite.getPosition().y > targetPosition.y + varyMov.y && vel.y > -speed) vel.y -= 0.15;
+				
 
 			}
 
@@ -2903,15 +2922,15 @@ namespace Entity
 
 		if (moveType == NORMAL) {
 
-            if(!hasAttack)objectSprite.move(vel.x,vel.y + velZ);
+            if(!hasAttack)objectSprite.move(vel.x, vel.y + velZ);
             
 			else if (moveOnAttack == false) {
 
-				if (!PlayerDistance(MID)) objectSprite.move(vel.x, vel.y + velZ);
+				if (!PlayerDistance(MID)) objectSprite.move(vel.x, vel.y  + velZ);
 
 			}
 
-			else objectSprite.move(vel.x, vel.y + velZ);
+			else objectSprite.move(vel.x, vel.y +  velZ);
             
         }
         
@@ -2936,6 +2955,33 @@ namespace Entity
             
         }
 
+		//setting a vector to randomly rotate target position to avoid enemy buildup
+
+		if (enemyMode != 0) {
+
+			if (World::GetInstance()->Timer(*this, 2100000.0)) {
+
+				varyMov.x = RandomNumber(6);
+				varyMov.y = RandomNumber(6);
+				int rand = RandomNumber(1);
+				int rand2 = RandomNumber(1);
+
+				if (rand == 0) {
+
+					varyMov.x *= -1;
+
+				}
+
+				if (rand2 == 0) {
+
+					varyMov.y *= -1;
+
+				}
+
+
+			}
+
+		}
 
 		MoveElse();
 
@@ -2955,9 +3001,14 @@ namespace Entity
 
 		else if (flatAnimation == false) {
 
+			/*
 			spriteDirection = RoundUp((GetAngle(objectShadow.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition())), 45);
 			int tempdir = abs((180 - spriteDirection) / 45);
 			spriteDirection = tempdir;
+			*/
+	
+			spriteDirection = objectSprite.getPosition().x < (objectSprite.getPosition().x + vel.x) ?  1 : 0;
+		
 
 			if (World::GetInstance()->Timer(*this,VERY_SLOW)) {
 
@@ -3571,7 +3622,6 @@ namespace Entity
         particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
         particles.properties["itemType"] = "DeathPoof";
         
-
         World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
         World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
         World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
@@ -3586,6 +3636,7 @@ namespace Entity
 
 		//MovementList.clear();
 		//AttackList.clear();
+		World::GetInstance()->WorldScene.audioContainer.music.stop();
     
     }
 

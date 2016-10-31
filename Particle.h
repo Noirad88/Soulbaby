@@ -725,6 +725,7 @@ namespace Entity
         int frame = 0;
         bool enemyDir = true;
         int enemyMode = 0;
+		sf::Vector2f varyMov;
         bool push = true;
         float fireDir;
         float animate = 0;

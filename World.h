@@ -89,10 +89,10 @@ struct Attributes{
     std::shared_ptr<int> textSpeed;
     std::array<int,7> levelsCompleted;
     std::array<int,7> weapons;
-    std::array<sf::Keyboard::Key,7> keyboardControls;
+    std::array<sf::Keyboard::Key,9> keyboardControls;
     int currentLevel = 0;
-    int playerWeapon = 1;
-	int playerWeapon2 = 2;
+    int playerWeapon = 0;
+	int playerWeapon2 = 4;
     
 };
 

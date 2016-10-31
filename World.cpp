@@ -100,6 +100,8 @@ World::World(){
 	GlobalMembers.keyboardControls[8] = sf::Keyboard::V;
 	dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC";
     
+	GlobalMembers.playerWeapon = 0;
+	GlobalMembers.playerWeapon2 = 5;
 
 }
 
