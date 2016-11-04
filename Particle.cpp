@@ -607,50 +607,49 @@ namespace Entity
         
         World::GetInstance()->WorldScene.hudPtr = this;
         
+		// Background hud
+
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
         weapon1.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
 		weapon2.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
 
+		pow1Lable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont("small"));
+		pow2Lable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont("small"));
+		pow1Lable.setString("pow1");
+		pow2Lable.setString("pow2");
+		pow1Lable.setCharacterSize(16);
+		pow2Lable.setCharacterSize(16);
+
+		objectSprite.setTextureRect(sf::IntRect(0,218, 61, 34));
 		weapon1.setTextureRect(sf::IntRect(0, 271 + (15 * World::GetInstance()->GlobalMembers.playerWeapon), 21, 15));
 		weapon2.setTextureRect(sf::IntRect(0, 271 + (15 * World::GetInstance()->GlobalMembers.playerWeapon2), 21, 15));
 		std::cout << "Hud created. pw1 = " << World::GetInstance()->GlobalMembers.playerWeapon << ", pw2 = " << World::GetInstance()->GlobalMembers.playerWeapon2 << std::endl;
 
 		weapon1slot.at(0) = 0;
-		weapon1slot.at(1) = 25;
-		weapon2slot.at(0) = 25;
+		weapon1slot.at(1) = 23;
+		weapon2slot.at(0) = 23;
 		weapon2slot.at(1) = 0;
 
-		weapon1.setPosition(World::GetInstance()->viewPos.x - 230 + weapon1slot.at(switching), World::GetInstance()->viewPos.y - 125);
-		weapon2.setPosition(World::GetInstance()->viewPos.x - 230 + weapon2slot.at(switching), World::GetInstance()->viewPos.y - 125);
+		objectSprite.setPosition(World::GetInstance()->viewPos.x - 230, World::GetInstance()->viewPos.y - 125);
+		weapon1.setPosition(World::GetInstance()->viewPos.x - 224 + weapon1slot.at(switching), World::GetInstance()->viewPos.y - 111);
+		weapon2.setPosition(World::GetInstance()->viewPos.x - 224 + weapon2slot.at(switching), World::GetInstance()->viewPos.y - 111);
     }
 
     
     void Hud::Update(){
-          
-		/*
-		weapon1.setPosition(weapon1.getPosition().x - (World::GetInstance()->viewPos.x - 230), 0);
-		weapon2.setPosition(weapon2.getPosition().x - (World::GetInstance()->viewPos.x - 230), 0);
 
-		sf::Vector2f newPos = sf::Vector2f(weapon1.getPosition().x, weapon1.getPosition().y);
-		sf::Vector2f newPos2 = sf::Vector2f(weapon2.getPosition().x, weapon2.getPosition().y);
-		newPos.x += (weapon1slot.at(switching) - weapon1.getPosition().x) / 5;
-		newPos2.x += (weapon2slot.at(switching) - weapon2.getPosition().x) / 5;
+		pow1Lable.setPosition((World::GetInstance()->viewPos.x) - 222, World::GetInstance()->viewPos.y - 134);
+		pow2Lable.setPosition((World::GetInstance()->viewPos.x) - 222 + 23, World::GetInstance()->viewPos.y - 134);
 
-		weapon1.setPosition((World::GetInstance()->viewPos.x - 230), World::GetInstance()->viewPos.y - 125);
-		weapon2.setPosition((World::GetInstance()->viewPos.x - 230), World::GetInstance()->viewPos.y - 125);
-		weapon1.move(newPos.x, 0);
-		weapon2.move(newPos2.x, 0);
-		*/
 
-		sf::Vector2f newPos = sf::Vector2f(weapon1.getPosition().x, weapon1.getPosition().y);
-		sf::Vector2f newPos2 = sf::Vector2f(weapon2.getPosition().x, weapon2.getPosition().y);
-		newPos.x += ((World::GetInstance()->viewPos.x - 230) + (weapon1slot.at(switching)) - weapon1.getPosition().x) / 5;
-		newPos2.x += ((World::GetInstance()->viewPos.x - 230) + (weapon2slot.at(switching)) - weapon2.getPosition().x) / 5;
+		objectSprite.setPosition(World::GetInstance()->viewPos.x - 230, World::GetInstance()->viewPos.y - 125);
 
-		weapon1.setPosition(newPos.x, World::GetInstance()->viewPos.y - 125);
-		weapon2.setPosition(newPos2.x, World::GetInstance()->viewPos.y - 125);
 
-		
+		newPos.x += ((weapon1slot.at(switching)) - (newPos.x)) / 5;
+		newPos2.x += ((weapon2slot.at(switching)) - (newPos2.x)) / 5;
 
+		weapon1.setPosition(((World::GetInstance()->viewPos.x) - 222) + newPos.x, objectSprite.getPosition().y + 10);
+		weapon2.setPosition(((World::GetInstance()->viewPos.x) - 222) + newPos2.x, objectSprite.getPosition().y + 10);
 
     }
     
@@ -663,6 +662,9 @@ namespace Entity
     
     void Hud::Draw(sf::RenderTarget& window){
         
+		World::GetInstance()->DrawObject(objectSprite);
+
+
 		if (switching == true) {
 
 			World::GetInstance()->DrawObject(weapon2);
@@ -678,6 +680,9 @@ namespace Entity
 
 
 		}
+
+		World::GetInstance()->DrawObject(pow1Lable);
+		World::GetInstance()->DrawObject(pow2Lable);
 
         
     }
@@ -2579,7 +2584,7 @@ namespace Entity
             enemyList[2] = "Slime";
             enemyList[3] = "Star2";
             enemyList[4] = "Squid2";
-            enemyList[5] = "Slime2";
+            enemyList[5] = "Roach";
             enemyList[6] = "Star3";
             enemyList[7] = "Squid3";
             enemyList[8] = "Slime3";
@@ -2759,7 +2764,6 @@ namespace Entity
     {
         objectSprite.setTextureRect(sf::IntRect (0,0,16,16));
         SetShadow();
-        moveType = NODE;
         type = "EnemyNode";
     }
     
@@ -2772,6 +2776,21 @@ namespace Entity
         health = 5;
 		enemyMode = 0;
     }
+
+	Roach::Roach() : Enemy()
+	{
+		objectSprite.setTextureRect(sf::IntRect(0, 120, 31, 15));
+		SetCharacterOrigin();
+		SetShadow();
+		moveType = SLIDER;
+		health = 10;
+		enemyMode = 4;
+
+		// For roaches, speed is the DISTANCE the enemy will move
+
+		speed = 25;
+
+	}
     
     Star::Star() : Enemy()
     {
@@ -2889,7 +2908,7 @@ namespace Entity
 				targetPosition.y = RandomNumber(600);
 			}
 
-			RotateVector(vel,-(GetAngle(objectSprite.getPosition(), targetPosition)));
+			RotateVector(vel, -(GetAngle(objectSprite.getPosition(), targetPosition)));
 
 		}
 
@@ -2933,6 +2952,29 @@ namespace Entity
 			else objectSprite.move(vel.x, vel.y +  velZ);
             
         }
+
+		else if (moveType == SLIDER) {
+
+			if (World::GetInstance()->Timer(*this, 350000.0, NODELAY) && velZ == 0) {
+
+				int rand1 = RandomNumber(45);
+				int rand2 = RandomNumber(1);
+				if (rand2 == 0) rand1 *= -1;
+
+				RotateVector(vel, -(GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition())));
+				RotateVector(vel, rand1);
+
+				targetPosition.x = objectSprite.getPosition().x + vel.x;
+				targetPosition.y = objectSprite.getPosition().y + vel.y;
+
+			}
+
+			sf::Vector2f newPos = sf::Vector2f(objectSprite.getPosition().x,objectSprite.getPosition().y);
+			newPos.x += (targetPosition.x - objectSprite.getPosition().x) / 5;
+			newPos.y += (targetPosition.y - objectSprite.getPosition().y) / 5;
+			objectSprite.setPosition(newPos.x,newPos.y);
+
+		}
         
 		else if (moveType == JUMPER){
 
@@ -2959,10 +3001,10 @@ namespace Entity
 
 		if (enemyMode != 0) {
 
-			if (World::GetInstance()->Timer(*this, 2100000.0)) {
+			if (World::GetInstance()->Timer(*this, 200000.0)) {
 
-				varyMov.x = RandomNumber(6);
-				varyMov.y = RandomNumber(6);
+				varyMov.x = RandomNumber(35);
+				varyMov.y = RandomNumber(35);
 				int rand = RandomNumber(1);
 				int rand2 = RandomNumber(1);
 
@@ -3660,6 +3702,10 @@ namespace Entity
     Slime::~Slime(){
         
     }
+
+	Roach::~Roach() {
+
+	}
     
     Star::~Star(){
         

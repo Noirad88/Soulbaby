@@ -352,6 +352,15 @@ void Container::AddObjects()
                 
             }
 
+			else if ((QI)->properties["itemType"] == "Roach")
+			{
+
+				std::unique_ptr<Entity::Roach> ptr(new Entity::Roach);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "HauzerSpire")
 			{
 

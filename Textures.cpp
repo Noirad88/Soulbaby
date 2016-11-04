@@ -178,7 +178,9 @@ namespace Textures{
         closedir(dip2);
         
         GameFont.loadFromFile(dir + "fonts/basis33.ttf");
+		GameFont2.loadFromFile(dir + "fonts/apfont.ttf");
         const_cast<sf::Texture&>(GameFont.getTexture(16)).setSmooth(false);
+		const_cast<sf::Texture&>(GameFont2.getTexture(16)).setSmooth(false);
         
         shaders.insert(std::pair<std::string,sf::Shader&>("redShader",redShader.shader));
         shaders.insert(std::pair<std::string,sf::Shader&>("waveShader",waveShader.shader));
@@ -193,10 +195,12 @@ namespace Textures{
     
     }
     
-    sf::Font& TextureContainer::GetFont(){
+    sf::Font& TextureContainer::GetFont(std::string font){
         
         //std::cout << temp_name << std::endl;
-        return GameFont;
+        if(font == "") return GameFont;
+
+		else return GameFont2;
         
     }
     

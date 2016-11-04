@@ -74,8 +74,9 @@ namespace Textures
         TextureContainer();
         void Update();
         sf::Texture& SetTexture(std::string temp_name);
-        sf::Font& GetFont();
+        sf::Font& GetFont(std::string font = "");
         sf::Font GameFont;
+		sf::Font GameFont2;
         sf::Texture* SetTextureForShapes(std::string temp_name);
         std::map<std::string,sf::Texture*> textureMap;
         bool set = false;

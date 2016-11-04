@@ -35,7 +35,7 @@ class World;
 #define WALKING (FRAME * 1)
 #define NORMAL 0
 #define JUMPER 1
-#define NODE 2
+#define SLIDER 2
 #define LAZYFOLLOW 3
 #define VERYCLOSE 25
 #define CLOSE 100
@@ -197,7 +197,12 @@ namespace Entity
         sf::Sprite weapon2;
 		std::array<int,2> weapon1slot;
 		std::array<int,2> weapon2slot;
+		sf::Vector2f newPos;
+		sf::Vector2f newPos2;
+		sf::Text pow1Lable;
+		sf::Text pow2Lable;
 		bool switching;
+
         
     };
     
@@ -771,6 +776,14 @@ namespace Entity
         ~Slime();
         
     };
+
+	class Roach : public Enemy
+	{
+	public:
+		Roach();
+		~Roach();
+
+	};
     
     class Squid : public Enemy
     {
