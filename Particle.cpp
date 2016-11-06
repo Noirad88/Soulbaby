@@ -888,11 +888,6 @@ namespace Entity
 			dashing = true;
 			RotateVector(vel, 45 * movement);
 			//World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
-			itemQueue particles;
-			particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-			particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-			particles.properties["itemType"] = "DamageSpark";
-			//World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 
 		}
 	
@@ -900,7 +895,12 @@ namespace Entity
 
 			if (World::GetInstance()->Timer(*this, FAST, NODELAY)) {
 
-				CreateClone(objectSprite, "tx_player.png");
+				//CreateClone(objectSprite, "tx_player.png");
+				itemQueue particles;
+				particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+				particles.properties["itemType"] = "DashEffect";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 
 			}
 
@@ -1262,6 +1262,15 @@ namespace Entity
         spdReduceRate = 0.25f;
         
     }
+
+	DashEffect::DashEffect() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(34, 10, 9, 20));
+		SetCharacterOrigin();
+		maxFrame = 5;
+		animSpeed = VERY_FAST;
+
+	}
     
     PlayerBomb::PlayerBomb() : Fixed(){
         
@@ -1539,7 +1548,7 @@ namespace Entity
         if(World::GetInstance()->Timer(*this,animSpeed))
         {
             
-                objectSprite.setTextureRect(sf::IntRect(0,(frame * assetHeight) + top,objectSprite.getTextureRect().width,objectSprite.getTextureRect().height));
+                objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left,(frame * assetHeight) + top,objectSprite.getTextureRect().width,objectSprite.getTextureRect().height));
                 
                 if(frame < maxFrame) {
                     
@@ -2285,6 +2294,10 @@ namespace Entity
 	HauzerSpear::~HauzerSpear() {
 
 	}
+
+	DashEffect::~DashEffect() {
+
+	}
     
     
     HitNum::~HitNum()
@@ -2582,7 +2595,7 @@ namespace Entity
             enemyList[0] = "Star";
             enemyList[1] = "Squid";
             enemyList[2] = "Slime";
-            enemyList[3] = "Star2";
+            enemyList[3] = "Mask";
             enemyList[4] = "Squid2";
             enemyList[5] = "Roach";
             enemyList[6] = "Star3";
@@ -2779,16 +2792,17 @@ namespace Entity
 
 	Roach::Roach() : Enemy()
 	{
-		objectSprite.setTextureRect(sf::IntRect(0, 120, 31, 15));
+		objectSprite.setTextureRect(sf::IntRect(0, 117, 37, 16));
 		SetCharacterOrigin();
 		SetShadow();
 		moveType = SLIDER;
 		health = 10;
 		enemyMode = 4;
+		animationSpeed = VERY_FAST;
 
 		// For roaches, speed is the DISTANCE the enemy will move
 
-		speed = 25;
+		speed = 35;
 
 	}
     
@@ -2804,6 +2818,22 @@ namespace Entity
 		enemyMode = 3;
         
     }
+
+	Mask::Mask() : Enemy()
+	{
+		objectSprite.setTextureRect(sf::IntRect(36, 15, 37, 43));
+		SetCharacterOrigin();
+		SetShadow();
+		moveType = NORMAL;
+		speed = 1.5;
+		health = 30;
+		flatAnimation = true;
+		enemyMode = 3;
+		hasAttack = true;
+		SetHitBox(sf::Vector2f(25, 35), 1);
+
+
+	}
     
     Squid::Squid() : Enemy()
     {
@@ -2955,7 +2985,7 @@ namespace Entity
 
 		else if (moveType == SLIDER) {
 
-			if (World::GetInstance()->Timer(*this, 350000.0, NODELAY) && velZ == 0) {
+			if (World::GetInstance()->Timer(*this, 400000.0, NODELAY) && velZ == 0) {
 
 				int rand1 = RandomNumber(45);
 				int rand2 = RandomNumber(1);
@@ -2966,6 +2996,12 @@ namespace Entity
 
 				targetPosition.x = objectSprite.getPosition().x + vel.x;
 				targetPosition.y = objectSprite.getPosition().y + vel.y;
+
+			}
+			 
+			else {
+
+				RotateVector(vel, -(GetAngle(objectSprite.getPosition(),targetPosition)));
 
 			}
 
@@ -3037,7 +3073,7 @@ namespace Entity
 
 			}
 
-			objectSprite.setTextureRect(sf::IntRect(0, (174 * frame) + spriteTop, objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
+			objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left, (174 * frame) + spriteTop, objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
 
 		}
 
@@ -3052,12 +3088,18 @@ namespace Entity
 			spriteDirection = objectSprite.getPosition().x < (objectSprite.getPosition().x + vel.x) ?  1 : 0;
 		
 
-			if (World::GetInstance()->Timer(*this,VERY_SLOW)) {
+			if (World::GetInstance()->Timer(*this,animationSpeed)) {
 
 				if (moveType != JUMPER) {
 
 					if (frame >= 3) frame = 0;
-					else frame++;
+					else if(moveType != SLIDER) frame++;
+
+					else if (moveType == SLIDER) {
+
+						if (!GetDistance(objectSprite.getPosition(),targetPosition,2)) frame++;
+
+					}
 				}
 
 				else {
@@ -3069,7 +3111,7 @@ namespace Entity
 
 			}
 
-			objectSprite.setTextureRect(sf::IntRect(0, (((spriteDirection * 4+frame) * 174) + spriteTop), objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
+			objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left, (((spriteDirection * 4+frame) * 174) + spriteTop), objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
 
 		}
         
@@ -3689,6 +3731,10 @@ namespace Entity
     Mozza::~Mozza(){
         
     }
+
+	Mask::~Mask() {
+
+	}
     
     EnemyNode::~EnemyNode(){
         

@@ -95,6 +95,15 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "DashEffect")
+			{
+
+				std::unique_ptr<Entity::DashEffect> ptr(new Entity::DashEffect);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "DeathBoom")
             {
@@ -356,6 +365,15 @@ void Container::AddObjects()
 			{
 
 				std::unique_ptr<Entity::Roach> ptr(new Entity::Roach);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "Mask")
+			{
+
+				std::unique_ptr<Entity::Mask> ptr(new Entity::Mask);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
 				ObjectContainer.push_back(std::move(ptr));
 

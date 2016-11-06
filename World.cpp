@@ -29,7 +29,7 @@ Fade::Fade(std::string mapName,bool dir ) : Transition(mapName)
 
 void Fade::Update(){
     
-    overlay.setPosition(World::GetInstance()->viewPos.x -240,0);
+    overlay.setPosition(World::GetInstance()->viewPos.x -240, World::GetInstance()->viewPos.x - 135);
  
     
     if(direction == TRANIN){
@@ -147,7 +147,7 @@ void World::LoadScene(std::string sceneName){
         WorldScene.levelContainer->CreateScene();
         WorldScene.isLoaded = true;
         std::cout << "Done Loading" << CurrentScene->name << std::endl;
-        if(sceneName != "battle") WorldScene.transition = std::unique_ptr<Transition> (new Fade("",TRANIN));
+        //if(sceneName != "battle") WorldScene.transition = std::unique_ptr<Transition> (new Fade("",TRANIN));
 }
 
 void World::LoadSceneBank(){

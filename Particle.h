@@ -530,6 +530,12 @@ namespace Entity
         void Update();
         ~SpriteClone();
     };
+
+	class DashEffect : public Fixed {
+	public:
+		DashEffect();
+		~DashEffect();
+	};
     
     class Spark: public Fixed{
     public:
@@ -734,6 +740,7 @@ namespace Entity
         bool push = true;
         float fireDir;
         float animate = 0;
+		float animationSpeed = VERY_SLOW;
         float jump = 0;
         float speed = 1;
 		int spriteTop = -1;
@@ -768,6 +775,14 @@ namespace Entity
         ~Star();
         
     };
+
+	class Mask : public Enemy
+	{
+	public:
+		Mask();
+		~Mask();
+
+	};
     
     class Slime : public Enemy
     {
