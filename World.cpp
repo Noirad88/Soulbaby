@@ -570,9 +570,16 @@ int RandomNumber(int max, int min){
     
 }
 
-bool GetDistance(sf::Vector2f a, sf::Vector2f b, int distance) {
+bool IfDistance(sf::Vector2f a, sf::Vector2f b, int distance) {
 
 	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y)) <= distance ? true : false;
+
+
+}
+
+float GetDistance(sf::Vector2f a, sf::Vector2f b) {
+
+	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
 
 
 }

@@ -205,6 +205,22 @@ void Container::AddObjects()
 
             }
 
+			else if ((QI)->properties["itemType"] == "EnemyLaser")
+			{
+
+				std::unique_ptr<Entity::EnemyLaser> ptr(new Entity::EnemyLaser);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				if ((QI)->properties.count("Speed")>0) ptr->vel.y = stoi((QI)->properties["Speed"]);
+				ptr->laserBody.setPosition(ptr->objectSprite.getPosition());
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				ptr->vel.y = -ptr->vel.y;
+				if ((QI)->properties.count("Direction"))RotateVector(ptr->vel, (-stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "HauzerSmog")
 			{
 

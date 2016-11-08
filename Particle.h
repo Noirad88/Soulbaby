@@ -383,6 +383,20 @@ namespace Entity
         void Update();
         
     };
+
+	class EnemyLaser : public EnemyProjectile {
+
+	public:
+		EnemyLaser();
+		~EnemyLaser();
+		void Update();
+		virtual void Draw(sf::RenderTarget& window);
+
+		sf::Sprite laserBody;
+		sf::Vector2f laserBodyvel;
+
+
+	};
     
     class Bullet : public Projectile{
         
@@ -729,7 +743,7 @@ namespace Entity
         virtual void Attack();
 		void TargetPlayer();
         void Damaged();
-        bool hasAttack = false;
+        int hasAttack = 0;
         float health = 3;
         float maxhealth = 3;
 		bool defending = false;

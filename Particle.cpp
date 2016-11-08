@@ -1319,6 +1319,18 @@ namespace Entity
 
     }
 
+	EnemyLaser::EnemyLaser() : EnemyProjectile() {
+
+		objectSprite.setTextureRect(sf::IntRect(0, 56, 16, 12));
+		laserBody.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		laserBody.setTextureRect(sf::IntRect(32, 56, 16, 2));
+		vel.y = 2;
+		SetEffectOrigin();
+		SetHitBox(sf::Vector2f(6, 6));
+		active = true;
+
+	}
+
 	HauzerSmog::HauzerSmog() : EnemyProjectile() {
 
 		sprite = 96 + (17 *RandomNumber(2));
@@ -1590,6 +1602,18 @@ namespace Entity
         }
     
     }
+
+	void EnemyLaser::Update() {
+
+		Projectile::Update();
+		laserBodyvel.x = 0;
+		laserBodyvel.y = -16;
+		laserBody.setRotation(-GetAngle(laserBody.getPosition(),objectSprite.getPosition())-90);
+		RotateVector(laserBodyvel, -GetAngle(laserBody.getPosition(), objectSprite.getPosition()));
+
+		if (World::GetInstance()->Timer(*this, VERY_SLOW*10)) misDestroyed = true;
+
+	}
 
 	void PlayerBomb::Update() {
 
@@ -2247,6 +2271,39 @@ namespace Entity
         World::GetInstance()->DrawObject(shaft);
         
     }
+
+	void EnemyLaser::Draw(sf::RenderTarget& window) {
+
+		sf::Vector2f previousBodyPos = laserBody.getPosition();
+		sf::IntRect BodyRect = laserBody.getTextureRect();
+		int distance = GetDistance(laserBody.getPosition(), objectSprite.getPosition());
+		int laserBodyLength = distance / 16;
+		int lengthRemainder = distance % 16;
+
+		for (int i = 0; i != laserBodyLength; i++) {
+
+			std::cout << " laser: " << i << std::endl;
+			laserBody.move(laserBodyvel);
+
+			if (i == laserBodyLength-1) {
+
+				std::cout << " laser cut off: " << lengthRemainder << std::endl;
+				laserBody.setTextureRect(sf::IntRect(BodyRect.left, BodyRect.top, lengthRemainder, BodyRect.height));
+				World::GetInstance()->DrawObject(laserBody);
+
+			}
+
+			else World::GetInstance()->DrawObject(laserBody);
+
+
+
+		}
+
+		laserBody.setPosition(previousBodyPos);
+		laserBody.setTextureRect(BodyRect);
+		World::GetInstance()->DrawObject(objectSprite);
+
+	}
     
     void Object::DrawShadow(sf::RenderTarget& window)
     {
@@ -2286,6 +2343,10 @@ namespace Entity
     EnemyBlip::~EnemyBlip(){
         
     }
+
+	EnemyLaser::~EnemyLaser() {
+
+	}
 
 	HauzerSmog::~HauzerSmog() {
 
@@ -2597,7 +2658,7 @@ namespace Entity
             enemyList[2] = "Slime";
             enemyList[3] = "Mask";
             enemyList[4] = "Squid2";
-            enemyList[5] = "Roach";
+            enemyList[5] = "Roach2";
             enemyList[6] = "Star3";
             enemyList[7] = "Squid3";
             enemyList[8] = "Slime3";
@@ -2829,7 +2890,7 @@ namespace Entity
 		health = 30;
 		flatAnimation = true;
 		enemyMode = 3;
-		hasAttack = true;
+		hasAttack = 2;
 		SetHitBox(sf::Vector2f(25, 35), 1);
 
 
@@ -2843,7 +2904,7 @@ namespace Entity
         moveType = NORMAL;
         speed = 0.5;
         health = 30;
-        hasAttack = true;
+        hasAttack = 1;
         SetHitBox(sf::Vector2f(20,20),1);
 		flatAnimation = false;
 		enemyMode = 1;
@@ -2905,7 +2966,7 @@ namespace Entity
         SetCharacterOrigin(&mysprite,true);
         SetHitBox(sf::Vector2f(70,70));
         SetShadow();
-        hasAttack = true;
+        hasAttack = 0;
 		speed = 1;
         bossName.setString("Mozza");
         targetPlayer = false;
@@ -2971,7 +3032,7 @@ namespace Entity
 
 		if (moveType == NORMAL) {
 
-            if(!hasAttack)objectSprite.move(vel.x, vel.y + velZ);
+            if(hasAttack == 0)objectSprite.move(vel.x, vel.y + velZ);
             
 			else if (moveOnAttack == false) {
 
@@ -3097,7 +3158,7 @@ namespace Entity
 
 					else if (moveType == SLIDER) {
 
-						if (!GetDistance(objectSprite.getPosition(),targetPosition,2)) frame++;
+						if (!IfDistance(objectSprite.getPosition(),targetPosition,2)) frame++;
 
 					}
 				}
@@ -3119,7 +3180,7 @@ namespace Entity
         
         if(targetPlayer) fireDir = GetAngle(objectSprite.getPosition(),World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
 
-		if (hasAttack) Attack();
+		if (hasAttack != 0) Attack();
         
     }
     
@@ -3179,9 +3240,11 @@ namespace Entity
 			}
 
 			else {
+
 				hurtPos.x = RandomNumber(4);
 				hurtPos.y = RandomNumber(4);
 				objectSprite.move(hurtPos);
+
 			}
 			 
 		}
@@ -3197,28 +3260,60 @@ namespace Entity
         
     }
     
-    void Enemy::Attack(){
-        
-        if(PlayerDistance(MID)){
-            
-            if(World::GetInstance()->Timer(*this, 1000000.0)){
-                
-                itemQueue bullet;
-                bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-                bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
-                bullet.properties["itemType"] = "EnemyBlip";
-                bullet.properties["Direction"] = std::to_string(fireDir);
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-                
-                bullet.properties["Direction"] = std::to_string(fireDir -10);
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-                
-                bullet.properties["Direction"] = std::to_string(fireDir +10);
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-                    
-            }
-            
-        }
+	void Enemy::Attack() {
+
+		//Specic attack is executed depending on hasAttack set in constructor
+
+		//EnemyBlip
+
+		if (hasAttack == 1) {
+
+			if (PlayerDistance(MID)) {
+
+				if (World::GetInstance()->Timer(*this, 1000000.0)) {
+
+					itemQueue bullet;
+					bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+					bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+					bullet.properties["itemType"] = "EnemyBlip";
+					bullet.properties["Direction"] = std::to_string(fireDir);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+					bullet.properties["Direction"] = std::to_string(fireDir - 10);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+					bullet.properties["Direction"] = std::to_string(fireDir + 10);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				}
+
+			}
+
+		}
+
+		//EnemyLaser
+
+		if (hasAttack == 2) {
+
+			if (PlayerDistance(MID)) {
+
+				if (World::GetInstance()->Timer(*this, 2000000.0)) {
+
+					itemQueue bullet;
+					bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+					bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+					bullet.properties["itemType"] = "EnemyLaser";
+					bullet.properties["Direction"] = std::to_string(fireDir);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+					int rand = RandomNumber(2);
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_elsr_" + std::to_string(rand));
+
+
+
+				}
+
+			}
+		}
         
     }
     
