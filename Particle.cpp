@@ -1312,7 +1312,7 @@ namespace Entity
     EnemyBlip::EnemyBlip() : EnemyProjectile(){
         
         objectSprite.setTextureRect(sf::IntRect(0, 19,7, 7));
-        vel.y = 1;
+        vel.y = speed;
         SetEffectOrigin();
         SetHitBox(sf::Vector2f(3,3));
         active = true;
@@ -1321,13 +1321,23 @@ namespace Entity
 
 	EnemyLaser::EnemyLaser() : EnemyProjectile() {
 
-		objectSprite.setTextureRect(sf::IntRect(0, 56, 16, 12));
+		objectSprite.setTextureRect(sf::IntRect(0, 55, 16, 13));
 		laserBody.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
-		laserBody.setTextureRect(sf::IntRect(32, 56, 16, 2));
-		vel.y = 2;
+		laserHead.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		laserBody.setTextureRect(sf::IntRect(32, 55, 16, 2));
+		laserHead.setTextureRect(sf::IntRect(32, 58, 15, 15));
+		speed = 2;
+		maxFrame = 1;
+		vel.y = speed;
 		SetEffectOrigin();
 		SetHitBox(sf::Vector2f(6, 6));
+		laserHead.setOrigin(7.5, 7.5);
+		laserBody.setOrigin(0, 0.5);
+
 		active = true;
+		followsPlayer = true;
+		emitter = "DeathPoof";
+		emitTime = SLOW;
 
 	}
 
@@ -1335,7 +1345,8 @@ namespace Entity
 
 		sprite = 96 + (17 *RandomNumber(2));
 		objectSprite.setTextureRect(sf::IntRect(0, 96, 17, 17));
-		vel.y = RandomNumber(6,4);
+		speed = RandomNumber(6, 4);
+		vel.y = speed;
 		SetEffectOrigin();
 		SetHitBox(sf::Vector2f(6, 6));
 		active = true;
@@ -1345,7 +1356,7 @@ namespace Entity
 	HauzerSpear::HauzerSpear() : EnemyProjectile() {
 
 		objectSprite.setTextureRect(sf::IntRect(0, 69, 7, 27));
-		vel.y = 1;
+		vel.y = speed;
 		SetEffectOrigin();
 		SetHitBox(sf::Vector2f(3, 6));
 		active = true;
@@ -1812,6 +1823,14 @@ namespace Entity
        
     void Projectile::Update()
     {
+
+		if (followsPlayer == true) {
+			
+			vel.x = 0;
+			vel.y = -speed;
+
+			RotateVector(vel, -GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition()));
+		}
         
         if(World::GetInstance()->Timer(*this,VERY_FAST))
         {
@@ -1838,7 +1857,7 @@ namespace Entity
 
 				vel.x -= (vel.x * deacceleration);
 				vel.y -= (vel.y * deacceleration);
-
+				speed -= deacceleration;
 			}
 		}
 
@@ -1848,6 +1867,8 @@ namespace Entity
 
 				vel.x += (vel.x * acceleration);
 				vel.y += (vel.y * acceleration);
+				speed += acceleration;
+
 
 			}
 		}
@@ -2274,20 +2295,36 @@ namespace Entity
 
 	void EnemyLaser::Draw(sf::RenderTarget& window) {
 
+		int lsrBdyFrame = laserBody.getTextureRect().left;
+		int lsrHdFrame = laserHead.getTextureRect().left;
+
+		if (World::GetInstance()->Timer(*this, VERY_FAST)) {
+			 
+			if (lsrBdyFrame != 80) lsrBdyFrame += 16;
+			else lsrBdyFrame = 32;
+
+			if (lsrHdFrame != 77) lsrHdFrame += 15;
+			else lsrHdFrame = 32;
+			laserHead.setTextureRect(sf::IntRect(lsrHdFrame, laserHead.getTextureRect().top, laserHead.getTextureRect().width, laserHead.getTextureRect().height));
+
+		}
+
+		//lsrBdyFrame = 48; 
+
 		sf::Vector2f previousBodyPos = laserBody.getPosition();
-		sf::IntRect BodyRect = laserBody.getTextureRect();
+		sf::IntRect BodyRect = sf::IntRect(lsrBdyFrame, laserBody.getTextureRect().top, laserBody.getTextureRect().width, laserBody.getTextureRect().height);
 		int distance = GetDistance(laserBody.getPosition(), objectSprite.getPosition());
 		int laserBodyLength = distance / 16;
 		int lengthRemainder = distance % 16;
 
+		World::GetInstance()->DrawObject(laserBody);
+
 		for (int i = 0; i != laserBodyLength; i++) {
 
-			std::cout << " laser: " << i << std::endl;
 			laserBody.move(laserBodyvel);
 
 			if (i == laserBodyLength-1) {
 
-				std::cout << " laser cut off: " << lengthRemainder << std::endl;
 				laserBody.setTextureRect(sf::IntRect(BodyRect.left, BodyRect.top, lengthRemainder, BodyRect.height));
 				World::GetInstance()->DrawObject(laserBody);
 
@@ -2301,6 +2338,7 @@ namespace Entity
 
 		laserBody.setPosition(previousBodyPos);
 		laserBody.setTextureRect(BodyRect);
+		World::GetInstance()->DrawObject(laserHead);
 		World::GetInstance()->DrawObject(objectSprite);
 
 	}
@@ -2657,8 +2695,8 @@ namespace Entity
             enemyList[1] = "Squid";
             enemyList[2] = "Slime";
             enemyList[3] = "Mask";
-            enemyList[4] = "Squid2";
-            enemyList[5] = "Roach2";
+            enemyList[4] = "Roach";
+            enemyList[5] = "Roach";
             enemyList[6] = "Star3";
             enemyList[7] = "Squid3";
             enemyList[8] = "Slime3";
@@ -2863,7 +2901,7 @@ namespace Entity
 
 		// For roaches, speed is the DISTANCE the enemy will move
 
-		speed = 35;
+		speed = 20;
 
 	}
     
@@ -2876,19 +2914,21 @@ namespace Entity
 		speed = 1.5;
         health = 10;
 		flatAnimation = true;
+		animationSpeed = 1000.0;
 		enemyMode = 3;
         
     }
 
 	Mask::Mask() : Enemy()
 	{
-		objectSprite.setTextureRect(sf::IntRect(36, 15, 37, 43));
+		objectSprite.setTextureRect(sf::IntRect(36, 13, 37, 45));
 		SetCharacterOrigin();
 		SetShadow();
 		moveType = NORMAL;
-		speed = 1.5;
+		speed = 0.5;
 		health = 30;
 		flatAnimation = true;
+		animationSpeed = VERY_SLOW*2;
 		enemyMode = 3;
 		hasAttack = 2;
 		SetHitBox(sf::Vector2f(25, 35), 1);
@@ -3032,7 +3072,7 @@ namespace Entity
 
 		if (moveType == NORMAL) {
 
-            if(hasAttack == 0)objectSprite.move(vel.x, vel.y + velZ);
+            if(hasAttack == 0) objectSprite.move(vel.x, vel.y + velZ);
             
 			else if (moveOnAttack == false) {
 
@@ -3126,7 +3166,7 @@ namespace Entity
 
 		if (flatAnimation == true) {
 
-			if (World::GetInstance()->Timer(*this, 1000.0)) {
+			if (World::GetInstance()->Timer(*this, animationSpeed)) {
 
 				if (frame >= 4) frame = 0;
 
@@ -3179,8 +3219,6 @@ namespace Entity
         //remove this below to activate angle rotation (this makes the enemy always look to player)
         
         if(targetPlayer) fireDir = GetAngle(objectSprite.getPosition(),World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
-
-		if (hasAttack != 0) Attack();
         
     }
     
@@ -3208,7 +3246,8 @@ namespace Entity
         if(active){
             
             if(hurt == true) objectSprite.move(-hurtPos);
-            Move();
+            if(attacking == false) Move();
+			if (hasAttack != 0) Attack();
             UpdateShadow();
             
         }
@@ -3262,7 +3301,7 @@ namespace Entity
     
 	void Enemy::Attack() {
 
-		//Specic attack is executed depending on hasAttack set in constructor
+		//Specifc attack is executed depending on hasAttack set in constructor
 
 		//EnemyBlip
 
@@ -3295,24 +3334,33 @@ namespace Entity
 
 		if (hasAttack == 2) {
 
-			if (PlayerDistance(MID)) {
+				if (attacking == false) {
 
-				if (World::GetInstance()->Timer(*this, 2000000.0)) {
+					if (PlayerDistance(MID)) {
 
-					itemQueue bullet;
-					bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-					bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
-					bullet.properties["itemType"] = "EnemyLaser";
-					bullet.properties["Direction"] = std::to_string(fireDir);
-					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-					int rand = RandomNumber(2);
-					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_elsr_" + std::to_string(rand));
+						if (World::GetInstance()->Timer(*this, VERY_SLOW)) {
 
+							itemQueue bullet;
+							bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+							bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+							bullet.properties["itemType"] = "EnemyLaser";
+							bullet.properties["Direction"] = std::to_string(fireDir);
+							World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+							int rand = RandomNumber(2);
+							World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_elsr_" + std::to_string(rand));
+							attacking = true;
 
+						}
+					}
 
 				}
 
-			}
+				else if (attacking == true) {
+
+					if (World::GetInstance()->Timer(*this, VERY_SLOW * 10)) attacking = false;
+
+				}
+
 		}
         
     }

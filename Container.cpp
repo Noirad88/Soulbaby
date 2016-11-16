@@ -211,7 +211,8 @@ void Container::AddObjects()
 				std::unique_ptr<Entity::EnemyLaser> ptr(new Entity::EnemyLaser);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
 				if ((QI)->properties.count("Speed")>0) ptr->vel.y = stoi((QI)->properties["Speed"]);
-				ptr->laserBody.setPosition(ptr->objectSprite.getPosition());
+				ptr->laserBody.setPosition(sf::Vector2f(ptr->objectSprite.getPosition().x, ptr->objectSprite.getPosition().y - 34));
+				ptr->laserHead.setPosition(sf::Vector2f(ptr->objectSprite.getPosition().x, ptr->objectSprite.getPosition().y - 34));
 
 				// multiplying direction by 45 degrees gets us the direction player is shooting
 

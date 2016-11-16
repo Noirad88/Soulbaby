@@ -337,10 +337,12 @@ namespace Entity
 		bool destroyOnImpact = true;
 		float deacceleration = 0;
 		float acceleration = 0;
+		int speed = 1;
         int frame = 0;
         int maxFrame = 0;
         float time;
 		bool rotation = false;
+		bool followsPlayer = false;
 
 		std::string emitter = "";
 		float emitTime = 0;
@@ -393,6 +395,7 @@ namespace Entity
 		virtual void Draw(sf::RenderTarget& window);
 
 		sf::Sprite laserBody;
+		sf::Sprite laserHead;
 		sf::Vector2f laserBodyvel;
 
 
@@ -761,6 +764,7 @@ namespace Entity
         sf::Vector2f scaleTemp;
         int moveType = NORMAL;
         int enemyID = 0;
+		bool attacking = false;
 		int flatAnimation = false;
 		enum movement { south, swest, west, nwest, north, neast, east, seast, idle };
 		int spriteDirection = south;
@@ -907,16 +911,18 @@ namespace Entity
         
             int aType = 1;
             int bType = 1;
-            if(a->type == "GUI") aType = 2;
+			if (a->type == "GUI") aType = 3;
+			if (a->type == "Projectile" || a->type ==  "EnemyProjectile") aType = 2;
             if(a->type == "BG") aType = 0;
-            if(b->type == "GUI") bType = 2;
+            if(b->type == "GUI") bType = 3;
+			if (b->type == "Projectile" || b->type ==  "EnemyProjectile") bType = 2;
             if(b->type == "BG") bType = 0;
             return aType < bType;
             
         }
         
     };
-    
+
     
     
     
