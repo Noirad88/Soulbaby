@@ -1465,7 +1465,7 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect(0, 32, 20, 20));
         objectSprite.setOrigin(10,10);
         SetEffectOrigin();
-        vel.y = 12;
+        vel.y = 16;
         damage = 6;
         SetHitBox(sf::Vector2f(12,12));
 		destroyOnImpact = false;
@@ -1621,9 +1621,8 @@ namespace Entity
 		laserBodyvel.y = -16;
 		laserBody.setRotation(-GetAngle(laserBody.getPosition(),objectSprite.getPosition())-90);
 		RotateVector(laserBodyvel, -GetAngle(laserBody.getPosition(), objectSprite.getPosition()));
-
-		if (World::GetInstance()->Timer(*this, VERY_SLOW*10)) misDestroyed = true;
-
+		if (objReference->type == "") misDestroyed = true;
+		else if (World::GetInstance()->Timer(*this, VERY_SLOW*10)) misDestroyed = true;
 	}
 
 	void PlayerBomb::Update() {
@@ -3345,6 +3344,7 @@ namespace Entity
 							bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
 							bullet.properties["itemType"] = "EnemyLaser";
 							bullet.properties["Direction"] = std::to_string(fireDir);
+							bullet.parent = this;
 							World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
 							int rand = RandomNumber(2);
 							World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_elsr_" + std::to_string(rand));

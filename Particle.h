@@ -65,15 +65,16 @@ namespace Entity
     {
         itemQueue()
         {
-            
-            
+
         }
         
         ~itemQueue()
         {
+
         }
         
         std::map<std::string,std::string> properties;
+		Entity::Object* parent = nullptr;
         
     };
     
@@ -397,6 +398,7 @@ namespace Entity
 		sf::Sprite laserBody;
 		sf::Sprite laserHead;
 		sf::Vector2f laserBodyvel;
+		Entity::Object* objReference = nullptr;
 
 
 	};

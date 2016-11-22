@@ -5,6 +5,7 @@
 #include <vector>
 #include <functional>
 #include <random>
+#include <stddef.h>
 
 #define WINDOW_X 480*2
 

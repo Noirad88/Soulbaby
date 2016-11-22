@@ -218,6 +218,7 @@ void Container::AddObjects()
 
 				ptr->vel.y = -ptr->vel.y;
 				if ((QI)->properties.count("Direction"))RotateVector(ptr->vel, (-stoi((QI)->properties["Direction"])));
+				ptr->objReference = (QI)->parent;
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
