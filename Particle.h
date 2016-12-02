@@ -206,6 +206,22 @@ namespace Entity
 
         
     };
+
+	class Guide : public GUI
+	{
+	public:
+		Guide();
+		void Update();
+		void Draw(sf::RenderTarget& window);
+		void SetTarget(sf::Vector2f newPosition);
+		void Hide();
+		~Guide();
+
+		bool hidden = true;
+		sf::Sprite Icon;
+		sf::Vector2f targetPosition;
+
+	};
     
     class Textbox : public GUI
     {
@@ -594,6 +610,20 @@ namespace Entity
         BigExp();
         ~BigExp();
     };
+
+	class ShieldEffect : public Fixed {
+	public:
+		ShieldEffect();
+		~ShieldEffect();
+
+	};
+
+	class BlockedEffect : public Fixed {
+	public:
+		BlockedEffect();
+		~BlockedEffect();
+
+	};
     
     class DamageSpark: public Fixed{
         
@@ -723,7 +753,7 @@ namespace Entity
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
-        int maxEnemies = 150;
+        int maxEnemies = 100;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;

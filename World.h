@@ -51,6 +51,7 @@ namespace Entity{
     class Object;
     class Player;
     class Hud;
+	class Guide;
 }
 
 namespace Level{
@@ -135,6 +136,8 @@ struct Scene{
     std::unique_ptr<Transition> transition;
     Entity::Player* playerPtr;
     Entity::Hud* hudPtr;
+	Entity::Guide* guidePtr;
+
     bool isLoaded = false;
 
 };

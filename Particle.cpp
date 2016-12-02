@@ -279,6 +279,18 @@ namespace Entity
         
     
     }
+
+	Guide::Guide() {
+
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+		Icon.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+
+		objectSprite.setTextureRect(sf::IntRect(60, 218, 44, 37));
+		SetCharacterOrigin();
+		Icon.setTextureRect(sf::IntRect(104, 219, 26, 15));
+		Entity::GUI::guiCount--;
+		World::GetInstance()->WorldScene.guidePtr = this;
+	}
     
     MenuItem::~MenuItem(){
     
@@ -652,6 +664,29 @@ namespace Entity
 		weapon2.setPosition(((World::GetInstance()->viewPos.x) - 222) + newPos2.x, objectSprite.getPosition().y + 10);
 
     }
+
+	void Guide::Update() {
+
+		sf::Vector2f newPos(objectSprite.getPosition().x, objectSprite.getPosition().y);
+
+		newPos.y += ((targetPosition.y-5) - objectSprite.getPosition().y) / 25;
+
+		objectSprite.setPosition(targetPosition.x, newPos.y);
+		Icon.setPosition(objectSprite.getPosition().x+9, objectSprite.getPosition().y+9);
+	}
+
+	void Guide::SetTarget(sf::Vector2f newPosition) {
+
+		if (hidden == true) {
+
+			hidden = false;
+			targetPosition = newPosition;
+			objectSprite.setPosition(targetPosition.x, targetPosition.y);
+			Icon.setPosition(objectSprite.getPosition().x + 9, objectSprite.getPosition().y + 9);
+		}
+
+	}
+
     
     void BattleBackground::Update(){
         
@@ -659,7 +694,19 @@ namespace Entity
         
     }
     
-    
+	void Guide::Draw(sf::RenderTarget& window) {
+
+		if (hidden == false) {
+
+			World::GetInstance()->DrawObject(objectSprite);
+			World::GetInstance()->DrawObject(Icon);
+
+		}
+
+		hidden = true;
+
+	}
+
     void Hud::Draw(sf::RenderTarget& window){
         
 		World::GetInstance()->DrawObject(objectSprite);
@@ -686,17 +733,26 @@ namespace Entity
 
         
     }
+
+
     
     void BattleBackground::Draw(sf::RenderTarget& window){
         
         World::GetInstance()->DrawObject(objectSprite,"waveShader");
         
     }
+
+
     
     Hud::~Hud(){
         
         
     }
+
+	Guide::~Guide() {
+
+
+	}
     
     PlayerMenu::~PlayerMenu(){
         
@@ -863,7 +919,7 @@ namespace Entity
 		}
 		// Animation
 
-		if (movement == idle && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsC])) {
+		if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsA])) {
 
 			if (World::GetInstance()->Timer(*this, 160000.0)) {
 
@@ -887,6 +943,11 @@ namespace Entity
 			vel.x = 0;
 			dashing = true;
 			RotateVector(vel, 45 * movement);
+			itemQueue particles;
+			particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y-10);
+			particles.properties["itemType"] = "ShieldEffect";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 			//World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
 
 		}
@@ -895,13 +956,7 @@ namespace Entity
 
 			if (World::GetInstance()->Timer(*this, FAST, NODELAY)) {
 
-				//CreateClone(objectSprite, "tx_player.png");
-				itemQueue particles;
-				particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-				particles.properties["itemType"] = "DashEffect";
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-
+				CreateClone(objectSprite, "tx_player.png");
 			}
 
 			if (World::GetInstance()->Timer(*this, 140000.0)) {
@@ -931,7 +986,7 @@ namespace Entity
 
 				frame_pos = (frame_pos >= 5) ? 0 : frame_pos + 1;
 
-				if (!sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsA])) {
+				if (!sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])) {
 
 					objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, movement * FRAME, spriteWidth, spriteHeight));
 					fireDir = movement;
@@ -1056,7 +1111,7 @@ namespace Entity
             // boomerang
 
             
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 5 && PlayerBoomerang::totalBoomerangs < 6 && World::GetInstance()->Timer(*this,SLOW,NODELAY)){
+            else if(World::GetInstance()->GlobalMembers.playerWeapon == 5 && World::GetInstance()->Timer(*this,VERY_SLOW*2,NODELAY)){
                 
                 itemQueue bullet;
                 bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -1239,7 +1294,7 @@ namespace Entity
         objectSprite.move(x,y);
         SetEffectOrigin();
         maxFrame = 4;
-        animSpeed = FAST;
+        animSpeed = VERY_FAST;
 
     }
     
@@ -1263,12 +1318,31 @@ namespace Entity
         
     }
 
+	ShieldEffect::ShieldEffect() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(25, 143, 17, 41));
+		SetEffectOrigin();
+		maxFrame = 7;
+		animSpeed = VERY_FAST;
+
+	}
+
+	BlockedEffect::BlockedEffect() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(42, 143, 19, 19));
+		SetEffectOrigin();
+		maxFrame = 6;
+		animSpeed = VERY_FAST;
+
+	}
+
 	DashEffect::DashEffect() : Fixed() {
 
-		objectSprite.setTextureRect(sf::IntRect(34, 10, 9, 20));
+		objectSprite.setTextureRect(sf::IntRect(0, 310, 63, 13));
 		SetCharacterOrigin();
-		maxFrame = 5;
-		animSpeed = VERY_FAST;
+		maxFrame = 8;
+		animSpeed = FAST;
+		deacceleration = 5;
 
 	}
     
@@ -2264,15 +2338,52 @@ namespace Entity
 
 	void Projectile::HasCollided(const std::unique_ptr<Entity::Object>& a) {
 
-		if (a->velZ == 0) {
+		Entity::Object* obj = a.get();
+		Entity::Enemy* pobj = dynamic_cast<Entity::Enemy*>(obj);
 
-			if (World::GetInstance()->Timer(this, NORMAL, NODELAY)) {
+		if (pobj->active == true) {
 
-				a->isCollided(damage);
-				misDestroyed = destroyOnImpact;
+			if (a->velZ >= -3) {
+
+				if (World::GetInstance()->Timer(this, NORMAL, NODELAY)) {
+
+					a->isCollided(damage);
+					misDestroyed = destroyOnImpact;
+
+					if (pobj->defending == false) {
+
+						itemQueue particles;
+						particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+						particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+						particles.properties["itemType"] = "DamageSpark";
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+						particles.properties["itemType"] = "Spark";
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+						World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_badhit2");
+
+					}
+
+					if (pobj->defending == true) {
+
+						itemQueue particles;
+						particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+						particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+						particles.properties["itemType"] = "ShieldEffect";
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+						World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_block");
+
+
+					}
+
+
+				}
 
 			}
-
 		}
 
 	}
@@ -2396,7 +2507,14 @@ namespace Entity
 	DashEffect::~DashEffect() {
 
 	}
+
+	BlockedEffect::~BlockedEffect() {
+
+	}
     
+	ShieldEffect::~ShieldEffect() {
+
+	}
     
     HitNum::~HitNum()
     {
@@ -2811,7 +2929,7 @@ namespace Entity
         SetCharacterOrigin();
         SetShadow();
         type = "Actor";
-        SetHitBox(sf::Vector2f(40,40),0);
+        SetHitBox(sf::Vector2f(100,100),0);
         
     }
     
@@ -2937,14 +3055,14 @@ namespace Entity
     
     Squid::Squid() : Enemy()
     {
-        objectSprite.setTextureRect(sf::IntRect (0,59,64,52));
+        objectSprite.setTextureRect(sf::IntRect (0,60,35,46));
         SetCharacterOrigin();
         SetShadow();
         moveType = NORMAL;
         speed = 0.5;
         health = 30;
         hasAttack = 1;
-        SetHitBox(sf::Vector2f(20,20),1);
+        SetHitBox(sf::Vector2f(24,43),1);
 		flatAnimation = false;
 		enemyMode = 1;
     
@@ -4071,32 +4189,13 @@ namespace Entity
      
 			if (!defending) {
 
-				if (active) {
-
 					if (moveType == NORMAL) vel.y = 0;
 
 					int newDamage = GetRandDmg(damage);
 					health -= newDamage;
 					hurt = true;
-					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_badhit2");
 
 				}
-
-				itemQueue particles;
-				particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-				particles.properties["itemType"] = "DamageSpark";
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-
-				particles.properties["itemType"] = "Spark";
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-
-			}
-
-			else World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_block");
-
 
     }
     

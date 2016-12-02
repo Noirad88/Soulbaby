@@ -146,7 +146,11 @@ namespace Level
             lvlSize.y = mapvec.y*16;
             
             // Create the boss and player
-            
+            Entity::itemQueue guide;
+			guide.properties["itemType"] = "Guide";
+			guide.properties["PosX"] = std::to_string(1);
+			guide.properties["PosY"] = std::to_string(1);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(guide);
            
           
             delete loader;

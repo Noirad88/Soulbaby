@@ -50,6 +50,14 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "Guide")
+			{
+
+				std::unique_ptr<Entity::Guide> ptr(new Entity::Guide);
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "Textbox")
             {
@@ -146,6 +154,24 @@ void Container::AddObjects()
 			{
 
 				std::unique_ptr<Entity::EnemySpark> ptr(new Entity::EnemySpark);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "ShieldEffect")
+			{
+
+				std::unique_ptr<Entity::ShieldEffect> ptr(new Entity::ShieldEffect);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "BlockedEffect")
+			{
+
+				std::unique_ptr<Entity::BlockedEffect> ptr(new Entity::BlockedEffect);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
 				ObjectContainer.push_back(std::move(ptr));
 
@@ -716,13 +742,17 @@ void Container::CheckCollisions(){
     
         for(int i = 0; i != typeInZone.size(); i++)
         {
-            //std::cout << "in prop zone: " << ObjectContainer.at(typeInZone.at(i))->type << std::endl;
+
             if(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds())){
                 
-                
-                //launch is collided for interaction manager; pass variable
-                // show interaction manager if not already up
-                // set string to relative (i.e., "Talk to Mozza" "Purge gate")
+				sf::Vector2f newvec = ObjectContainer.at(typeInZone.at(i))->objectSprite.getPosition();
+				sf::Vector2f neworigin = ObjectContainer.at(typeInZone.at(i))->objectSprite.getOrigin();
+
+				newvec -= neworigin;
+				newvec.x += ObjectContainer.at(typeInZone.at(i))->objectSprite.getTextureRect().width / 2;
+
+
+				World::GetInstance()->WorldScene.guidePtr->SetTarget(newvec);
                 
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::X))ObjectContainer.at(typeInZone.at(i))->isCollided();
                 
