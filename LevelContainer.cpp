@@ -101,7 +101,7 @@ namespace Level
                     
                     
                     int doorPath = stoi(it->getProperty("Path").erase(0,it->getProperty("Path").find("_")+1));
-                    std::cout << "door path(" << doorPath << "): " << World::GetInstance()->GlobalMembers.levelsCompleted.at(doorPath) << " = " << NOTCOMPLETED << std::endl;
+                    //std::cout << "door path(" << doorPath << "): " << World::GetInstance()->GlobalMembers.levelsCompleted.at(doorPath) << " = " << NOTCOMPLETED << std::endl;
                     item.properties["PosX"] = to_string(it->getXposition());
                     item.properties["PosY"] = to_string(it->getYposition());
                     item.properties["Path"] = it->getProperty("Path");
@@ -145,7 +145,9 @@ namespace Level
             lvlSize.x = mapvec.x*16;
             lvlSize.y = mapvec.y*16;
             
-            // Create the boss and player
+
+            // Create the guide (for interactions)
+
             Entity::itemQueue guide;
 			guide.properties["itemType"] = "Guide";
 			guide.properties["PosX"] = std::to_string(1);
@@ -158,8 +160,7 @@ namespace Level
         }
         
         if(sceneType == ENCOUNTER){
-            
-            
+             
             Entity::itemQueue enemyManager;
             enemyManager.properties["itemType"] = "LevelManager";
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemyManager);
@@ -187,7 +188,7 @@ namespace Level
     
     void LevelContainer::CreateBoss(){
         
-        std::cout << "Creating Boss ..." << std::endl;
+        //std::cout << "Creating Boss ..." << std::endl;
         Entity::itemQueue boss;
         boss.properties["itemType"] = "Boss";
         boss.properties["PosX"] = to_string(560);
@@ -217,7 +218,6 @@ namespace Level
             std::cout << posX << " |aa " << posY << std::endl;
             player.properties["PosX"] = to_string(posX);
             player.properties["PosY"] = to_string(posY);
-            std::cout << player.properties["PosX"] << " |aa " << player.properties["PosY"] << std::endl;
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(player);
             
             
@@ -233,7 +233,7 @@ namespace Level
     
     void LevelContainer::CreateHud(){
         
-        std::cout << "Creating Hud ..." << std::endl;
+        //std::cout << "Creating Hud ..." << std::endl;
         Entity::itemQueue hud;
         hud.properties["itemType"] = "Hud";
         World::GetInstance()->WorldScene.objectContainer->Queue.push_back(hud);
@@ -242,7 +242,7 @@ namespace Level
     
     void LevelContainer::CreateMenu(){
         
-        std::cout << "Creating Menu..." << std::endl;
+        //std::cout << "Creating Menu..." << std::endl;
         Entity::itemQueue menu;
         menu.properties["itemType"] = "Menu";
         World::GetInstance()->WorldScene.objectContainer->Queue.push_back(menu);

@@ -715,25 +715,28 @@ void Container::CheckCollisions(){
     
     //get all enemy projectiles to compare to player
         
-   objectsInZone = GetObjectsInZone(World::GetInstance()->WorldScene.playerPtr->zone);
-    typeInZone = GetEnemyProjectileObjects(objectsInZone);
-        
-        for(int i = 0; i != typeInZone.size(); i++)
-        {
-            
-            if(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && World::GetInstance()->WorldScene.playerPtr->dashing == false) 
-		
-			
-            
-{
-                
-                World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
-                World::GetInstance()->WorldScene.audioContainer.music.stop();
-                World::GetInstance()->ReadyScene("map2_1");
-                
-            }
-            
-        }
+	if (World::GetInstance()->WorldScene.playerPtr != nullptr) {
+
+		objectsInZone = GetObjectsInZone(World::GetInstance()->WorldScene.playerPtr->zone);
+		typeInZone = GetEnemyProjectileObjects(objectsInZone);
+
+		for (int i = 0; i != typeInZone.size(); i++)
+		{
+
+			if (ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && World::GetInstance()->WorldScene.playerPtr->dashing == false)
+
+
+
+			{
+
+				World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
+				World::GetInstance()->WorldScene.audioContainer.music.stop();
+				World::GetInstance()->ReadyScene("map2_1");
+
+			}
+
+		}
+	}
     
     
     //check prop/actor collison

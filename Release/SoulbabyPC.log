@@ -1,4 +1,123 @@
-﻿  Particle.cpp
+﻿  Container.cpp
+  Unknown compiler version - please run the configure tests and report the results
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(36): warning C4005: 'NORMAL': macro redefinition
+  c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(35): note: see previous definition of 'NORMAL'
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(43): warning C4005: 'FAR': macro redefinition
+  C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h(150): note: see previous definition of 'FAR'
+Container.cpp(19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(102): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(111): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(120): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(129): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(139): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(148): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(157): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(166): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(175): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(184): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(193): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(202): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(210): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(211): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Container.cpp(212): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Container.cpp(223): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(224): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Container.cpp(238): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(239): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Container.cpp(256): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(257): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Container.cpp(271): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(272): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Container.cpp(279): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(288): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(293): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(302): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(307): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(316): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(321): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(330): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(333): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(343): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(353): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(362): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(371): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(380): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(394): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(403): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(412): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(421): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(430): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(439): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(448): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(457): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(466): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(475): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(484): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(493): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(503): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(512): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(514): warning C4244: 'argument': conversion from 'std::size_t' to 'float', possible loss of data
+Container.cpp(522): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Container.cpp(779): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+Container.cpp(780): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+Container.cpp(781): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+Container.cpp(782): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+Container.cpp(786): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Container.cpp(787): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Container.cpp(788): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Container.cpp(789): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  LevelContainer.cpp
+  Unknown compiler version - please run the configure tests and report the results
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(36): warning C4005: 'NORMAL': macro redefinition
+  c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(35): note: see previous definition of 'NORMAL'
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(43): warning C4005: 'FAR': macro redefinition
+  C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h(150): note: see previous definition of 'FAR'
+LevelContainer.cpp(56): warning C4018: '<': signed/unsigned mismatch
+LevelContainer.cpp(72): warning C4018: '<': signed/unsigned mismatch
+LevelContainer.cpp(74): warning C4018: '<': signed/unsigned mismatch
+LevelContainer.cpp(145): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+LevelContainer.cpp(146): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+LevelContainer.cpp(335): warning C4305: 'argument': truncation from 'double' to 'float'
+LevelContainer.cpp(337): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+LevelContainer.cpp(341): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(342): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+LevelContainer.cpp(352): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+LevelContainer.cpp(353): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(354): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+LevelContainer.cpp(360): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+LevelContainer.cpp(361): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(480): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(508): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(512): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(518): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(526): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(537): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(543): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(551): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(555): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+LevelContainer.cpp(560): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+LevelContainer.cpp(587): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(614): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(617): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(623): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(631): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(635): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+LevelContainer.cpp(663): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(667): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(674): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(683): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(698): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(704): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(714): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+LevelContainer.cpp(753): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(754): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(755): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(756): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(783): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(795): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(802): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+LevelContainer.cpp(814): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  Particle.cpp
   Unknown compiler version - please run the configure tests and report the results
 C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(36): warning C4005: 'NORMAL': macro redefinition
   c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(35): note: see previous definition of 'NORMAL'
@@ -16,76 +135,76 @@ Particle.cpp(356): warning C4018: '<': signed/unsigned mismatch
 Particle.cpp(358): warning C4018: '<=': signed/unsigned mismatch
 Particle.cpp(426): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
 Particle.cpp(579): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data
-Particle.cpp(694): warning C4305: 'argument': truncation from 'double' to 'float'
-Particle.cpp(788): warning C4305: 'argument': truncation from 'double' to 'float'
+Particle.cpp(695): warning C4305: 'argument': truncation from 'double' to 'float'
+Particle.cpp(789): warning C4305: 'argument': truncation from 'double' to 'float'
+Particle.cpp(964): warning C4305: '*=': truncation from 'double' to 'float'
 Particle.cpp(965): warning C4305: '*=': truncation from 'double' to 'float'
-Particle.cpp(966): warning C4305: '*=': truncation from 'double' to 'float'
-Particle.cpp(1215): warning C4305: '=': truncation from 'double' to 'float'
-Particle.cpp(1227): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(1295): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(1317): warning C4305: '=': truncation from 'double' to 'float'
-Particle.cpp(1390): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(1406): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(1424): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(1434): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(1438): warning C4305: '=': truncation from 'double' to 'float'
-Particle.cpp(1485): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
-Particle.cpp(1485): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(1663): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(1698): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(1725): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(1761): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(1904): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(1906): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(1934): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(1944): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(1214): warning C4305: '=': truncation from 'double' to 'float'
+Particle.cpp(1226): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(1294): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(1316): warning C4305: '=': truncation from 'double' to 'float'
+Particle.cpp(1389): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(1405): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(1423): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(1433): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(1437): warning C4305: '=': truncation from 'double' to 'float'
+Particle.cpp(1484): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
+Particle.cpp(1484): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(1662): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(1697): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(1724): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(1760): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(1903): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(1905): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(1933): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(1943): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(2038): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
 Particle.cpp(2039): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-Particle.cpp(2040): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-Particle.cpp(2249): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(2257): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Particle.cpp(2308): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Particle.cpp(2427): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(2891): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-Particle.cpp(2911): warning C4305: 'argument': truncation from 'double' to 'float'
-Particle.cpp(2947): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(2984): warning C4305: 'argument': truncation from 'double' to 'float'
+Particle.cpp(2248): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(2256): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+Particle.cpp(2307): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+Particle.cpp(2426): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(2890): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+Particle.cpp(2910): warning C4305: 'argument': truncation from 'double' to 'float'
+Particle.cpp(2946): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(2983): warning C4305: 'argument': truncation from 'double' to 'float'
+Particle.cpp(3155): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 Particle.cpp(3156): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(3157): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(3160): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(3168): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(3179): warning C4305: '+=': truncation from 'double' to 'float'
-Particle.cpp(3180): warning C4305: '-=': truncation from 'double' to 'float'
-Particle.cpp(3181): warning C4305: '+=': truncation from 'double' to 'float'
-Particle.cpp(3182): warning C4305: '-=': truncation from 'double' to 'float'
-Particle.cpp(3213): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(3223): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(3242): warning C4305: '+=': truncation from 'double' to 'float'
+Particle.cpp(3159): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(3167): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(3178): warning C4305: '+=': truncation from 'double' to 'float'
+Particle.cpp(3179): warning C4305: '-=': truncation from 'double' to 'float'
+Particle.cpp(3180): warning C4305: '+=': truncation from 'double' to 'float'
+Particle.cpp(3181): warning C4305: '-=': truncation from 'double' to 'float'
+Particle.cpp(3212): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(3222): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(3241): warning C4305: '+=': truncation from 'double' to 'float'
+Particle.cpp(3260): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 Particle.cpp(3261): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(3262): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(3285): warning C4805: '==': unsafe mix of type 'int' and type 'bool' in operation
+Particle.cpp(3284): warning C4805: '==': unsafe mix of type 'int' and type 'bool' in operation
+Particle.cpp(3400): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 Particle.cpp(3401): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(3402): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(3507): warning C4018: '>': signed/unsigned mismatch
-Particle.cpp(3579): warning C4018: '<': signed/unsigned mismatch
-Particle.cpp(3608): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(3506): warning C4018: '>': signed/unsigned mismatch
+Particle.cpp(3578): warning C4018: '<': signed/unsigned mismatch
+Particle.cpp(3607): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(3914): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 Particle.cpp(3915): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(3916): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(4036): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(4088): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(4092): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(4098): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(4106): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(4117): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-Particle.cpp(4123): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(4131): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(4035): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(4087): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(4091): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(4097): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(4105): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(4116): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Particle.cpp(4122): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(4130): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(4163): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 Particle.cpp(4164): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(4165): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(4171): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-Particle.cpp(4278): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-Particle.cpp(4284): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-Particle.cpp(4290): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-Particle.cpp(4296): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(274): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+Particle.cpp(4170): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Particle.cpp(4277): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+Particle.cpp(4283): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+Particle.cpp(4289): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+Particle.cpp(4295): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(281): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   Particle.cpp(174): note: see reference to function template instantiation 'bool World::Timer<Entity::Menu,double,int>(T &,I,O)' being compiled
           with
           [
@@ -93,18 +212,60 @@ c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\Worl
               I=double,
               O=int
           ]
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(274): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-  Particle.cpp(861): note: see reference to function template instantiation 'bool World::Timer<Entity::Player,int,int>(T &,I,O)' being compiled
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(281): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  Particle.cpp(860): note: see reference to function template instantiation 'bool World::Timer<Entity::Player,int,int>(T &,I,O)' being compiled
           with
           [
               T=Entity::Player,
               I=int,
               O=int
           ]
+  Tile.cpp
+  Unknown compiler version - please run the configure tests and report the results
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(36): warning C4005: 'NORMAL': macro redefinition
+  c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(35): note: see previous definition of 'NORMAL'
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(43): warning C4005: 'FAR': macro redefinition
+  C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h(150): note: see previous definition of 'FAR'
+Tile.cpp(27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Tile.cpp(29): warning C4244: '=': conversion from 'const float' to 'int', possible loss of data
+Tile.cpp(30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+Tile.cpp(31): warning C4244: '=': conversion from 'const float' to 'int', possible loss of data
+Tile.cpp(32): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+Tile.cpp(40): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Tile.cpp(88): warning C4244: '=': conversion from 'const float' to 'int', possible loss of data
+Tile.cpp(89): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+Tile.cpp(90): warning C4244: '=': conversion from 'const float' to 'int', possible loss of data
+Tile.cpp(91): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+Tile.cpp(120): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+Tile.cpp(121): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  World.cpp
+  Unknown compiler version - please run the configure tests and report the results
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(36): warning C4005: 'NORMAL': macro redefinition
+  c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(35): note: see previous definition of 'NORMAL'
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(43): warning C4005: 'FAR': macro redefinition
+  C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h(150): note: see previous definition of 'FAR'
+World.cpp(45): warning C4244: 'argument': conversion from 'float' to 'sf::Uint8', possible loss of data
+World.cpp(46): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+World.cpp(73): warning C4244: 'argument': conversion from 'float' to 'sf::Uint8', possible loss of data
+World.cpp(408): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+World.cpp(409): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+World.cpp(411): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+World.cpp(412): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+World.cpp(544): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+World.cpp(545): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+World.cpp(560): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+World.cpp(598): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  main.cpp
+  Unknown compiler version - please run the configure tests and report the results
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(36): warning C4005: 'NORMAL': macro redefinition
+  c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(35): note: see previous definition of 'NORMAL'
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(43): warning C4005: 'FAR': macro redefinition
+  C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h(150): note: see previous definition of 'FAR'
+main.cpp(73): warning C4244: '=': conversion from 'sf::Int64' to 'float', possible loss of data
   Generating code
-  1 of 5900 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  27 of 5906 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
+    8 functions were new in current compilation
+    44 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   SoulbabyPC.vcxproj -> C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\Release\SoulbabyPC.exe
   SoulbabyPC.vcxproj -> C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\Release\SoulbabyPC.pdb (Full PDB)

@@ -642,6 +642,8 @@ namespace Entity
 		weapon2slot.at(0) = 23;
 		weapon2slot.at(1) = 0;
 
+		std::cout << "viewPos = " << World::GetInstance()->viewPos.x << std::endl;
+
 		objectSprite.setPosition(World::GetInstance()->viewPos.x - 230, World::GetInstance()->viewPos.y - 125);
 		weapon1.setPosition(World::GetInstance()->viewPos.x - 224 + weapon1slot.at(switching), World::GetInstance()->viewPos.y - 111);
 		weapon2.setPosition(World::GetInstance()->viewPos.x - 224 + weapon2slot.at(switching), World::GetInstance()->viewPos.y - 111);
@@ -789,8 +791,6 @@ namespace Entity
         dead = false;
         if(!World::GetInstance()->CameraTarget) World::GetInstance()->SetCameraTarget(*this);
 
-        
-        
     }
     
     Player::~Player(){

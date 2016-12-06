@@ -14,6 +14,24 @@ class Container;
 
 sf::Clock World::clock2;
 
+void Transition::Update() {
+
+	if (!hasLoadedScene) FadeOut();
+	else FadeIn();
+	Draw();
+
+}
+
+void Transition::LoadScene() {
+
+	World::GetInstance()->LoadScene(destination);
+	World::GetInstance()->viewPos.x = 240;
+	World::GetInstance()->Screen.setCenter(World::GetInstance()->viewPos.x, 160);
+	hasLoadedScene = true;
+
+}
+
+
 Fade::Fade(std::string mapName,bool dir ) : Transition(mapName)
 {
 
@@ -22,51 +40,49 @@ Fade::Fade(std::string mapName,bool dir ) : Transition(mapName)
     
     direction = dir;
     overlay.setPosition(0,0);
-    overlay.setSize(sf::Vector2f(500,500));
+    overlay.setSize(sf::Vector2f(1000,1000));
+	overlay.setOrigin(500, 500);
     overlay.setFillColor(sf::Color(0,0,0,transparency));
     transparency = (direction == TRANIN) ? 255 : 0;
+
 }
 
-void Fade::Update(){
-    
-    overlay.setPosition(World::GetInstance()->viewPos.x -240, World::GetInstance()->viewPos.x - 135);
- 
-    
-    if(direction == TRANIN){
-        
-        transparency-= 5;
-        
-        if (transparency <= 0) isDone = true;
-        
-    }
-    
-    else{
-        
-        if(Entity::Player::dead) transparency += 1;
-        else transparency+= 5;
-        
-            if(transparency >= 255){
-                
-                World::GetInstance()->LoadScene(destination);
-                overlay.setPosition(World::GetInstance()->Screen.getCenter().x -240,0);
-                World::GetInstance()->viewPos.x = 240;
-                World::GetInstance()->Screen.setCenter(World::GetInstance()->viewPos.x,160);
-                isDone = true;
-                
-            }
-        
-    }
-    
-    overlay.setFillColor(sf::Color(0,0,0,transparency));
-    World::GetInstance()->windowWorld->draw(overlay);
-    
+void Fade::FadeIn() {
+
+	overlay.setPosition(World::GetInstance()->viewPos.x - 240, World::GetInstance()->viewPos.y - 135);
+
+	transparency -= 2.5;
+
+	if (transparency <= 0) isDone = true;
+
+}
+
+void Fade::FadeOut() {
+
+	overlay.setPosition(World::GetInstance()->viewPos.x - 240, World::GetInstance()->viewPos.y - 135);
+
+	transparency += 2.5;
+
+	if (transparency >= 255) LoadScene();
+
+}
+
+void Fade::Draw() {
+
+	std::cout << overlay.getPosition().x << ", " << overlay.getPosition().y << std::endl;
+	overlay.setFillColor(sf::Color(0, 0, 0, transparency));
+	World::GetInstance()->windowWorld->draw(overlay);
 }
 
 void World::UpdateTransition(){
     
     WorldScene.transition->Update();
     
-    if(WorldScene.transition->isDone) WorldScene.transition.reset();
+	if (WorldScene.transition->isDone) {
+
+		WorldScene.transition.reset();
+
+	}
     
 
 }
@@ -127,14 +143,9 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
 
 void World::ReadyScene(std::string mapName){
     
-    if(!WorldScene.transition){
-    
-   
-            WorldScene.transition = std::unique_ptr<Transition> (new Fade(mapName,TRANOUT));
-    
-        
-    }
-    
+	WorldScene.isLoaded = false;
+   WorldScene.transition = std::unique_ptr<Transition>(new Fade(mapName, TRANOUT));
+
 }
 
 void World::LoadScene(std::string sceneName){
@@ -147,7 +158,8 @@ void World::LoadScene(std::string sceneName){
         WorldScene.levelContainer->CreateScene();
         WorldScene.isLoaded = true;
         std::cout << "Done Loading" << CurrentScene->name << std::endl;
-        //if(sceneName != "battle") WorldScene.transition = std::unique_ptr<Transition> (new Fade("",TRANIN));
+
+
 }
 
 void World::LoadSceneBank(){
@@ -176,89 +188,87 @@ void World::ResetScene(){
     
 }
 
-void World::Run(sf::Event& event, float timestamp, sf::Clock& clock){
-    
-    UpdateTime(timestamp);
-    eventWorld = &event;
-    
-    if(Timer(*this,100.0f)){
-        
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0)){
-            
-            GlobalMembers.playerWeapon = 0;
-            
-        }
-        
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)){
-            
-            GlobalMembers.playerWeapon = 1;
-            
-        }
-        
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)){
-            
-            GlobalMembers.playerWeapon = 2;
-            
-        }
-        
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)){
-            
-            GlobalMembers.playerWeapon = 3;
-            
-        }
-        
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)){
-            
-            GlobalMembers.playerWeapon = 4;
-            
-        }
-        
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num7)){
-            
-            ReadyScene("menu");
-            
-        }
-        
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::T)){
-            
-            ReadyScene("battle");
-            
-        }
-        
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num8)){
-            
-            ReadyScene("map1");
-            
-        }
-        
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)){
-            
-            ReadyScene("map2_1");
-            
-        }
-        
-    }
+void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 
-    if(WorldScene.isLoaded){
-        
-        WorldScene.objectContainer->AddObjects();
-        WorldScene.objectContainer->RemoveObjects();
-        WorldScene.objectContainer->UpdateObjects();
-        
-        
-            WorldScene.levelContainer->Update();
-            WorldScene.textureContainer.Update();
-    
-        
-        WorldScene.objectContainer->CheckCollisions();
-        WorldScene.levelContainer->CheckCollisions();
-         
-        UpdateCamera();
-         
-        WorldScene.levelContainer->DrawLevel();
-        WorldScene.objectContainer->DrawObjects(*windowWorld,*this);
-        if(CurrentScene->mapType != ENCOUNTER) WorldScene.levelContainer->DrawBGTop();
-    }
+	UpdateTime(timestamp);
+	eventWorld = &event;
+
+	if (Timer(*this, 100.0f)) {
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0)) {
+
+			GlobalMembers.playerWeapon = 0;
+
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+
+			GlobalMembers.playerWeapon = 1;
+
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+
+			GlobalMembers.playerWeapon = 2;
+
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
+
+			GlobalMembers.playerWeapon = 3;
+
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
+
+			GlobalMembers.playerWeapon = 4;
+
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num7)) {
+
+			ReadyScene("menu");
+
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+
+			ReadyScene("battle");
+
+		}
+
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num8)) {
+
+			ReadyScene("map1");
+
+		}
+
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)) {
+
+			ReadyScene("map2_1");
+
+		}
+
+	}
+
+
+		WorldScene.objectContainer->AddObjects();
+		WorldScene.objectContainer->RemoveObjects();
+		WorldScene.objectContainer->UpdateObjects();
+
+
+		WorldScene.levelContainer->Update();
+		WorldScene.textureContainer.Update();
+
+		WorldScene.objectContainer->CheckCollisions();
+		WorldScene.levelContainer->CheckCollisions();
+
+		UpdateCamera(); 
+
+		WorldScene.levelContainer->DrawLevel();
+		WorldScene.objectContainer->DrawObjects(*windowWorld, *this);
+		if (CurrentScene->mapType != ENCOUNTER) WorldScene.levelContainer->DrawBGTop();
+
     
     if(WorldScene.transition) UpdateTransition();
      
@@ -335,9 +345,6 @@ void World::UpdateCamera(){
         
         sf::Vector2f view = Screen.getCenter();
         sf::Vector2f size = Screen.getSize();
-        
-        //Screen.zoom(0.001 * sin((World::clock2.getElapsedTime().asSeconds()) /6 * M_PI) + 1);
-        
         
         if(CurrentScene->mapType == ENCOUNTER){
             
@@ -423,6 +430,8 @@ void World::UpdateCamera(){
         
         
     }
+
+
     
 
     

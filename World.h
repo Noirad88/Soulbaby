@@ -103,22 +103,29 @@ struct Transition{
     {
         if(mapName != "") destination = mapName;
     }
+
     std::string destination = "";
-    virtual void Update(){
-        
-    }
+	void Update();
+	void LoadScene();
+	virtual void FadeIn(){}
+	virtual void FadeOut(){}
+	virtual void Draw(){}
     
     bool isDone = false;
+	bool hasLoadedScene = false;
+
     
 };
 
 struct Fade : public Transition{
     
     Fade(std::string mapName = "", bool dir = TRANIN);
-    sf::RectangleShape overlay;
     float transparency = 0;
-    void Update();
+	void FadeIn();
+	void FadeOut();
+	void Draw();
     bool direction = TRANOUT;
+	sf::RectangleShape overlay;
     std::unique_ptr<Entity::Player> playerTemp;
     
     
