@@ -117,19 +117,37 @@ struct Transition{
     
 };
 
-struct Fade : public Transition{
+struct Fade : public Transition {
+
+	Fade(std::string mapName = "", bool dir = TRANIN);
+	float spriteFrameCount = 0;
+	float transparency = 0;
+	void FadeIn();
+	void FadeOut();
+	void Draw();
+	bool direction = TRANOUT;
+	sf::RectangleShape overlay;
+
+
+};
+
+struct BlockFade : public Transition{
     
-    Fade(std::string mapName = "", bool dir = TRANIN);
-    float transparency = 0;
+    BlockFade(std::string mapName = "", bool dir = TRANIN);
 	void FadeIn();
 	void FadeOut();
 	void Draw();
     bool direction = TRANOUT;
-	sf::RectangleShape overlay;
-    std::unique_ptr<Entity::Player> playerTemp;
+	sf::Sprite tile;
+	int fadeProgress = 0;
+	sf::Vector2f camPos;
+	int spriteSize = 30;
+	int maxWidth = 470;
+	int maxHeight = 270;
     
     
 };
+
 
 
 struct Scene{

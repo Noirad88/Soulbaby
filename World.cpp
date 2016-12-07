@@ -74,6 +74,64 @@ void Fade::Draw() {
 	World::GetInstance()->windowWorld->draw(overlay);
 }
 
+BlockFade::BlockFade(std::string mapName, bool dir) : Transition(mapName)
+{
+
+	tile.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+	tile.setTextureRect(sf::IntRect(48, 48, 32, 32));
+
+}
+
+void BlockFade::FadeIn() {
+	
+	isDone = true;
+
+}
+
+void BlockFade::FadeOut() {
+
+	tile.setPosition(World::GetInstance()->viewPos.x - 240, World::GetInstance()->viewPos.y - 135);
+	camPos = tile.getPosition();
+	std::cout << fadeProgress << std::endl;
+
+	if (fadeProgress < maxWidth*2) {
+
+		if (World::GetInstance()->Timer(*this, NORMAL)) {
+
+			fadeProgress += spriteSize;
+
+		}
+	}
+
+	else {
+
+		LoadScene();
+		fadeProgress = 0;
+	}
+
+}
+
+void BlockFade::Draw() {
+
+	for (int i = 0; i != fadeProgress; i += spriteSize) {
+
+		for (int p = 0; p != maxHeight; p += spriteSize) {
+
+			int frame = fadeProgress - i;
+			if (frame > 150) frame = 150;
+			//std::cout << "frame = " << frame << std::endl;
+
+			tile.setPosition(camPos.x + i, camPos.y + p);
+			tile.setTextureRect(sf::IntRect(48 + frame, 48, spriteSize, spriteSize));
+			World::GetInstance()->windowWorld->draw(tile);
+
+		}
+
+		
+	}
+
+}
+
 void World::UpdateTransition(){
     
     WorldScene.transition->Update();
@@ -144,7 +202,7 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
 void World::ReadyScene(std::string mapName){
     
 	WorldScene.isLoaded = false;
-   WorldScene.transition = std::unique_ptr<Transition>(new Fade(mapName, TRANOUT));
+   WorldScene.transition = std::unique_ptr<Transition>(new BlockFade(mapName, TRANOUT));
 
 }
 
