@@ -102,6 +102,9 @@ struct Transition{
     Transition(std::string mapName = "")
     {
         if(mapName != "") destination = mapName;
+		tranOverlay.setSize(sf::Vector2f(1000, 1000));
+		tranOverlay.setOrigin(500, 500);
+		tranOverlay.setFillColor(sf::Color::Black);
     }
 
     std::string destination = "";
@@ -109,10 +112,12 @@ struct Transition{
 	void LoadScene();
 	virtual void FadeIn(){}
 	virtual void FadeOut(){}
-	virtual void Draw(){}
+	virtual void Draw();
     
     bool isDone = false;
 	bool hasLoadedScene = false;
+	sf::RectangleShape tranOverlay;
+
 
     
 };

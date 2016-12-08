@@ -4,19 +4,20 @@ C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Part
   c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(35): note: see previous definition of 'NORMAL'
 C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(43): warning C4005: 'FAR': macro redefinition
   C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h(150): note: see previous definition of 'FAR'
-World.cpp(45): warning C4244: 'argument': conversion from 'float' to 'sf::Uint8', possible loss of data
-World.cpp(46): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-World.cpp(73): warning C4244: 'argument': conversion from 'float' to 'sf::Uint8', possible loss of data
-World.cpp(466): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-World.cpp(467): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-World.cpp(469): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-World.cpp(470): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
-World.cpp(602): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-World.cpp(603): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-World.cpp(618): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-World.cpp(656): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(299): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-  World.cpp(99): note: see reference to function template instantiation 'bool World::Timer<BlockFade,int,int>(T &,I,O)' being compiled
+World.cpp(38): warning C4244: 'initializing': conversion from 'const float' to 'int', possible loss of data
+World.cpp(54): warning C4244: 'argument': conversion from 'float' to 'sf::Uint8', possible loss of data
+World.cpp(55): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+World.cpp(82): warning C4244: 'argument': conversion from 'float' to 'sf::Uint8', possible loss of data
+World.cpp(520): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+World.cpp(521): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+World.cpp(523): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+World.cpp(524): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+World.cpp(656): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+World.cpp(657): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+World.cpp(672): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+World.cpp(710): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(304): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  World.cpp(103): note: see reference to function template instantiation 'bool World::Timer<BlockFade,int,int>(T &,I,O)' being compiled
           with
           [
               T=BlockFade,
@@ -24,9 +25,9 @@ c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\Worl
               O=int
           ]
   Generating code
-  1 of 5906 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  3 of 5906 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    59 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   SoulbabyPC.vcxproj -> C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\Release\SoulbabyPC.exe
   SoulbabyPC.vcxproj -> C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\Release\SoulbabyPC.pdb (Full PDB)

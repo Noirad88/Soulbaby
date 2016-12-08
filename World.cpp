@@ -26,8 +26,15 @@ void Transition::LoadScene() {
 
 	World::GetInstance()->LoadScene(destination);
 	World::GetInstance()->viewPos.x = 240;
-	World::GetInstance()->Screen.setCenter(World::GetInstance()->viewPos.x, 160);
+	World::GetInstance()->Screen.setCenter(World::GetInstance()->viewPos.x, World::GetInstance()->viewPos.y);
 	hasLoadedScene = true;
+
+}
+
+void Transition::Draw() {
+
+	tranOverlay.setPosition(World::GetInstance()->Screen.getCenter().x, World::GetInstance()->Screen.getCenter().y);
+	World::GetInstance()->windowWorld->draw(tranOverlay);
 
 }
 
@@ -49,7 +56,7 @@ Fade::Fade(std::string mapName,bool dir ) : Transition(mapName)
 
 void Fade::FadeIn() {
 
-	overlay.setPosition(World::GetInstance()->viewPos.x - 240, World::GetInstance()->viewPos.y - 135);
+	overlay.setPosition(World::GetInstance()->viewPos.x - (World::GetInstance()->viewPos.x / 2), World::GetInstance()->viewPos.y - (World::GetInstance()->viewPos.y / 2));
 
 	transparency -= 2.5;
 
@@ -59,7 +66,7 @@ void Fade::FadeIn() {
 
 void Fade::FadeOut() {
 
-	overlay.setPosition(World::GetInstance()->viewPos.x - 240, World::GetInstance()->viewPos.y - 135);
+	overlay.setPosition(World::GetInstance()->viewPos.x - (World::GetInstance()->viewPos.x/2), World::GetInstance()->viewPos.y - (World::GetInstance()->viewPos.y / 2));
 
 	transparency += 2.5;
 
@@ -84,7 +91,25 @@ BlockFade::BlockFade(std::string mapName, bool dir) : Transition(mapName)
 
 void BlockFade::FadeIn() {
 	
-	isDone = true;
+	tile.setPosition(World::GetInstance()->viewPos.x - 240, World::GetInstance()->viewPos.y - 135);
+	camPos = tile.getPosition();
+
+	if(fadeProgress == 0) Transition::Draw();
+
+	if (fadeProgress < maxWidth * 2) {
+
+		if (World::GetInstance()->Timer(*this,NORMAL)) {
+
+			fadeProgress += spriteSize;
+
+		}
+	}
+
+	else {
+
+		isDone = true;
+	}
+
 
 }
 
@@ -92,11 +117,10 @@ void BlockFade::FadeOut() {
 
 	tile.setPosition(World::GetInstance()->viewPos.x - 240, World::GetInstance()->viewPos.y - 135);
 	camPos = tile.getPosition();
-	std::cout << fadeProgress << std::endl;
 
 	if (fadeProgress < maxWidth*2) {
 
-		if (World::GetInstance()->Timer(*this, NORMAL)) {
+		if (World::GetInstance()->Timer(*this,NORMAL)) {
 
 			fadeProgress += spriteSize;
 
@@ -106,6 +130,7 @@ void BlockFade::FadeOut() {
 	else {
 
 		LoadScene();
+		Transition::Draw();
 		fadeProgress = 0;
 	}
 
@@ -113,21 +138,47 @@ void BlockFade::FadeOut() {
 
 void BlockFade::Draw() {
 
-	for (int i = 0; i != fadeProgress; i += spriteSize) {
+	if (!hasLoadedScene) {
 
-		for (int p = 0; p != maxHeight; p += spriteSize) {
+		for (int i = 0; i != fadeProgress; i += spriteSize) {
 
-			int frame = fadeProgress - i;
-			if (frame > 150) frame = 150;
-			//std::cout << "frame = " << frame << std::endl;
+			for (int p = 0; p != maxHeight; p += spriteSize) {
 
-			tile.setPosition(camPos.x + i, camPos.y + p);
-			tile.setTextureRect(sf::IntRect(48 + frame, 48, spriteSize, spriteSize));
-			World::GetInstance()->windowWorld->draw(tile);
+				int frame = fadeProgress - i;
+				if (frame > 180) frame = 180;
+
+				tile.setPosition(camPos.x + i, camPos.y + p);
+				tile.setTextureRect(sf::IntRect(48 + frame, 48, spriteSize, spriteSize));
+				World::GetInstance()->windowWorld->draw(tile);
+
+			}
+
+
+		}
+	}
+
+	else {
+
+		for (int i = 0; i <= maxWidth; i += spriteSize) {
+
+			for (int p = 0; p != maxHeight; p += spriteSize) {
+
+				int frame = fadeProgress - i;
+				if (frame > 180) frame = 180;
+				if (i >= fadeProgress) frame = 0;
+
+				tile.setPosition(camPos.x + i, camPos.y + p);
+				tile.setTextureRect(sf::IntRect(228 - frame, 48, spriteSize, spriteSize));
+				World::GetInstance()->windowWorld->draw(tile);
+
+			}
+
 
 		}
 
-		
+
+
+
 	}
 
 }
@@ -382,113 +433,114 @@ void World::ScreenShake(int strength){
 
 void World::UpdateCamera(){
     
-    
-    if(CurrentScene->mapType == MAP || ENCOUNTER){
-        
-        //center the camera on player
-        
-        camOrient = 0;
-        vel = 20;
-        
-        //
-        
-        float playerPosX = (Entity::Player::dead == false) ? CameraTarget->objectSprite.getPosition().x + camOrient : Screen.getCenter().x;
-        float playerPosY = (Entity::Player::dead == false) ? CameraTarget->objectSprite.getPosition().y + camOrient : Screen.getCenter().y;
-        
-        //Update the camera position
-        
-        viewPos.x += (playerPosX - Screen.getCenter().x) / vel;
-        viewPos.y += (playerPosY - Screen.getCenter().y) / vel;
-        Screen.setCenter(viewPos.x, viewPos.y);
-        
-        sf::Vector2f view = Screen.getCenter();
-        sf::Vector2f size = Screen.getSize();
-        
-        if(CurrentScene->mapType == ENCOUNTER){
-            
-            // If camera is at the end of the level on the left, stop the camera
-        
-            if(view.x < size.x/2){
-                
-                viewPos.x = size.x/2;
-                Screen.setCenter(size.x/2, viewPos.y);
-                camOrient = 0;
-                vel = 0;
-                
-            }
-            
-            // If right
-            
-            
-            else if(view.x > WorldScene.levelContainer->lvlSize.x-size.x/2){
-                
-                viewPos.x = WorldScene.levelContainer->lvlSize.x-size.x/2;
-                Screen.setCenter(WorldScene.levelContainer->lvlSize.x-size.x/2, viewPos.y);
-                camOrient = 0;
-                vel = 0;
-                
-            }
-            
-            
-            if(view.y > WorldScene.levelContainer->lvlSize.y-size.y/2){
-                
-                viewPos.y = WorldScene.levelContainer->lvlSize.y-size.y/2;
-                Screen.setCenter(viewPos.x, WorldScene.levelContainer->lvlSize.y-size.y/2);
-                camOrient = 0;
-                vel = 0;
-                
-            }
-            
-            else if(view.y < size.y/2){
-                
-                viewPos.y =size.y/2;
-                Screen.setCenter(viewPos.x, size.y/2);
-                camOrient = 0;
-                vel = 0;
-                
-            }
-            
-        }
-        
-        //Pass viewport data to level
-        
-        WorldScene.levelContainer->view = view;
-        
-        // If called to shake the camera ...
-        
-        if(isShaking){
-            
-        //Lower music volume on screenshake
+	if (WorldScene.isLoaded) {
 
-            
-        //if ScreenShake() has been called, shake the screen until back to original position
-            
-            int x = (rand() % quakeStrength) + viewPos.x;
-            int y = rand() % quakeStrength + viewPos.y;
-            
-            Screen.setCenter(x,y);
-            quakeStrength-= 0.5;
-            
-            if(quakeStrength <= 0){
-                
-                isShaking = false;
-                
-            }
-            
-        }
-        
-    }
-    
-    if(CurrentScene->mapType == MENU){
-        
-        viewPos.x = 240;
-        Screen.setCenter(240,135);
-        camOrient = 0;
-        vel = 0;
-        
-        
-    }
+		if (CurrentScene->mapType == MAP || ENCOUNTER) {
 
+			//center the camera on player
+
+			camOrient = 0;
+			vel = 20;
+
+			//
+
+			float playerPosX = (Entity::Player::dead == false) ? CameraTarget->objectSprite.getPosition().x + camOrient : Screen.getCenter().x;
+			float playerPosY = (Entity::Player::dead == false) ? CameraTarget->objectSprite.getPosition().y + camOrient : Screen.getCenter().y;
+
+			//Update the camera position
+
+			viewPos.x += (playerPosX - Screen.getCenter().x) / vel;
+			viewPos.y += (playerPosY - Screen.getCenter().y) / vel;
+			Screen.setCenter(viewPos.x, viewPos.y);
+
+			sf::Vector2f view = Screen.getCenter();
+			sf::Vector2f size = Screen.getSize();
+
+			if (CurrentScene->mapType == ENCOUNTER) {
+
+				// If camera is at the end of the level on the left, stop the camera
+
+				if (view.x < size.x / 2) {
+
+					viewPos.x = size.x / 2;
+					Screen.setCenter(size.x / 2, viewPos.y);
+					camOrient = 0;
+					vel = 0;
+
+				}
+
+				// If right
+
+
+				else if (view.x > WorldScene.levelContainer->lvlSize.x - size.x / 2) {
+
+					viewPos.x = WorldScene.levelContainer->lvlSize.x - size.x / 2;
+					Screen.setCenter(WorldScene.levelContainer->lvlSize.x - size.x / 2, viewPos.y);
+					camOrient = 0;
+					vel = 0;
+
+				}
+
+
+				if (view.y > WorldScene.levelContainer->lvlSize.y - size.y / 2) {
+
+					viewPos.y = WorldScene.levelContainer->lvlSize.y - size.y / 2;
+					Screen.setCenter(viewPos.x, WorldScene.levelContainer->lvlSize.y - size.y / 2);
+					camOrient = 0;
+					vel = 0;
+
+				}
+
+				else if (view.y < size.y / 2) {
+
+					viewPos.y = size.y / 2;
+					Screen.setCenter(viewPos.x, size.y / 2);
+					camOrient = 0;
+					vel = 0;
+
+				}
+
+			}
+
+			//Pass viewport data to level
+
+			WorldScene.levelContainer->view = view;
+
+			// If called to shake the camera ...
+
+			if (isShaking) {
+
+				//Lower music volume on screenshake
+
+
+				//if ScreenShake() has been called, shake the screen until back to original position
+
+				int x = (rand() % quakeStrength) + viewPos.x;
+				int y = rand() % quakeStrength + viewPos.y;
+
+				Screen.setCenter(x, y);
+				quakeStrength -= 0.5;
+
+				if (quakeStrength <= 0) {
+
+					isShaking = false;
+
+				}
+
+			}
+
+		}
+
+		if (CurrentScene->mapType == MENU) {
+
+			viewPos.x = 240;
+			Screen.setCenter(240, 135);
+			camOrient = 0;
+			vel = 0;
+
+
+		}
+	}
 
     
 
