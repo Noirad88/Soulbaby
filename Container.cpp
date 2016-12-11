@@ -715,8 +715,10 @@ void Container::CheckCollisions(){
     
     //get all enemy projectiles to compare to player
         
-	if (World::GetInstance()->WorldScene.playerPtr != nullptr) {
 
+	if (World::GetInstance()->WorldScene.playerPtr->misDestroyed != true) {
+
+		std::cout << "playerptr = " << World::GetInstance()->WorldScene.playerPtr << std::endl;
 		objectsInZone = GetObjectsInZone(World::GetInstance()->WorldScene.playerPtr->zone);
 		typeInZone = GetEnemyProjectileObjects(objectsInZone);
 

@@ -62,6 +62,9 @@ void Fade::FadeIn() {
 
 	if (transparency <= 0) isDone = true;
 
+	std::cout << World::GetInstance()->viewPos.x - (World::GetInstance()->viewPos.x / 2) << " " << overlay.getPosition().x << std::endl;
+	std::cout << World::GetInstance()->viewPos.y - (World::GetInstance()->viewPos.y / 2) << " " << overlay.getPosition().y << std::endl;
+
 }
 
 void Fade::FadeOut() {
@@ -72,6 +75,8 @@ void Fade::FadeOut() {
 
 	if (transparency >= 255) LoadScene();
 
+	std::cout << World::GetInstance()->viewPos.x - (World::GetInstance()->viewPos.x / 2) << " " << overlay.getPosition().x << std::endl;
+	std::cout << World::GetInstance()->viewPos.y - (World::GetInstance()->viewPos.y / 2) << " " << overlay.getPosition().y << std::endl;
 }
 
 void Fade::Draw() {
@@ -103,12 +108,15 @@ void BlockFade::FadeIn() {
 			fadeProgress += spriteSize;
 
 		}
-	}
+	} 
 
 	else {
 
 		isDone = true;
 	}
+
+	std::cout << World::GetInstance()->viewPos.x - 240 << " " << tile.getPosition().x << std::endl;
+	std::cout << World::GetInstance()->viewPos.y - 135 << " " << tile.getPosition().y << std::endl;
 
 
 }
@@ -133,6 +141,9 @@ void BlockFade::FadeOut() {
 		Transition::Draw();
 		fadeProgress = 0;
 	}
+
+	std::cout << World::GetInstance()->viewPos.x - (World::GetInstance()->viewPos.x / 2) << " " << tile.getPosition().x << std::endl;
+	std::cout << World::GetInstance()->viewPos.y - (World::GetInstance()->viewPos.y / 2) << " " << tile.getPosition().y << std::endl;
 
 }
 
