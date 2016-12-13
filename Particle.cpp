@@ -343,8 +343,6 @@ namespace Entity
         
         characterName = characters[name];
         
-        //std::cout << characterName + std::to_string(World::GetInstance()->GlobalMembers.levelsFinished) << std::endl;
-        
         script = World::GetInstance()->CharacterScripts.at(characterName + std::to_string(0));
         
         int lineCount = 0;
@@ -393,6 +391,7 @@ namespace Entity
                     
                     if(lineCount == maxLines){
                         
+						if (strncmp(&script.at(i), " ", 1)) script.insert(i,&script.at(i));
                         script.replace(i,1,">");
                         lineCount = 0;
                     
@@ -405,6 +404,8 @@ namespace Entity
             
         }
         
+		std::cout << script << std::endl;
+
         scriptLength = script.length();
         
         backDrop.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
@@ -485,7 +486,7 @@ namespace Entity
                     else if(!strncmp(&script.at(0),">",1)){
                     
                         
-                        if(World::GetInstance()->Timer(*this,FAST)){
+                        if(World::GetInstance()->Timer(*this,25100.0)){
                         
                             if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])){
                             
@@ -510,40 +511,15 @@ namespace Entity
                     // if none of the conditions above are not true, proceed to progress text
                     
                     else{
-                        
-                        //if player presses "Z" while progressing, this takes the text the trigger character
-                        
-                        if(World::GetInstance()->Timer(*this,FAST, NODELAY)){
-                            
-                            /*
-                            if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[buttonA])){
-                                
-                                unsigned long int lastLinePos = script.find(">");
-                                std::cout << "trigger at " << lastLinePos << std::endl;
-                                newScript.append(script,0,lastLinePos);
-                                script.erase(0,lastLinePos);
-                                boxText.setString(newScript);
-                                
-                            }
-                             */
-                            
-                        }
-                        
-                        else{
-                        
-                            newScript.append(script,0,1);
-                            script.erase(0,1);
-                            World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_txt"); 
-                            
-                        }
-                        
+                                 
+                        newScript.append(script,0,1);
+                        script.erase(0,1);
+                        World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_txt"); 
                         boxText.setString(newScript);
                                             
                     }
                     
-                }
-                
-                              
+                }           
             
             } 
             
@@ -551,10 +527,11 @@ namespace Entity
         
         else{
             
-            if(World::GetInstance()->Timer(*this,FAST)){
+            if(World::GetInstance()->Timer(*this,25200.0)){
                 
                 if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])) misDestroyed = true;
-                
+				World::GetInstance()->WorldScene.guidePtr->ready = false;
+
             }
             
         }
@@ -643,10 +620,12 @@ namespace Entity
 		weapon2slot.at(1) = 0;
 
 		std::cout << "viewPos = " << World::GetInstance()->viewPos.x << std::endl;
-
+		
+		if (switching > 1) switching = 1;
 		objectSprite.setPosition(World::GetInstance()->viewPos.x - 230, World::GetInstance()->viewPos.y - 125);
 		weapon1.setPosition(World::GetInstance()->viewPos.x - 224 + weapon1slot.at(switching), World::GetInstance()->viewPos.y - 111);
 		weapon2.setPosition(World::GetInstance()->viewPos.x - 224 + weapon2slot.at(switching), World::GetInstance()->viewPos.y - 111);
+
     }
 
     
@@ -671,10 +650,19 @@ namespace Entity
 
 		sf::Vector2f newPos(objectSprite.getPosition().x, objectSprite.getPosition().y);
 
-		newPos.y += ((targetPosition.y-5) - objectSprite.getPosition().y) / 25;
+		newPos.y += ((targetPosition.y - 5) - objectSprite.getPosition().y) / 25;
 
 		objectSprite.setPosition(targetPosition.x, newPos.y);
-		Icon.setPosition(objectSprite.getPosition().x+9, objectSprite.getPosition().y+9);
+		Icon.setPosition(objectSprite.getPosition().x + 9, objectSprite.getPosition().y + 9);
+
+		if (ready == false) {
+
+			if (World::GetInstance()->Timer(*this, VERY_SLOW*2)) {
+
+				ready = true;
+
+			}
+		}
 	}
 
 	void Guide::SetTarget(sf::Vector2f newPosition) {
@@ -748,12 +736,13 @@ namespace Entity
     
     Hud::~Hud(){
         
-        
+		World::GetInstance()->WorldScene.hudPtr = NULL;
+
     }
 
 	Guide::~Guide() {
 
-
+		Entity::GUI::guiCount++;
 	}
     
     PlayerMenu::~PlayerMenu(){
@@ -800,8 +789,8 @@ namespace Entity
         delete posXtemp1;
         delete posYtemp2;
         dead = true;
-        
-        
+		World::GetInstance()->WorldScene.playerPtr = NULL;
+
     }
     
     void Player::Update()
@@ -930,7 +919,6 @@ namespace Entity
 				int tempWeap = World::GetInstance()->GlobalMembers.playerWeapon;
 				World::GetInstance()->GlobalMembers.playerWeapon = World::GetInstance()->GlobalMembers.playerWeapon2;
 				World::GetInstance()->GlobalMembers.playerWeapon2 = tempWeap;
-
 
 			}
 
@@ -1160,6 +1148,8 @@ namespace Entity
         World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_playerDeath");
         
         World::GetInstance()->ScreenShake(20);
+		//World::GetInstance()->WorldScene.playerPtr = nullptr;
+
     }
     
     //////////// END PLAYER DEFINITIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1897,7 +1887,7 @@ namespace Entity
     void Projectile::Update()
     {
 
-		if (followsPlayer == true) {
+		if (followsPlayer == true && World::GetInstance()->WorldScene.playerPtr) {
 			
 			vel.x = 0;
 			vel.y = -speed;
@@ -2043,30 +2033,35 @@ namespace Entity
 
 	}
     
-    void PlayerBoomerang::Update(){
-        
-        if(World::GetInstance()->Timer(*this,VERY_FAST))
-        {
-        
-            objectSprite.setTextureRect(sf::IntRect((frame * 20),32,20,20));
-            objectSprite.setOrigin(10,10);
-            
-            frame++;
-            
-            if(frame >= 2)
-            {
-                
-                frame = 0;
-                
-            }
-            
-        }
-        
-        objectSprite.setRotation(objectSprite.getRotation() +10);
-        sf::Vector2f newPos(objectSprite.getPosition().x, objectSprite.getPosition().y);
-        
-        newPos.x += (World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x - objectSprite.getPosition().x) / timeCurve;
-        newPos.y += (World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y - objectSprite.getPosition().y) / timeCurve;
+	void PlayerBoomerang::Update() {
+
+		if (World::GetInstance()->Timer(*this, VERY_FAST))
+		{
+
+			objectSprite.setTextureRect(sf::IntRect((frame * 20), 32, 20, 20));
+			objectSprite.setOrigin(10, 10);
+
+			frame++;
+
+			if (frame >= 2)
+			{
+
+				frame = 0;
+
+			}
+
+		}
+
+		objectSprite.setRotation(objectSprite.getRotation() + 10);
+		sf::Vector2f newPos(objectSprite.getPosition().x, objectSprite.getPosition().y);
+
+		if (World::GetInstance()->WorldScene.playerPtr) {
+
+		newPos.x += (World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x - objectSprite.getPosition().x) / timeCurve;
+		newPos.y += (World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y - objectSprite.getPosition().y) / timeCurve;
+
+		}
+
         if(World::GetInstance()->Timer(*this,FAST)) if(timeCurve > 10) timeCurve -= 4;
     
         objectSprite.setPosition(newPos.x + vel.x,newPos.y + vel.y);

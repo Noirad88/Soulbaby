@@ -672,12 +672,15 @@ void Container::CheckCollisions(){
 
 		// checking the player for enemy and enemy projectile collisions
 
-		if ((*enemy)->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && (*enemy)->active && World::GetInstance()->WorldScene.playerPtr->dashing == false) {
+		if (World::GetInstance()->WorldScene.playerPtr) {
 
-			World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
-			World::GetInstance()->WorldScene.audioContainer.music.stop();
-			World::GetInstance()->ReadyScene("map2_1");
+			if ((*enemy)->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && (*enemy)->active && World::GetInstance()->WorldScene.playerPtr->dashing == false) {
 
+				World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
+				World::GetInstance()->WorldScene.audioContainer.music.stop();
+				World::GetInstance()->ReadyScene("map2_1");
+
+			}
 		}
 
 		/*// check enemies in zone for collision
@@ -716,9 +719,8 @@ void Container::CheckCollisions(){
     //get all enemy projectiles to compare to player
         
 
-	if (World::GetInstance()->WorldScene.playerPtr->misDestroyed != true) {
+	if (World::GetInstance()->WorldScene.playerPtr) {
 
-		std::cout << "playerptr = " << World::GetInstance()->WorldScene.playerPtr << std::endl;
 		objectsInZone = GetObjectsInZone(World::GetInstance()->WorldScene.playerPtr->zone);
 		typeInZone = GetEnemyProjectileObjects(objectsInZone);
 
@@ -759,7 +761,7 @@ void Container::CheckCollisions(){
 
 				World::GetInstance()->WorldScene.guidePtr->SetTarget(newvec);
                 
-                if(sf::Keyboard::isKeyPressed(sf::Keyboard::X))ObjectContainer.at(typeInZone.at(i))->isCollided();
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::X) && World::GetInstance()->WorldScene.guidePtr->ready == true)ObjectContainer.at(typeInZone.at(i))->isCollided();
                 
             }
             

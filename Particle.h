@@ -202,7 +202,7 @@ namespace Entity
 		sf::Vector2f newPos2;
 		sf::Text pow1Lable;
 		sf::Text pow2Lable;
-		bool switching;
+		bool switching = false;
 
         
     };
@@ -220,6 +220,7 @@ namespace Entity
 		bool hidden = true;
 		sf::Sprite Icon;
 		sf::Vector2f targetPosition;
+		bool ready = true;
 
 	};
     
