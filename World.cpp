@@ -586,9 +586,9 @@ sf::View* World::GetView(){
 void World::CreateCharacterScripts(){
     
     std::string lim0 = "Say you want to have a party. You want it to be the most incredible party on the planet, one that all of your friends will remember forever. You're putting a lot of money into it, so you can't afford to fail. It's gotta be perfect. To pull off an event like this, you'll need to get a bunch of things: balloons, chairs, pizza. You decide that just holding it at some bar won't be cool enough, so you're gonna hold it in France. You hire a bunch of people to help you make this party happen, with the promise that it's going to be goddamn legendary.";
-    std::string mozza1 = "I don't really have much to say, tbh";
+	std::string mozza1 = "I don't really have much to say, tbh. The card, I open it and I now know what it means to hear terrified numbness being slid from out of a pouch which contains little nuggets of something and, still, all I see is you search it all, like you’re looking for the rotten bit. I know what’s coming, it’s the same thing as always : tears and yours, not mine. Never mine.";
     std::string hauzer2 = "Hmmm. Who do I have to fuck for that job?";
-    std::string feet3 = "FUCK ...> OFF";
+    std::string feet3 = "FUCK ... OFF";
 
     CharacterScripts.insert(std::pair<std::string,std::string>("LIM0",lim0));
     CharacterScripts.insert(std::pair<std::string,std::string>("MOZZA0",mozza1));

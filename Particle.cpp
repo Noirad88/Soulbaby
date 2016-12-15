@@ -359,7 +359,6 @@ namespace Entity
                     
                     if(strncmp(&script.at(i)," ",1))
                     {
-                        
                         //check previous letters for the first space to break there instead of breaking mid-word
                         
                         for(int n = i; n != 0; n--){
@@ -381,8 +380,7 @@ namespace Entity
                     else{
                     
                         script.replace(i,1,"\n");
-                        i++;
-                                   
+                                                 
                     }
                     
                     lineCount++;
@@ -391,11 +389,14 @@ namespace Entity
                     
                     if(lineCount == maxLines){
                         
-						if (strncmp(&script.at(i), " ", 1)) script.insert(i,&script.at(i));
                         script.replace(i,1,">");
                         lineCount = 0;
                     
                     }
+
+					i++;
+
+
                     
                 }
                 
@@ -500,8 +501,6 @@ namespace Entity
                         if(World::GetInstance()->Timer(*this,SLOW)){
                             
                             int left = boxArrow.getTextureRect().left == 15 ? 20 : 15;
-                            std::cout << left << std::endl;
-                            
                             boxArrow.setTextureRect(sf::IntRect(left,0,5 ,5));
                             
                         }
