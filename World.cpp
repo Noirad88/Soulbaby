@@ -25,8 +25,6 @@ void Transition::Update() {
 void Transition::LoadScene() {
 
 	World::GetInstance()->LoadScene(destination);
-	World::GetInstance()->viewPos.x = 240;
-	World::GetInstance()->Screen.setCenter(World::GetInstance()->viewPos.x, World::GetInstance()->viewPos.y);
 	hasLoadedScene = true;
 
 }
@@ -49,39 +47,37 @@ Fade::Fade(std::string mapName,bool dir ) : Transition(mapName)
     overlay.setPosition(0,0);
     overlay.setSize(sf::Vector2f(1000,1000));
 	overlay.setOrigin(500, 500);
-    overlay.setFillColor(sf::Color(0,0,0,transparency));
+    overlay.setFillColor(sf::Color(50,0,0,transparency));
     transparency = (direction == TRANIN) ? 255 : 0;
 
 }
 
 void Fade::FadeIn() {
 
-	overlay.setPosition(World::GetInstance()->viewPos.x - (World::GetInstance()->viewPos.x / 2), World::GetInstance()->viewPos.y - (World::GetInstance()->viewPos.y / 2));
-
 	transparency -= 2.5;
 
 	if (transparency <= 0) isDone = true;
 
-	std::cout << World::GetInstance()->viewPos.x - (World::GetInstance()->viewPos.x / 2) << " " << overlay.getPosition().x << std::endl;
-	std::cout << World::GetInstance()->viewPos.y - (World::GetInstance()->viewPos.y / 2) << " " << overlay.getPosition().y << std::endl;
+	overlay.setPosition(World::GetInstance()->Screen.getCenter().x, World::GetInstance()->Screen.getCenter().y);
 
 }
 
 void Fade::FadeOut() {
 
-	overlay.setPosition(World::GetInstance()->viewPos.x - (World::GetInstance()->viewPos.x/2), World::GetInstance()->viewPos.y - (World::GetInstance()->viewPos.y / 2));
-
 	transparency += 2.5;
 
-	if (transparency >= 255) LoadScene();
+	if (transparency >= 255) {
+		LoadScene();
+		transparency = 255;
+	}
 
-	std::cout << World::GetInstance()->viewPos.x - (World::GetInstance()->viewPos.x / 2) << " " << overlay.getPosition().x << std::endl;
-	std::cout << World::GetInstance()->viewPos.y - (World::GetInstance()->viewPos.y / 2) << " " << overlay.getPosition().y << std::endl;
+	overlay.setPosition(World::GetInstance()->Screen.getCenter().x, World::GetInstance()->Screen.getCenter().y);
+
+
 }
 
 void Fade::Draw() {
 
-	std::cout << overlay.getPosition().x << ", " << overlay.getPosition().y << std::endl;
 	overlay.setFillColor(sf::Color(0, 0, 0, transparency));
 	World::GetInstance()->windowWorld->draw(overlay);
 }
@@ -96,7 +92,7 @@ BlockFade::BlockFade(std::string mapName, bool dir) : Transition(mapName)
 
 void BlockFade::FadeIn() {
 	
-	tile.setPosition(World::GetInstance()->viewPos.x - 240, World::GetInstance()->viewPos.y - 135);
+	tile.setPosition(World::GetInstance()->Screen.getCenter().x - 240 - 90, World::GetInstance()->Screen.getCenter().y - 135 - 90);
 	camPos = tile.getPosition();
 
 	if(fadeProgress == 0) Transition::Draw();
@@ -115,15 +111,14 @@ void BlockFade::FadeIn() {
 		isDone = true;
 	}
 
-	std::cout << World::GetInstance()->viewPos.x - 240 << " " << tile.getPosition().x << std::endl;
-	std::cout << World::GetInstance()->viewPos.y - 135 << " " << tile.getPosition().y << std::endl;
 
 
 }
 
 void BlockFade::FadeOut() {
 
-	tile.setPosition(World::GetInstance()->viewPos.x - 240, World::GetInstance()->viewPos.y - 135);
+	tile.setPosition(World::GetInstance()->Screen.getCenter().x - 240 - 90, World::GetInstance()->Screen.getCenter().y - 135 - 90);
+
 	camPos = tile.getPosition();
 
 	if (fadeProgress < maxWidth*2) {
@@ -142,8 +137,7 @@ void BlockFade::FadeOut() {
 		fadeProgress = 0;
 	}
 
-	std::cout << World::GetInstance()->viewPos.x - (World::GetInstance()->viewPos.x / 2) << " " << tile.getPosition().x << std::endl;
-	std::cout << World::GetInstance()->viewPos.y - (World::GetInstance()->viewPos.y / 2) << " " << tile.getPosition().y << std::endl;
+	//std::cout << "tile pos(" << tile.getPosition().x << "," << tile.getPosition().y << ")" << std::endl;
 
 }
 
@@ -258,6 +252,8 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     GlobalMembers.levelsCompleted.fill(0);
     LoadSceneBank();
     LoadScene("map2_1");
+	testShape.setFillColor(sf::Color::Blue);
+	testShape.setSize(sf::Vector2f(200,200));
     
 }
 
@@ -372,29 +368,31 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 	}
 
 
-		WorldScene.objectContainer->AddObjects();
-		WorldScene.objectContainer->RemoveObjects();
-		WorldScene.objectContainer->UpdateObjects();
+	WorldScene.objectContainer->AddObjects();
+	WorldScene.objectContainer->RemoveObjects();
+	WorldScene.objectContainer->UpdateObjects();
 
 
-		WorldScene.levelContainer->Update();
-		WorldScene.textureContainer.Update();
+	WorldScene.levelContainer->Update();
+	WorldScene.textureContainer.Update();
 
-		WorldScene.objectContainer->CheckCollisions();
-		WorldScene.levelContainer->CheckCollisions();
+	WorldScene.objectContainer->CheckCollisions();
+	WorldScene.levelContainer->CheckCollisions();
 
-		UpdateCamera(); 
+	UpdateCamera(); 
 
-		WorldScene.levelContainer->DrawLevel();
-		WorldScene.objectContainer->DrawObjects(*windowWorld, *this);
-		if (CurrentScene->mapType != ENCOUNTER) WorldScene.levelContainer->DrawBGTop();
+	WorldScene.levelContainer->DrawLevel();
+	WorldScene.objectContainer->DrawObjects(*windowWorld, *this);
+
+	if (CurrentScene->mapType != ENCOUNTER) WorldScene.levelContainer->DrawBGTop();
 
     
     if(WorldScene.transition) UpdateTransition();
      
      RemoveTimeObjects();
-    
-    
+
+	 testShape.setPosition(viewPos.x, viewPos.y);
+	 //DrawObject(testShape);
 }
 
 void World::UpdateTime(float timestamp){
@@ -459,57 +457,64 @@ void World::UpdateCamera(){
 			float playerPosY = (Entity::Player::dead == false) ? CameraTarget->objectSprite.getPosition().y + camOrient : Screen.getCenter().y;
 
 			//Update the camera position
+			if (World::GetInstance()->WorldScene.playerPtr) {
 
-			viewPos.x += (playerPosX - Screen.getCenter().x) / vel;
-			viewPos.y += (playerPosY - Screen.getCenter().y) / vel;
-			Screen.setCenter(viewPos.x, viewPos.y);
+				viewPos.x += (playerPosX - Screen.getCenter().x) / vel;
+				viewPos.y += (playerPosY - Screen.getCenter().y) / vel;
+				Screen.setCenter(viewPos.x, viewPos.y);
+
+			}
 
 			sf::Vector2f view = Screen.getCenter();
 			sf::Vector2f size = Screen.getSize();
 
 			if (CurrentScene->mapType == ENCOUNTER) {
 
-				// If camera is at the end of the level on the left, stop the camera
+				if (!WorldScene.transition) {
 
-				if (view.x < size.x / 2) {
+					// If camera is at the end of the level on the left, stop the camera
 
-					viewPos.x = size.x / 2;
-					Screen.setCenter(size.x / 2, viewPos.y);
-					camOrient = 0;
-					vel = 0;
+					if (view.x < size.x / 2) {
 
+						viewPos.x = size.x / 2;
+						Screen.setCenter(size.x / 2, viewPos.y);
+						camOrient = 0;
+						vel = 0;
+
+					}
+
+					// If right
+
+
+					else if (view.x > WorldScene.levelContainer->lvlSize.x - size.x / 2) {
+
+						viewPos.x = WorldScene.levelContainer->lvlSize.x - size.x / 2;
+						Screen.setCenter(WorldScene.levelContainer->lvlSize.x - size.x / 2, viewPos.y);
+						camOrient = 0;
+						vel = 0;
+
+					}
+
+
+					if (view.y > WorldScene.levelContainer->lvlSize.y - size.y / 2) {
+
+						viewPos.y = WorldScene.levelContainer->lvlSize.y - size.y / 2;
+						Screen.setCenter(viewPos.x, WorldScene.levelContainer->lvlSize.y - size.y / 2);
+						camOrient = 0;
+						vel = 0;
+
+					}
+
+					else if (view.y < size.y / 2) {
+
+						viewPos.y = size.y / 2;
+						Screen.setCenter(viewPos.x, size.y / 2);
+						camOrient = 0;
+						vel = 0;
+
+					}
 				}
-
-				// If right
-
-
-				else if (view.x > WorldScene.levelContainer->lvlSize.x - size.x / 2) {
-
-					viewPos.x = WorldScene.levelContainer->lvlSize.x - size.x / 2;
-					Screen.setCenter(WorldScene.levelContainer->lvlSize.x - size.x / 2, viewPos.y);
-					camOrient = 0;
-					vel = 0;
-
-				}
-
-
-				if (view.y > WorldScene.levelContainer->lvlSize.y - size.y / 2) {
-
-					viewPos.y = WorldScene.levelContainer->lvlSize.y - size.y / 2;
-					Screen.setCenter(viewPos.x, WorldScene.levelContainer->lvlSize.y - size.y / 2);
-					camOrient = 0;
-					vel = 0;
-
-				}
-
-				else if (view.y < size.y / 2) {
-
-					viewPos.y = size.y / 2;
-					Screen.setCenter(viewPos.x, size.y / 2);
-					camOrient = 0;
-					vel = 0;
-
-				}
+				
 
 			}
 
@@ -552,8 +557,6 @@ void World::UpdateCamera(){
 
 		}
 	}
-
-    
 
     
 }
@@ -611,7 +614,7 @@ Scene::Scene(){
     
     levelContainer = std::unique_ptr<Level::LevelContainer>(new Level::LevelContainer);
     objectContainer = std::unique_ptr<Container>(new Container);
-    transition = std::unique_ptr<Transition>(new Transition);
+    //transition = std::unique_ptr<Transition>(new Transition);
     
 }
 

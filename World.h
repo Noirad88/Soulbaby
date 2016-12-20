@@ -147,8 +147,8 @@ struct BlockFade : public Transition{
 	int fadeProgress = 0;
 	sf::Vector2f camPos;
 	int spriteSize = 30;
-	int maxWidth = 470;
-	int maxHeight = 270;
+	int maxWidth = 600; //should be divisible by spriteSize
+	int maxHeight = 450; //should be divisible by spriteSize
     
     
 };
@@ -232,6 +232,7 @@ class World{
     void LoadSceneBank();
     void CreateCharacterScripts();
     void DrawObject(sf::Drawable& sprite, std::string shader = "");
+	sf::RectangleShape testShape;
     static World *GetInstance(){
         
         if(!Worldptr) Worldptr = new World;

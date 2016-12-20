@@ -172,7 +172,6 @@ namespace Level
             player.properties["itemType"] = "BattlePlayer";
             player.properties["PosX"] = std::to_string(300);
             player.properties["PosY"] = std::to_string(300);
-            World::GetInstance()->Screen.setCenter(lvlSize.x/2,lvlSize.y/2);
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(player);
             LevelBG[0].setTextureRect(sf::IntRect(0,0,0,0));
 			CreateHud();
@@ -215,11 +214,9 @@ namespace Level
             
             Entity::itemQueue player;
             player.properties["itemType"] = "Player";
-            std::cout << posX << " |aa " << posY << std::endl;
             player.properties["PosX"] = to_string(posX);
             player.properties["PosY"] = to_string(posY);
-            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(player);
-            
+            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(player);       
             
         }
        
