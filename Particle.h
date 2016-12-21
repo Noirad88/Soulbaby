@@ -843,6 +843,14 @@ namespace Entity
         
     };
 
+	class Spore : public Enemy
+	{
+	public:
+		Spore();
+		~Spore();
+
+	};
+
 	class Roach : public Enemy
 	{
 	public:

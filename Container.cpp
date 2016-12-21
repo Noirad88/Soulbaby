@@ -450,14 +450,23 @@ void Container::AddObjects()
                 
             }
             
-            else if((QI)->properties["itemType"] == "Squid")
+            else if((QI)->properties["itemType"] == "Spore")
             {
                 
-                std::unique_ptr<Entity::Squid> ptr(new Entity::Squid);
+                std::unique_ptr<Entity::Spore> ptr(new Entity::Spore);
                 ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]),stoi((QI)->properties["PosY"]));
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "Squid")
+			{
+
+				std::unique_ptr<Entity::Squid> ptr(new Entity::Squid);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "Boss")
             {

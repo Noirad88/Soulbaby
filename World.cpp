@@ -16,7 +16,21 @@ sf::Clock World::clock2;
 
 void Transition::Update() {
 
-	if (!hasLoadedScene) FadeOut();
+	if (!hasLoadedScene) {
+		FadeOut();
+
+		// fades music volume
+
+		if (World::GetInstance()->WorldScene.audioContainer.music.getVolume() != 0) {
+
+			if (World::GetInstance()->Timer(*this, VERY_FAST, NODELAY)) {
+
+				World::GetInstance()->WorldScene.audioContainer.music.setVolume(World::GetInstance()->WorldScene.audioContainer.music.getVolume() - 1);
+			}
+		}
+
+	}
+
 	else FadeIn();
 	Draw();
 
@@ -571,6 +585,12 @@ bool World::IsPlayerActive(){
     
     return (CameraTarget == WorldScene.playerPtr) && (Entity::GUI::guiCount == 0) && (!WorldScene.transition);
     
+}
+
+bool World::IsPlayerCameraTarget() {
+
+	return (CameraTarget == WorldScene.playerPtr);
+
 }
 
 void World::ResetCamera(){

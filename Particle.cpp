@@ -283,11 +283,8 @@ namespace Entity
 	Guide::Guide() {
 
 		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
-		Icon.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
-
-		objectSprite.setTextureRect(sf::IntRect(60, 218, 44, 37));
+		objectSprite.setTextureRect(sf::IntRect(60, 218, 24, 18));
 		SetCharacterOrigin();
-		Icon.setTextureRect(sf::IntRect(104, 219, 26, 15));
 		Entity::GUI::guiCount--;
 		World::GetInstance()->WorldScene.guidePtr = this;
 	}
@@ -647,12 +644,11 @@ namespace Entity
 
 	void Guide::Update() {
 
-		sf::Vector2f newPos(objectSprite.getPosition().x, objectSprite.getPosition().y);
+		//sf::Vector2f newPos(objectSprite.getPosition().x, objectSprite.getPosition().y);
 
-		newPos.y += ((targetPosition.y - 5) - objectSprite.getPosition().y) / 25;
+		//newPos.y += ((targetPosition.y - 5) - objectSprite.getPosition().y) / 25;
 
-		objectSprite.setPosition(targetPosition.x, newPos.y);
-		Icon.setPosition(objectSprite.getPosition().x + 9, objectSprite.getPosition().y + 9);
+		//objectSprite.setPosition(targetPosition.x, newPos.y-10);
 
 		if (ready == false) {
 
@@ -662,6 +658,20 @@ namespace Entity
 
 			}
 		}
+
+		if (World::GetInstance()->Timer(*this, VERY_SLOW)) {
+
+			if (objectSprite.getTextureRect().left != 132) {
+
+				objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left + 24, 218, 24, 18));
+
+			}
+
+			else objectSprite.setTextureRect(sf::IntRect(60, 218, 24, 18));
+
+		}
+
+
 	}
 
 	void Guide::SetTarget(sf::Vector2f newPosition) {
@@ -670,8 +680,7 @@ namespace Entity
 
 			hidden = false;
 			targetPosition = newPosition;
-			objectSprite.setPosition(targetPosition.x, targetPosition.y);
-			Icon.setPosition(objectSprite.getPosition().x + 9, objectSprite.getPosition().y + 9);
+			objectSprite.setPosition(targetPosition.x, targetPosition.y-5);
 		}
 
 	}
@@ -685,10 +694,9 @@ namespace Entity
     
 	void Guide::Draw(sf::RenderTarget& window) {
 
-		if (hidden == false) {
+		if (hidden == false && World::GetInstance()->IsPlayerCameraTarget()) {
 
 			World::GetInstance()->DrawObject(objectSprite);
-			World::GetInstance()->DrawObject(Icon);
 
 		}
 
@@ -2810,7 +2818,7 @@ namespace Entity
             enemyList[1] = "Squid";
             enemyList[2] = "Slime";
             enemyList[3] = "Mask";
-            enemyList[4] = "Roach";
+            enemyList[4] = "Spore";
             enemyList[5] = "Roach";
             enemyList[6] = "Star3";
             enemyList[7] = "Squid3";
@@ -3003,6 +3011,19 @@ namespace Entity
         health = 5;
 		enemyMode = 0;
     }
+
+	Spore::Spore() : Enemy()
+	{
+		objectSprite.setTextureRect(sf::IntRect(78, 3, 16, 17));
+		SetHitBox(sf::Vector2f(10, 10), 1);
+		SetCharacterOrigin();
+		SetShadow();
+		moveType = NORMAL;
+		health = 5;
+		enemyMode = 0;
+		flatAnimation = true;
+		speed = 1.5;
+	}
 
 	Roach::Roach() : Enemy()
 	{
@@ -3283,7 +3304,7 @@ namespace Entity
 
 			if (World::GetInstance()->Timer(*this, animationSpeed)) {
 
-				if (frame >= 4) frame = 0;
+				if (frame >= 3) frame = 0;
 
 				else frame++;
 
@@ -4010,6 +4031,10 @@ namespace Entity
     }
 
 	Roach::~Roach() {
+
+	}
+
+	Spore::~Spore() {
 
 	}
     

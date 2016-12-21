@@ -223,6 +223,7 @@ class World{
     void UpdateCamera();
     void SetCameraTarget(Entity::Object& target);
     bool IsPlayerActive();
+	bool IsPlayerCameraTarget();
     void ResetCamera();
     void ReadyScene(std::string mapName);
     void UpdateTransition();
