@@ -1359,6 +1359,15 @@ namespace Entity
         deacceleration = 0.25;
         
     }
+
+	EnemyCharge::EnemyCharge() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(44,168, 15, 15));
+		SetEffectOrigin();
+		maxFrame = 4;
+		maxTime = 2000000.0;
+		animSpeed = VERY_FAST;
+	}
     
     
     Hit::Hit(){
@@ -2502,6 +2511,28 @@ namespace Entity
 
 	}
 
+	EnemyCharge::~EnemyCharge() {
+
+		itemQueue bullet;
+		int dx = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x - objectSprite.getPosition().x;
+		int dy = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y - objectSprite.getPosition().y;
+		int angle = atan2(dx, dy);
+
+		bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+		bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+		bullet.properties["itemType"] = "EnemyBlip";
+
+		int fireDir = 0;
+		if (World::GetInstance()->WorldScene.playerPtr) fireDir = GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
+		bullet.properties["Direction"] = std::to_string(fireDir);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+		bullet.properties["Direction"] = std::to_string(fireDir - 10);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+		bullet.properties["Direction"] = std::to_string(fireDir + 10);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+	}
+
 	HauzerSmog::~HauzerSmog() {
 
 	}
@@ -2991,6 +3022,8 @@ namespace Entity
         hurtPos.x = 0;
         hurtPos.y = 0;
         SetHitBox(sf::Vector2f(16,16),1);
+		hotSpot.x = 0;
+		hotSpot.y = 0;
 
 
     }
@@ -3074,16 +3107,18 @@ namespace Entity
     
     Squid::Squid() : Enemy()
     {
-        objectSprite.setTextureRect(sf::IntRect (0,60,35,46));
+        objectSprite.setTextureRect(sf::IntRect (0,60,43,46));
         SetCharacterOrigin();
         SetShadow();
         moveType = NORMAL;
         speed = 0.5;
-        health = 30;
-        hasAttack = 1;
+        health = 60;
+        hasAttack = 3;
         SetHitBox(sf::Vector2f(24,43),1);
 		flatAnimation = false;
 		enemyMode = 1;
+		hotSpot.x = 20;
+		hotSpot.y = 30;
     
     }
 
@@ -3159,12 +3194,16 @@ namespace Entity
     
 	void Enemy::Move() {
 
+
+
 		if (enemyMode != 3) {
 
 			vel.x = 0;
 			vel.y = -speed;
 
 		}
+
+		// no target; random movement points (Slime)
 
 		if (enemyMode == 0) {
 
@@ -3179,12 +3218,16 @@ namespace Entity
 
 		}
 
+		// Regular move (Squiz wizard)
+
 		else if (enemyMode == 1) {
 
 			//set move to player
 			targetPosition = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition();
 			RotateVector(vel, -(GetAngle(objectSprite.getPosition(), targetPosition + varyMov)));
 		}
+
+		// gradually locate to player (Spike ball)
 
 		else if (enemyMode == 3) {
 
@@ -3206,19 +3249,23 @@ namespace Entity
 		}
 
 
+		// regular movement (Squid wizard)
+
 		if (moveType == NORMAL) {
 
             if(hasAttack == 0) objectSprite.move(vel.x, vel.y + velZ);
             
 			else if (moveOnAttack == false) {
 
-				if (!PlayerDistance(MID)) objectSprite.move(vel.x, vel.y  + velZ);
+				if (attacking == false) objectSprite.move(vel.x, vel.y  + velZ);
 
 			}
 
 			else objectSprite.move(vel.x, vel.y +  velZ);
             
         }
+
+		// slides accross in intervals (Roach movement
 
 		else if (moveType == SLIDER) {
 
@@ -3248,6 +3295,8 @@ namespace Entity
 			objectSprite.setPosition(newPos.x,newPos.y);
 
 		}
+		
+		// periodically jumps (Slime movement)
         
 		else if (moveType == JUMPER){
 
@@ -3360,6 +3409,27 @@ namespace Entity
     
     
     void Enemy::Act(){
+
+		sf::Vector2f hs;
+		hs = hotSpot;
+
+		if (hotSpot.x != 0 && hotSpot.y != 0) {
+
+			if (objectSprite.getTextureRect().top >= 696) {
+
+				hotSpot.x = objectSprite.getPosition().x + hotSpot.x;
+				hotSpot.y = objectSprite.getPosition().y - hotSpot.y;
+
+			}
+
+			else {
+
+				hotSpot.x = objectSprite.getPosition().x - hotSpot.x;
+				hotSpot.y = objectSprite.getPosition().y - hotSpot.y;
+
+			}
+		}
+
         
 		if (spriteTop == -1) spriteTop = objectSprite.getTextureRect().top;
 
@@ -3384,6 +3454,25 @@ namespace Entity
             if(hurt == true) objectSprite.move(-hurtPos);
             if(attacking == false) Move();
 			if (hasAttack != 0) Attack();
+			
+			// misc decorations
+
+			if (hotSpot.x != 0 && hotSpot.y != 0) {
+
+				if (World::GetInstance()->Timer(*this, SLOW)) {
+
+
+					itemQueue particles;
+					particles.properties["PosX"] = std::to_string(hotSpot.x - 4 + RandomNumber(8));
+					particles.properties["PosY"] = std::to_string(hotSpot.y - 4 + RandomNumber(8));
+					particles.properties["itemType"] = "EnemySpark";
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+				}
+
+			}
+
+
             UpdateShadow();
             
         }
@@ -3401,6 +3490,7 @@ namespace Entity
         }
         
 		isHurt();
+		hotSpot = hs;
 
     }
 
@@ -3497,6 +3587,42 @@ namespace Entity
 					if (World::GetInstance()->Timer(*this, VERY_SLOW * 10)) attacking = false;
 
 				}
+
+		}
+
+		//Wizard cast
+
+		if (hasAttack == 3) {
+
+			if (attacking == false) {
+
+				if (PlayerDistance(MID)) {
+
+						// create charge object; charge object casts bullets
+
+						itemQueue bullet;
+						bullet.properties["PosX"] = std::to_string(hotSpot.x);
+						bullet.properties["PosY"] = std::to_string(hotSpot.y);
+						bullet.properties["itemType"] = "EnemyCharge";
+						bullet.parent = this;
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+						attacking = true;
+
+				}
+
+			}
+
+			else if (attacking == true) {
+
+				//ENEMY SHOULDNT MOVE IF ATTACKING
+
+				// this time should take in account the charge asset + bullets; there should be a small break and
+
+				if (World::GetInstance()->Timer(*this, 2000000.0)) attacking = false;
+
+				// also can set "cast" animatino here as well
+
+			}
 
 		}
         
@@ -4322,7 +4448,7 @@ namespace Entity
     
     bool Object::PlayerDistance(int distance){
         
-        
+        //BUG?
         return sqrt((objectShadow.getPosition().x - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().x)*(objectShadow.getPosition().x - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().x) + (objectShadow.getPosition().y - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().y)*(objectShadow.getPosition().y - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().y)) <= distance ? true : false;
         
         

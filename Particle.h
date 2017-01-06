@@ -60,152 +60,152 @@ class World;
 
 namespace Entity
 {
-    
-    struct itemQueue
-    {
-        itemQueue()
-        {
 
-        }
-        
-        ~itemQueue()
-        {
+	struct itemQueue
+	{
+		itemQueue()
+		{
 
-        }
-        
-        std::map<std::string,std::string> properties;
+		}
+
+		~itemQueue()
+		{
+
+		}
+
+		std::map<std::string, std::string> properties;
 		Entity::Object* parent = nullptr;
-        
-    };
-    
-    //Base class for all entities
 
-    class Object
-    {
-        friend class LevelContainer;
-        
-    public:
-        static int totalObjects;
-        sf::Vector2f vel;
-        float posZ = 0;
-        float velZ = 0;
-        sf::Sprite objectSprite;
-        sf::RectangleShape objectHitBox;
-        sf::Sprite objectShadow;
-        
-        Object();
-        virtual ~Object();
-        virtual void Update();
-        virtual void isCollided(int var = 0);
-        virtual void Draw(sf::RenderTarget& window);
-        sf::IntRect GetObjectBounds();
-        float GetYPosition();
-        bool PlayerDistance(int distance);
-        void SetShadow();
-        virtual void CheckLvlCollision();
-        void UpdateShadow();
-        void GetZone(int vecPos);
-        void DrawShadow(sf::RenderTarget& window);
-        bool isDestroyed();
-        int damage;
-        bool misDestroyed = false;
-        bool active = false;
-        std::string type = "Object";
-        std::string zone;
-        void SetCharacterOrigin(sf::Sprite** object = NULL, bool center = false);
-        void SetEffectOrigin();
-        void SetHitBox(sf::Vector2f size,int originPos = 0);
-        void UpdateHitBox();
-        
-    private: 
-        static int center;
-        static int bottomCenter;
-        static int topLeft;
-    };
-    
-    // Misc classes (hud, menu, etc)
-    
-    class GUI : public Object
-    {
-        
-    public:GUI();
-        ~GUI();
-        void Update();
-        static int guiCount;
-        
-    };
-    
-    class MenuItem : public GUI
-    {
-        friend class MenuItemHolder;
-        
-    public:
-        MenuItem(std::string lableName, char typeName);
-        ~MenuItem();
-        void Update();
-        void Draw(sf::RenderTarget& window);
-        void ToggleSelection();
-        sf::Text menuLable;
-        static sf::Font menuFnt;
-        char type;
-        std::weak_ptr<int> linkedAttribute;
-        static int count;
-        
-    };
-    
-    
-    class MenuItemHolder : public GUI
-    {
-        
-    public:
-        MenuItemHolder();
-        ~MenuItemHolder();
-        void Update();
-        void Draw(sf::RenderTarget& window);
-        int currentPos = 0;
-        std::vector<MenuItem> menuList;
-        
-        
-    };
-    
-    class Menu : public GUI
-    {
-        
-    public:
-        Menu();
-        ~Menu();
-        void Update();
-        void DoMenuAction(MenuItem& item);
-        bool HasSwitch(MenuItem& item);
-        void Draw(sf::RenderTarget& window);
-        std::vector<MenuItemHolder> menuContainer;
-        
-    };
-    
-    
-    
-    class Hud : public GUI
-    {
-        
-    public:
-        Hud();
-        void Update();
-        void Draw(sf::RenderTarget& window);
-        
-        ~Hud();
-        
-        sf::Sprite weapon1;
-        sf::Sprite weapon2;
-		std::array<int,2> weapon1slot;
-		std::array<int,2> weapon2slot;
+	};
+
+	//Base class for all entities
+
+	class Object
+	{
+		friend class LevelContainer;
+
+	public:
+		static int totalObjects;
+		sf::Vector2f vel;
+		float posZ = 0;
+		float velZ = 0;
+		sf::Sprite objectSprite;
+		sf::RectangleShape objectHitBox;
+		sf::Sprite objectShadow;
+
+		Object();
+		virtual ~Object();
+		virtual void Update();
+		virtual void isCollided(int var = 0);
+		virtual void Draw(sf::RenderTarget& window);
+		sf::IntRect GetObjectBounds();
+		float GetYPosition();
+		bool PlayerDistance(int distance);
+		void SetShadow();
+		virtual void CheckLvlCollision();
+		void UpdateShadow();
+		void GetZone(int vecPos);
+		void DrawShadow(sf::RenderTarget& window);
+		bool isDestroyed();
+		int damage;
+		bool misDestroyed = false;
+		bool active = false;
+		std::string type = "Object";
+		std::string zone;
+		void SetCharacterOrigin(sf::Sprite** object = NULL, bool center = false);
+		void SetEffectOrigin();
+		void SetHitBox(sf::Vector2f size, int originPos = 0);
+		void UpdateHitBox();
+
+	private:
+		static int center;
+		static int bottomCenter;
+		static int topLeft;
+	};
+
+	// Misc classes (hud, menu, etc)
+
+	class GUI : public Object
+	{
+
+	public:GUI();
+		   ~GUI();
+		   void Update();
+		   static int guiCount;
+
+	};
+
+	class MenuItem : public GUI
+	{
+		friend class MenuItemHolder;
+
+	public:
+		MenuItem(std::string lableName, char typeName);
+		~MenuItem();
+		void Update();
+		void Draw(sf::RenderTarget& window);
+		void ToggleSelection();
+		sf::Text menuLable;
+		static sf::Font menuFnt;
+		char type;
+		std::weak_ptr<int> linkedAttribute;
+		static int count;
+
+	};
+
+
+	class MenuItemHolder : public GUI
+	{
+
+	public:
+		MenuItemHolder();
+		~MenuItemHolder();
+		void Update();
+		void Draw(sf::RenderTarget& window);
+		int currentPos = 0;
+		std::vector<MenuItem> menuList;
+
+
+	};
+
+	class Menu : public GUI
+	{
+
+	public:
+		Menu();
+		~Menu();
+		void Update();
+		void DoMenuAction(MenuItem& item);
+		bool HasSwitch(MenuItem& item);
+		void Draw(sf::RenderTarget& window);
+		std::vector<MenuItemHolder> menuContainer;
+
+	};
+
+
+
+	class Hud : public GUI
+	{
+
+	public:
+		Hud();
+		void Update();
+		void Draw(sf::RenderTarget& window);
+
+		~Hud();
+
+		sf::Sprite weapon1;
+		sf::Sprite weapon2;
+		std::array<int, 2> weapon1slot;
+		std::array<int, 2> weapon2slot;
 		sf::Vector2f newPos;
 		sf::Vector2f newPos2;
 		sf::Text pow1Lable;
 		sf::Text pow2Lable;
 		bool switching = false;
 
-        
-    };
+
+	};
 
 	class Guide : public GUI
 	{
@@ -223,142 +223,142 @@ namespace Entity
 		bool ready = true;
 
 	};
-    
-    class Textbox : public GUI
-    {
-        
-    public:
-        Textbox(int name);
-        ~Textbox();
-        void Update();
-        void Draw(sf::RenderTarget& window);
-        sf::Sprite backDrop;
-        std::string script = "";
-        std::string newScript = "";
-        static int lineLength;
-        static int maxLines;
-        static int scriptLength;
-        static int progressSpeed;
-        static int textboxCount;
-        sf::Vector2i portraitSize;
-        sf::Text boxText;
-        sf::Text boxName;
-        sf::RectangleShape boxNameBG;
-        sf::Sprite boxArrow;
-        static std::string characters[11];
-        std::string characterName = "";
-        
-    };
-    
-    class PlayerMenu : public GUI
-    {
-        
-    public:
-        PlayerMenu();
-        ~PlayerMenu();
-        void Update();
-        void Draw(sf::RenderTarget& window);
-        sf::Text itemsLable;
-        sf::Text itemName;
-        sf::Text itemDescriptionText;
-        sf::Text itemDescriptionLable;
-        sf::Text itemLvl;
-        sf::Sprite itemsBg;
-        static bool menuUp;
-        
-    };
-    
-    class Clone : public Object
-    {
-        
-    public:
-        Clone();
-        ~Clone();
-        void Update();
-        sf::Texture* tempTexture;
-        
-    };
-    
-    class BattleBackground : public Object{
-        
-    public:
-        BattleBackground();
-        ~BattleBackground();
-        void Update();
-        void Draw(sf::RenderTarget& window);
-        bool isLoaded = false;
-        float size = 1;
-        float rate = 1000;
-        float plrDir = 0;
-        sf::Vector2f playerPos;
-        
-        
-    };
-    
-    // Player Classes
-    
-    class Player : public Object
-    {
-        
-        friend class LevelContainer;
-        
-    public:
-        void Update();
-        void CheckLvlCollision();
-        Player(sf::Vector2i pos = sf::Vector2i(200,50));
-        ~Player();
-        float* posXtemp1 = new float;
-        float* posYtemp2 = new float;
-        int spriteWidth = 0;
-        int spriteHeight = 0;
-        int playerHealth = 0;
-        int playerPow = 0;
-        enum movement {south,swest, west, nwest, north, neast, east, seast, idle};
-        int movement = south;
-        int fireDir = south;
-		bool dashing = false;
-        int frame_pos = 0;
-        sf::Vector2f scaleTemp;
-        bool isCollided = false;
-        static bool dead;
-        bool menuUp = false;
-        
-    };
-    
-    class BattlePlayer : public Player
-    {
-    
-    public:
-        BattlePlayer();
-        void CheckLvlCollision();
-        sf::Vector2f hotSpot;
-        void Update();
-        ~BattlePlayer();
-        
-    };
 
-    
-    //Bullets
-    
-    //Base class for bullets
-    
-    class Projectile : public Object
-    {
-        
-    public:
-        Projectile();
-        virtual ~Projectile();
-        virtual int GetDamage();
-        void Update();
+	class Textbox : public GUI
+	{
+
+	public:
+		Textbox(int name);
+		~Textbox();
+		void Update();
+		void Draw(sf::RenderTarget& window);
+		sf::Sprite backDrop;
+		std::string script = "";
+		std::string newScript = "";
+		static int lineLength;
+		static int maxLines;
+		static int scriptLength;
+		static int progressSpeed;
+		static int textboxCount;
+		sf::Vector2i portraitSize;
+		sf::Text boxText;
+		sf::Text boxName;
+		sf::RectangleShape boxNameBG;
+		sf::Sprite boxArrow;
+		static std::string characters[11];
+		std::string characterName = "";
+
+	};
+
+	class PlayerMenu : public GUI
+	{
+
+	public:
+		PlayerMenu();
+		~PlayerMenu();
+		void Update();
+		void Draw(sf::RenderTarget& window);
+		sf::Text itemsLable;
+		sf::Text itemName;
+		sf::Text itemDescriptionText;
+		sf::Text itemDescriptionLable;
+		sf::Text itemLvl;
+		sf::Sprite itemsBg;
+		static bool menuUp;
+
+	};
+
+	class Clone : public Object
+	{
+
+	public:
+		Clone();
+		~Clone();
+		void Update();
+		sf::Texture* tempTexture;
+
+	};
+
+	class BattleBackground : public Object {
+
+	public:
+		BattleBackground();
+		~BattleBackground();
+		void Update();
+		void Draw(sf::RenderTarget& window);
+		bool isLoaded = false;
+		float size = 1;
+		float rate = 1000;
+		float plrDir = 0;
+		sf::Vector2f playerPos;
+
+
+	};
+
+	// Player Classes
+
+	class Player : public Object
+	{
+
+		friend class LevelContainer;
+
+	public:
+		void Update();
+		void CheckLvlCollision();
+		Player(sf::Vector2i pos = sf::Vector2i(200, 50));
+		~Player();
+		float* posXtemp1 = new float;
+		float* posYtemp2 = new float;
+		int spriteWidth = 0;
+		int spriteHeight = 0;
+		int playerHealth = 0;
+		int playerPow = 0;
+		enum movement { south, swest, west, nwest, north, neast, east, seast, idle };
+		int movement = south;
+		int fireDir = south;
+		bool dashing = false;
+		int frame_pos = 0;
+		sf::Vector2f scaleTemp;
+		bool isCollided = false;
+		static bool dead;
+		bool menuUp = false;
+
+	};
+
+	class BattlePlayer : public Player
+	{
+
+	public:
+		BattlePlayer();
+		void CheckLvlCollision();
+		sf::Vector2f hotSpot;
+		void Update();
+		~BattlePlayer();
+
+	};
+
+
+	//Bullets
+
+	//Base class for bullets
+
+	class Projectile : public Object
+	{
+
+	public:
+		Projectile();
+		virtual ~Projectile();
+		virtual int GetDamage();
+		void Update();
 		void HasCollided(const std::unique_ptr<Entity::Object>& a);
-        bool isCollided = false;
+		bool isCollided = false;
 		bool destroyOnImpact = true;
 		float deacceleration = 0;
 		float acceleration = 0;
 		int speed = 1;
-        int frame = 0;
-        int maxFrame = 0;
-        float time;
+		int frame = 0;
+		int maxFrame = 0;
+		float time;
 		bool rotation = false;
 		bool followsPlayer = false;
 
@@ -366,16 +366,16 @@ namespace Entity
 		float emitTime = 0;
 		bool emitScatter = false;
 		int emitCount = 1;
-        
-    };
-    
-    class EnemyProjectile : public Projectile{
-        
-    public:
-        EnemyProjectile();
-        ~EnemyProjectile();
-        
-    };
+
+	};
+
+	class EnemyProjectile : public Projectile {
+
+	public:
+		EnemyProjectile();
+		~EnemyProjectile();
+
+	};
 
 	class HauzerSmog : public EnemyProjectile {
 
@@ -394,15 +394,15 @@ namespace Entity
 		~HauzerSpear();
 
 	};
-    
-    class EnemyBlip : public EnemyProjectile{
-        
-    public:
-        EnemyBlip();
-        ~EnemyBlip();
-        void Update();
-        
-    };
+
+	class EnemyBlip : public EnemyProjectile {
+
+	public:
+		EnemyBlip();
+		~EnemyBlip();
+		void Update();
+
+	};
 
 	class EnemyLaser : public EnemyProjectile {
 
@@ -419,139 +419,145 @@ namespace Entity
 
 
 	};
-    
-    class Bullet : public Projectile{
-        
-    public:
-        Bullet();
-        ~Bullet();
-    
-    };
-    
-    class PlayerBombExp : public Projectile{
-        
-    public:
-        PlayerBombExp();
-        void Update();
-        ~PlayerBombExp();
-        static int Bombcount;
-    };
-    
-    class PlayerLaser : public Projectile{
-        
-    public:
-        PlayerLaser();
-        void Update();
-        void isCollided(int var = 0);
-        ~PlayerLaser();
-        
-    };
-    
-    class PlayerBoomerang : public Projectile{
-    public:
-        PlayerBoomerang();
-        void Update();
-        int timeCurve = 100;
-        ~PlayerBoomerang();
-        static int totalBoomerangs;
-        
-    };
-    
-    class PlayerRepeater : public Projectile{
-        
-    public:
-        PlayerRepeater();
-        void Update();
-        void isCollided(int var = 0);
-        ~PlayerRepeater();
-        
-    };
-    
-    class Laser : public Projectile
-    {
-        
-    public:
-        Laser();
-        ~Laser();
-        void Update();
-        float* playerPosX;
-        float* playerPosY;
-        float length = 1;
-        float height = 10;
-        float frame = 0;
-        int span;
-        
-        
-    };
-    
-    //Particles
-    
-    class Particle : public Object
-    {
-        
-    public:
-        Particle();
-        ~Particle();
-        void Update ();
-        int frame = 0;
-        float gravity = 0.4f;
-        bool isAnimated = true;
-    
-    };
-    
-    class Hit : public Object{
-        
-    public:
-        Hit();
-        ~Hit();
-        void Update ();
-        int damage = 0;
-    };
-    
-    class Dirt : public Particle{
-        
-    public:Dirt();
-        ~Dirt();
-    };
-    
-    
-    class Gib : public Particle{
-        
-    public:Gib();
-        ~Gib();
-        sf::Texture gibTexture;
-        int textRectLeft = 0;
-        int textRectTop = 0;
 
-    };
-    
-    class Fixed: public Particle{
-        
-    public:
-        Fixed();
-        ~Fixed();
-        void Update();
-        static int assetHeight;
-        int maxFrame = 0;
-        float maxTime = 0;
-        float animSpeed = 5.0f;
-        float spdReduceRate = 0;
-        int top = -1;
-        static int spriteRotation;
-        float deacceleration = 0;
+	class Bullet : public Projectile {
+
+	public:
+		Bullet();
+		~Bullet();
+
+	};
+
+	class PlayerBombExp : public Projectile {
+
+	public:
+		PlayerBombExp();
+		void Update();
+		~PlayerBombExp();
+		static int Bombcount;
+	};
+
+	class PlayerLaser : public Projectile {
+
+	public:
+		PlayerLaser();
+		void Update();
+		void isCollided(int var = 0);
+		~PlayerLaser();
+
+	};
+
+	class PlayerBoomerang : public Projectile {
+	public:
+		PlayerBoomerang();
+		void Update();
+		int timeCurve = 100;
+		~PlayerBoomerang();
+		static int totalBoomerangs;
+
+	};
+
+	class PlayerRepeater : public Projectile {
+
+	public:
+		PlayerRepeater();
+		void Update();
+		void isCollided(int var = 0);
+		~PlayerRepeater();
+
+	};
+
+	class Laser : public Projectile
+	{
+
+	public:
+		Laser();
+		~Laser();
+		void Update();
+		float* playerPosX;
+		float* playerPosY;
+		float length = 1;
+		float height = 10;
+		float frame = 0;
+		int span;
+
+
+	};
+
+	//Particles
+
+	class Particle : public Object
+	{
+
+	public:
+		Particle();
+		~Particle();
+		void Update();
+		int frame = 0;
+		float gravity = 0.4f;
+		bool isAnimated = true;
+
+	};
+
+	class Hit : public Object {
+
+	public:
+		Hit();
+		~Hit();
+		void Update();
+		int damage = 0;
+	};
+
+	class Dirt : public Particle {
+
+	public:Dirt();
+		   ~Dirt();
+	};
+
+
+	class Gib : public Particle {
+
+	public:Gib();
+		   ~Gib();
+		   sf::Texture gibTexture;
+		   int textRectLeft = 0;
+		   int textRectTop = 0;
+
+	};
+
+	class Fixed : public Particle {
+
+	public:
+		Fixed();
+		~Fixed();
+		void Update();
+		static int assetHeight;
+		int maxFrame = 0;
+		float maxTime = 0;
+		float animSpeed = 5.0f;
+		float spdReduceRate = 0;
+		int top = -1;
+		static int spriteRotation;
+		float deacceleration = 0;
 		float acceleration = 0;
-        bool rotation = false;
-        
-    };
-    
-    class PlayerBeam: public Fixed{
-    public:
-        PlayerBeam();
-        sf::RectangleShape shaft;
-        void Update();
-        void Draw(sf::RenderTarget& window);
-        ~PlayerBeam();
-    };
+		bool rotation = false;
+
+	};
+
+	class PlayerBeam : public Fixed {
+	public:
+		PlayerBeam();
+		sf::RectangleShape shaft;
+		void Update();
+		void Draw(sf::RenderTarget& window);
+		~PlayerBeam();
+	};
+
+	class EnemyCharge : public Fixed {
+	public:
+		EnemyCharge();
+		~EnemyCharge();
+	};
     
     class DoorDestroy: public Fixed{
     public:
@@ -807,6 +813,7 @@ namespace Entity
         bool targetPlayer = true;
 
         sf::Vector2f hurtPos;
+		sf::Vector2f hotSpot;
 		bool transition = true;
 		sf::Vector2f targetPosition;
         

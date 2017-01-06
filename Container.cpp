@@ -140,6 +140,15 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "EnemyCharge")
+			{
+
+				std::unique_ptr<Entity::EnemyCharge> ptr(new Entity::EnemyCharge);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "DeathPoof")
             {
