@@ -58,6 +58,15 @@ namespace Textures{
 
         
     }
+
+	WhiteShader::WhiteShader()
+	{
+
+		std::string dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC/";
+		shader.loadFromFile(dir + "shaders/whiteoverlay.frag", sf::Shader::Fragment);
+
+
+	}
     
     DamageShader::DamageShader()
     {
@@ -80,6 +89,10 @@ namespace Textures{
     WaveShader::~WaveShader(){
         
     }
+
+	WhiteShader::~WhiteShader() {
+
+	}
     
     DamageShader::~DamageShader(){
         
@@ -105,6 +118,11 @@ namespace Textures{
         
         shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
     }
+
+	void WhiteShader::Update() {
+
+		shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
+	}
     
     void DamageShader::Update(){
         
@@ -184,6 +202,8 @@ namespace Textures{
         
         shaders.insert(std::pair<std::string,sf::Shader&>("redShader",redShader.shader));
         shaders.insert(std::pair<std::string,sf::Shader&>("waveShader",waveShader.shader));
+		shaders.insert(std::pair<std::string, sf::Shader&>("whiteShader", whiteShader.shader));
+
     
     }
     

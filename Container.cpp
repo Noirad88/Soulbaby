@@ -177,6 +177,15 @@ void Container::AddObjects()
 
 			}
 
+			else if ((QI)->properties["itemType"] == "BlockedWave")
+			{
+
+				std::unique_ptr<Entity::BlockedWave> ptr(new Entity::BlockedWave);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "BlockedEffect")
 			{
 
@@ -286,6 +295,22 @@ void Container::AddObjects()
 
 				if ((QI)->properties.count("Direction")) RotateVector(ptr->vel, (-stoi((QI)->properties["Direction"])));
 				ptr->objectSprite.setRotation((-stoi((QI)->properties["Direction"]))+180);
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "EnemyHomingBlip")
+			{
+
+				std::unique_ptr<Entity::EnemyHomingBlip> ptr(new Entity::EnemyHomingBlip);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				if ((QI)->properties.count("Speed")>0) ptr->vel.y = stoi((QI)->properties["Speed"]);
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				ptr->vel = -ptr->vel;
+				if ((QI)->properties.count("Direction")) RotateVector(ptr->vel, (-stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation((-stoi((QI)->properties["Direction"])) + 180);
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
@@ -664,7 +689,7 @@ std::vector<int> Container::GetObjectsInZone(std::string zone){
 
 void Container::CheckCollisions(){
 
-    
+
 	for (ObjectIterator enemy = ObjectContainer.begin(); enemy != Enemies; ++enemy)
 	{
 		// get all projectiles for enemy to check collisions to
@@ -692,13 +717,8 @@ void Container::CheckCollisions(){
 
 		if (World::GetInstance()->WorldScene.playerPtr) {
 
-			if ((*enemy)->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && (*enemy)->active && World::GetInstance()->WorldScene.playerPtr->dashing == false) {
+			if ((*enemy)->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && (*enemy)->active && World::GetInstance()->WorldScene.playerPtr->dashing == false) PlayerDamaged();
 
-				World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
-				World::GetInstance()->WorldScene.audioContainer.music.stop();
-				World::GetInstance()->ReadyScene("map2_1");
-
-			}
 		}
 
 		/*// check enemies in zone for collision
@@ -744,20 +764,33 @@ void Container::CheckCollisions(){
 
 		for (int i = 0; i != typeInZone.size(); i++)
 		{
+			// if both object's hitbox overlap, player is damage.
 
-			if (ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && World::GetInstance()->WorldScene.playerPtr->dashing == false)
+			if (ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds())
+				&& World::GetInstance()->WorldScene.playerPtr->dashing == false) {
+				PlayerDamaged();
 
+			}
 
+			// if not; then if player is very close to projectile, player has countere
+			
+			else if (GetDistance(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getPosition(),
+				World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition()) <= 25
+				&& World::GetInstance()->PlayerPressedButton(controlsC)
+				&& World::GetInstance()->WorldScene.playerPtr->dashing == true) {
 
-			{
+				ObjectContainer.at(typeInZone.at(i))->misDestroyed = true;
 
-				World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
-				World::GetInstance()->WorldScene.audioContainer.music.stop();
-				World::GetInstance()->ReadyScene("map2_1");
+				Entity::itemQueue particles;
+				particles.properties["PosX"] = std::to_string(ObjectContainer.at(typeInZone.at(i))->objectSprite.getPosition().x);
+				particles.properties["PosY"] = std::to_string(ObjectContainer.at(typeInZone.at(i))->objectSprite.getPosition().y);
+				particles.properties["itemType"] = "BlockedEffect";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 
 			}
 
 		}
+
 	}
     
     
@@ -779,7 +812,7 @@ void Container::CheckCollisions(){
 
 				World::GetInstance()->WorldScene.guidePtr->SetTarget(newvec);
                 
-                if(sf::Keyboard::isKeyPressed(sf::Keyboard::X) && World::GetInstance()->WorldScene.guidePtr->ready == true)ObjectContainer.at(typeInZone.at(i))->isCollided();
+                if(World::GetInstance()->PlayerPressedButton(controlsB) && World::GetInstance()->WorldScene.guidePtr->ready == true)ObjectContainer.at(typeInZone.at(i))->isCollided();
                 
             }
             
@@ -787,6 +820,26 @@ void Container::CheckCollisions(){
    
     
     zoneMatrix.clear();
+}
+
+void Container::PlayerDamaged() {
+
+	if (World::GetInstance()->WorldScene.playerPtr->shield > 0 && World::GetInstance()->WorldScene.playerPtr->shield < 41 ) {
+
+		World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
+		World::GetInstance()->WorldScene.audioContainer.music.stop();
+		World::GetInstance()->ReadyScene("map2_1");
+
+	}
+
+	else if (World::GetInstance()->WorldScene.playerPtr->shield == 41) {
+
+		World::GetInstance()->WorldScene.playerPtr->shield = 0;
+		World::GetInstance()->ScreenShake(10);
+
+
+	}
+
 }
 
 void Container::GetCollisionArea(sf::Vector2f prevPos, sf::Vector2f currPos, sf::IntRect spriteRect){
@@ -815,7 +868,6 @@ void Container::GetCollisionArea(sf::Vector2f prevPos, sf::Vector2f currPos, sf:
 }
 
 std::vector<int> Container::GetProjectileObjects(std::vector<int>& vec){
-    
     
     
     int projectilesBegin = int(std::distance(ObjectContainer.begin(),Enemies));

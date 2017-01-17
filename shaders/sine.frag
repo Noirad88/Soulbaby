@@ -56,7 +56,9 @@ void main()
     float newB = 0.1 * sin(time * M_PI/5.0) + 1.0;
     vec2 test = gl_FragCoord.xy;
     //float opacity = texture2D(currentTexture, test).a;
-    vec4 newColor = vec4(newR,newG,newB,1.0);
+vec4 acolor = texture2D(currentTexture,distortedTextureCoordinate);
+
+    vec4 newColor = vec4(newR,newG,newB,acolor.a);
     
     gl_FragColor = newColor * texture2D(currentTexture, distortedTextureCoordinate);
 }

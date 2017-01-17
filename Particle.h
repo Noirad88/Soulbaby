@@ -307,6 +307,7 @@ namespace Entity
 		void CheckLvlCollision();
 		Player(sf::Vector2i pos = sf::Vector2i(200, 50));
 		~Player();
+		void Draw(sf::RenderTarget& window);
 		float* posXtemp1 = new float;
 		float* posYtemp2 = new float;
 		int spriteWidth = 0;
@@ -322,6 +323,8 @@ namespace Entity
 		bool isCollided = false;
 		static bool dead;
 		bool menuUp = false;
+		int shield = 41;
+		sf::Sprite sshield;
 
 	};
 
@@ -350,7 +353,7 @@ namespace Entity
 		virtual ~Projectile();
 		virtual int GetDamage();
 		void Update();
-		void HasCollided(const std::unique_ptr<Entity::Object>& a);
+		virtual void HasCollided(const std::unique_ptr<Entity::Object>& a);
 		bool isCollided = false;
 		bool destroyOnImpact = true;
 		float deacceleration = 0;
@@ -404,6 +407,14 @@ namespace Entity
 
 	};
 
+	class EnemyHomingBlip : public EnemyProjectile {
+
+	public:
+		EnemyHomingBlip();
+		~EnemyHomingBlip();
+		void Update();
+	};
+
 	class EnemyLaser : public EnemyProjectile {
 
 	public:
@@ -451,6 +462,7 @@ namespace Entity
 	public:
 		PlayerBoomerang();
 		void Update();
+		void HasCollided(const std::unique_ptr<Entity::Object>& a);
 		int timeCurve = 100;
 		~PlayerBoomerang();
 		static int totalBoomerangs;
@@ -631,6 +643,13 @@ namespace Entity
 		~BlockedEffect();
 
 	};
+
+	class BlockedWave : public Fixed {
+	public:
+		BlockedWave();
+		~BlockedWave();
+
+	};
     
     class DamageSpark: public Fixed{
         
@@ -809,6 +828,7 @@ namespace Entity
 		int spriteDirection = south;
 		int currentDirection = 0;
         bool hurt = false;
+		bool showHurt = false;
 		bool moveOnAttack = false;
         bool targetPlayer = true;
 

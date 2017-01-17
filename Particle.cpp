@@ -332,7 +332,8 @@ namespace Entity
     
     Textbox::Textbox(int name) : GUI()
     {
-        
+		World::GetInstance()->WorldScene.UIPtr = this;
+
         textboxCount = 1;
         
         std::cout << "creating texbox" << std::endl;
@@ -447,6 +448,7 @@ namespace Entity
     
     Textbox::~Textbox(){
         
+		World::GetInstance()->WorldScene.UIPtr = nullptr;
         scriptLength = 0;
         textboxCount = 0;
         World::GetInstance()->ResetCamera();
@@ -661,7 +663,7 @@ namespace Entity
 
 		if (World::GetInstance()->Timer(*this, VERY_SLOW)) {
 
-			if (objectSprite.getTextureRect().left != 132) {
+			if (objectSprite.getTextureRect().left != 108) {
 
 				objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left + 24, 218, 24, 18));
 
@@ -823,26 +825,33 @@ namespace Entity
         if(World::GetInstance()->IsPlayerActive()){
             
         
-        if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = swest;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])) movement = nwest;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight])) movement = neast;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])) movement = seast;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])) movement = south;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = west;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])) movement = north;
-        
-        else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight])) movement = east;
+        if((World::GetInstance()->PlayerPressedButton(controlsDown)
+			&& World::GetInstance()->PlayerPressedButton(controlsLeft))) movement = swest;
+
+		else if ((World::GetInstance()->PlayerPressedButton(controlsLeft)
+			&& World::GetInstance()->PlayerPressedButton(controlsUp))) movement = nwest;
+
+		else if ((World::GetInstance()->PlayerPressedButton(controlsUp)
+			&& World::GetInstance()->PlayerPressedButton(controlsRight))) movement = neast;
+
+		else if ((World::GetInstance()->PlayerPressedButton(controlsRight)
+			&& World::GetInstance()->PlayerPressedButton(controlsDown))) movement = seast;
+
+		else if (World::GetInstance()->PlayerPressedButton(controlsDown)) movement = south;
+
+		else if (World::GetInstance()->PlayerPressedButton(controlsLeft)) movement = west;
+
+		else if (World::GetInstance()->PlayerPressedButton(controlsUp)) movement = north;
+
+		else if (World::GetInstance()->PlayerPressedButton(controlsRight)) movement = east;
 
         }
         
-        if (!sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = idle;
-        
+		if (!World::GetInstance()->PlayerPressedButton(controlsRight)
+			&& !World::GetInstance()->PlayerPressedButton(controlsUp)
+			&& !World::GetInstance()->PlayerPressedButton(controlsDown)
+			&& !World::GetInstance()->PlayerPressedButton(controlsLeft))
+			movement = idle;
         
         
         // Animation
@@ -885,9 +894,10 @@ namespace Entity
         
         hotSpot.x = objectSprite.getPosition().x + 6;
         hotSpot.y = objectSprite.getPosition().y + 12;
-        std::cout << objectSprite.getPosition().x << "," << objectSprite.getPosition().y << std::endl;
-        
-        
+		std::cout << objectSprite.getPosition().x << "," << objectSprite.getPosition().y << std::endl;
+		sshield.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+		sshield.setTextureRect(sf::IntRect(103, 0, 17, 41));
+		sshield.setColor(sf::Color::Color(255, 255, 255, 50));
     }
     
 	void BattlePlayer::Update() {
@@ -896,30 +906,39 @@ namespace Entity
 
 			if (!World::GetInstance()->WorldScene.transition) {
 
-				if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = swest;
+				if ((World::GetInstance()->PlayerPressedButton(controlsDown)
+					&& World::GetInstance()->PlayerPressedButton(controlsLeft))) movement = swest;
 
-				else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])) movement = nwest;
+				else if ((World::GetInstance()->PlayerPressedButton(controlsLeft)
+					&& World::GetInstance()->PlayerPressedButton(controlsUp))) movement = nwest;
 
-				else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight])) movement = neast;
+				else if ((World::GetInstance()->PlayerPressedButton(controlsUp)
+					&& World::GetInstance()->PlayerPressedButton(controlsRight))) movement = neast;
 
-				else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])) movement = seast;
+				else if ((World::GetInstance()->PlayerPressedButton(controlsRight)
+					&& World::GetInstance()->PlayerPressedButton(controlsDown))) movement = seast;
 
-				else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])) movement = south;
+				else if (World::GetInstance()->PlayerPressedButton(controlsDown)) movement = south;
 
-				else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = west;
+				else if (World::GetInstance()->PlayerPressedButton(controlsLeft)) movement = west;
 
-				else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])) movement = north;
+				else if (World::GetInstance()->PlayerPressedButton(controlsUp)) movement = north;
 
-				else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight])) movement = east;
+				else if (World::GetInstance()->PlayerPressedButton(controlsRight)) movement = east;
 
 			}
 
-			if (!sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown]) && !sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft])) movement = idle;
+			if (!World::GetInstance()->PlayerPressedButton(controlsRight)
+				&& !World::GetInstance()->PlayerPressedButton(controlsUp)
+				&& !World::GetInstance()->PlayerPressedButton(controlsDown)
+				&& !World::GetInstance()->PlayerPressedButton(controlsLeft))
+				movement = idle;
+
 		}
 
 		// Animation
 
-		if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsA])) {
+		if (World::GetInstance()->PlayerPressedButton(controlsA)) {
 
 			if (World::GetInstance()->Timer(*this, 160000.0)) {
 
@@ -934,23 +953,27 @@ namespace Entity
 			}
 
 		}
-			
 
-		if (dashing == false && movement != idle &&  sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsC])) {
+
+		if (dashing == false && movement != idle &&  World::GetInstance()->PlayerPressedButton(controlsC)) {
 
 			vel.y = 6;
 			vel.x = 0;
 			dashing = true;
 			RotateVector(vel, 45 * movement);
-			itemQueue particles;
-			particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-			particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y-10);
-			particles.properties["itemType"] = "ShieldEffect";
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-			//World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
+
+			if (shield == 2) {
+
+				itemQueue particles;
+				particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 10);
+				particles.properties["itemType"] = "BlockedWave";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+			}
 
 		}
-	
+
 		if (dashing == true) {
 
 			if (World::GetInstance()->Timer(*this, FAST, NODELAY)) {
@@ -971,7 +994,7 @@ namespace Entity
 
 			}
 
-			std::cout << vel.x << ", " << vel.y << std::endl;
+			//std::cout << vel.x << ", " << vel.y << std::endl;
 
 		}
 
@@ -980,12 +1003,12 @@ namespace Entity
 
 			vel.y = 2;
 			vel.x = 0;
-				
+
 			if (World::GetInstance()->Timer(*this, FAST, NODELAY)) {
 
 				frame_pos = (frame_pos >= 5) ? 0 : frame_pos + 1;
 
-				if (!sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])) {
+				if (!World::GetInstance()->PlayerPressedButton(controlsB)) {
 
 					objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, movement * FRAME, spriteWidth, spriteHeight));
 					fireDir = movement;
@@ -999,43 +1022,43 @@ namespace Entity
 
 		}
 
-		else if (movement == idle) { 
-			
-			objectSprite.setTextureRect(sf::IntRect(0, objectSprite.getTextureRect().top, spriteWidth, spriteHeight)); 
-			
+		else if (movement == idle) {
+
+			objectSprite.setTextureRect(sf::IntRect(0, objectSprite.getTextureRect().top, spriteWidth, spriteHeight));
+
 		}
 
 		if (World::GetInstance()->Timer(*this, 140000.0, NODELAY) && dashing == false) {
 
-				vel.x *= 0.25;
-				vel.y *= 0.25;
+			vel.x *= 0.25;
+			vel.y *= 0.25;
 
 		}
 
 		// rotates speed in the correct direction
 
-		if(dashing == false) RotateVector(vel, 45 * movement);
+		if (dashing == false) RotateVector(vel, 45 * movement);
 
-        if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])){
-            
-            // repeater
-        
-            if(World::GetInstance()->GlobalMembers.playerWeapon == 0 && World::GetInstance()->Timer(*this,SLOW,NODELAY)){
-                
-                itemQueue bullet;
-                bullet.properties["PosX"] = std::to_string(hotSpot.x);
-                bullet.properties["PosY"] = std::to_string(hotSpot.y);
-                bullet.properties["Direction"] = std::to_string(fireDir);
-                bullet.properties["VelX"] = std::to_string(vel.x);
-                bullet.properties["VelY"] = std::to_string(vel.y);
-                bullet.properties["itemType"] = "PlayerLaser";
-                World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-                    
-            }
-            
-            // cannon
-            
+		if (World::GetInstance()->PlayerPressedButton(controlsB)) {
+
+			// repeater
+
+			if (World::GetInstance()->GlobalMembers.playerWeapon == 0 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
+
+				itemQueue bullet;
+				bullet.properties["PosX"] = std::to_string(hotSpot.x);
+				bullet.properties["PosY"] = std::to_string(hotSpot.y);
+				bullet.properties["Direction"] = std::to_string(fireDir);
+				bullet.properties["VelX"] = std::to_string(vel.x);
+				bullet.properties["VelY"] = std::to_string(vel.y);
+				bullet.properties["itemType"] = "PlayerLaser";
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+			}
+
+			// cannon
+
 			else if (World::GetInstance()->GlobalMembers.playerWeapon == 6) {
 
 
@@ -1043,17 +1066,17 @@ namespace Entity
 
 					if (World::GetInstance()->Timer(*this, VERY_SLOW)) {
 
-					itemQueue bullet;
-					bullet.properties["PosX"] = std::to_string(hotSpot.x);
-					bullet.properties["PosY"] = std::to_string(hotSpot.y);
-					bullet.properties["Direction"] = std::to_string(fireDir);
-					bullet.properties["VelX"] = std::to_string(vel.x);
-					bullet.properties["VelY"] = std::to_string(vel.y);
-					bullet.properties["itemType"] = "PlayerBomb";
-					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
-					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+						itemQueue bullet;
+						bullet.properties["PosX"] = std::to_string(hotSpot.x);
+						bullet.properties["PosY"] = std::to_string(hotSpot.y);
+						bullet.properties["Direction"] = std::to_string(fireDir);
+						bullet.properties["VelX"] = std::to_string(vel.x);
+						bullet.properties["VelY"] = std::to_string(vel.y);
+						bullet.properties["itemType"] = "PlayerBomb";
+						World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
 
-					}	
+					}
 
 				}
 
@@ -1063,82 +1086,128 @@ namespace Entity
 
 				}
 
-            }
+			}
 
-            
-            // rail
-            
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 3 && PlayerBomb::totalBombs < 2 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
-                
-                itemQueue bullet;
-                bullet.properties["PosX"] = std::to_string(hotSpot.x);
-                bullet.properties["PosY"] = std::to_string(hotSpot.y);
-                bullet.properties["Direction"] = std::to_string(fireDir);
-                bullet.properties["VelX"] = std::to_string(vel.x);
-                bullet.properties["VelY"] = std::to_string(vel.y);
-                bullet.properties["itemType"] = "PlayerBeam";
-                World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-                
-            }
-            
-            // spreader
-            
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 1 && World::GetInstance()->Timer(*this,VERY_SLOW,NODELAY)){
-                
-                itemQueue bullet;
-                bullet.properties["PosX"] = std::to_string(hotSpot.x);
-                bullet.properties["PosY"] = std::to_string(hotSpot.y);
-                bullet.properties["VelX"] = std::to_string(vel.x);
-                bullet.properties["VelY"] = std::to_string(vel.y);
-                bullet.properties["itemType"] = "PlayerRepeater";
-                bullet.properties["Direction"] = std::to_string(45*fireDir);
-                std::cout << fireDir << std::endl;
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-                
-                bullet.properties["Direction"] = std::to_string(45*fireDir -20);
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-                
-                bullet.properties["Direction"] = std::to_string(45*fireDir +20);
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-                
-                
-                World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
-                
-            }
-            
-            // boomerang
 
-            
-            else if(World::GetInstance()->GlobalMembers.playerWeapon == 5 && World::GetInstance()->Timer(*this,VERY_SLOW*2,NODELAY)){
-                
-                itemQueue bullet;
-                bullet.properties["PosX"] = std::to_string(hotSpot.x);
-                bullet.properties["PosY"] = std::to_string(hotSpot.y);
-                bullet.properties["Direction"] = std::to_string(fireDir);
-                bullet.properties["VelX"] = std::to_string(vel.x);
-                bullet.properties["VelY"] = std::to_string(vel.y);
-                bullet.properties["itemType"] = "PlayerBoomerang";
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-                
-                World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
-                
-            }
-            
-        }
+			// rail
 
-        objectSprite.move(vel.x,vel.y);
-        hotSpot.x = objectSprite.getPosition().x;
-        hotSpot.y = objectSprite.getPosition().y - objectSprite.getTextureRect().height/3;
-        UpdateShadow();
-        *posXtemp1 = objectSprite.getPosition().x;
-        *posYtemp2 = objectSprite.getPosition().y;
-        
+			else if (World::GetInstance()->GlobalMembers.playerWeapon == 3 && PlayerBomb::totalBombs < 2 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
 
-                
-        
-        
-    }
+				itemQueue bullet;
+				bullet.properties["PosX"] = std::to_string(hotSpot.x);
+				bullet.properties["PosY"] = std::to_string(hotSpot.y);
+				bullet.properties["Direction"] = std::to_string(fireDir);
+				bullet.properties["VelX"] = std::to_string(vel.x);
+				bullet.properties["VelY"] = std::to_string(vel.y);
+				bullet.properties["itemType"] = "PlayerBeam";
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+			}
+
+			// spreader
+
+			else if (World::GetInstance()->GlobalMembers.playerWeapon == 1 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
+
+				itemQueue bullet;
+				bullet.properties["PosX"] = std::to_string(hotSpot.x);
+				bullet.properties["PosY"] = std::to_string(hotSpot.y);
+				bullet.properties["VelX"] = std::to_string(vel.x);
+				bullet.properties["VelY"] = std::to_string(vel.y);
+				bullet.properties["itemType"] = "PlayerRepeater";
+				bullet.properties["Direction"] = std::to_string(45 * fireDir);
+				std::cout << fireDir << std::endl;
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				bullet.properties["Direction"] = std::to_string(45 * fireDir - 20);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				bullet.properties["Direction"] = std::to_string(45 * fireDir + 20);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
+
+			}
+
+			// boomerang
+
+
+			else if (World::GetInstance()->GlobalMembers.playerWeapon == 5 && World::GetInstance()->Timer(*this, VERY_SLOW * 2, NODELAY)) {
+
+				itemQueue bullet;
+				bullet.properties["PosX"] = std::to_string(hotSpot.x);
+				bullet.properties["PosY"] = std::to_string(hotSpot.y);
+				bullet.properties["Direction"] = std::to_string(fireDir);
+				bullet.properties["VelX"] = std::to_string(vel.x);
+				bullet.properties["VelY"] = std::to_string(vel.y);
+				bullet.properties["itemType"] = "PlayerBoomerang";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
+
+			}
+
+		}
+
+		//Shield logic
+		//shield == 0; set when player is just damaged; cannot be damaged in this state
+		//shield > 0 && != 41; can be damaged in this state
+		//shield == 41; shield is on/recovered
+
+		if (shield == 0) {
+
+			objectSprite.setColor(sf::Color::Color(255, 255, 255, 50 + cos(World::GetInstance()->clock2.getElapsedTime().asMilliseconds()*0.5) * 100));
+			if (World::GetInstance()->Timer(*this, VERY_SLOW * 8)) shield = 1;
+
+		}
+
+		else if (shield != 0 && shield < 41) {
+
+			if (World::GetInstance()->Timer(*this, VERY_SLOW*2)) shield += 1;
+			sshield.setColor(sf::Color::Color(255, 255, 255, 50 + cos(World::GetInstance()->clock2.getElapsedTime().asMilliseconds()*0.5) * 100));
+			sshield.setTextureRect(sf::IntRect(86, 41 - shield, 17, shield));
+
+			if (shield >= 41) {
+
+				shield = 41;
+				itemQueue particles;
+				particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 10);
+				particles.properties["itemType"] = "ShieldEffect";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+					
+			}
+
+		}
+
+		else if (shield == 41) {
+
+			float transparency = (40 + cos(World::GetInstance()->clock2.getElapsedTime().asMilliseconds()*0.0015) * 20) + 10;
+			sshield.setColor(sf::Color::Color(255, 255, 255, transparency));
+			sshield.setTextureRect(sf::IntRect(103, 41 - shield, 17, shield));
+
+
+		}
+
+		objectSprite.move(vel.x, vel.y);
+		hotSpot.x = objectSprite.getPosition().x;
+		hotSpot.y = objectSprite.getPosition().y - objectSprite.getTextureRect().height / 3;
+		UpdateShadow();
+
+		*posXtemp1 = objectSprite.getPosition().x;
+		*posYtemp2 = objectSprite.getPosition().y;
+
+		sshield.setPosition(objectSprite.getPosition().x - 8, (objectSprite.getPosition().y - 32)+41-shield);
+
+	}
+
+	void Player::Draw(sf::RenderTarget& window) {
+		
+			World::GetInstance()->DrawObject(objectSprite);
+			if(shield != 0 ) World::GetInstance()->DrawObject(sshield);
+
+	}
     
     BattlePlayer::~BattlePlayer(){
         
@@ -1328,12 +1397,26 @@ namespace Entity
 
 	}
 
+	// When projectile is countered
+
 	BlockedEffect::BlockedEffect() : Fixed() {
 
 		objectSprite.setTextureRect(sf::IntRect(42, 143, 19, 19));
+		objectSprite.setTextureRect(sf::IntRect(64, 143, 20, 20));
 		SetEffectOrigin();
 		maxFrame = 6;
 		animSpeed = VERY_FAST;
+
+	}
+
+	// When player dashes
+
+	BlockedWave::BlockedWave() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(54, 195, 42, 42));
+		SetEffectOrigin();
+		maxFrame = 6;
+		animSpeed = FAST;
 
 	}
 
@@ -1365,7 +1448,7 @@ namespace Entity
 		objectSprite.setTextureRect(sf::IntRect(44,168, 15, 15));
 		SetEffectOrigin();
 		maxFrame = 4;
-		maxTime = 2000000.0;
+		maxTime = 1000000.0;
 		animSpeed = VERY_FAST;
 	}
     
@@ -1396,12 +1479,24 @@ namespace Entity
     EnemyBlip::EnemyBlip() : EnemyProjectile(){
         
         objectSprite.setTextureRect(sf::IntRect(0, 19,7, 7));
+		speed = 1.5;
         vel.y = speed;
         SetEffectOrigin();
         SetHitBox(sf::Vector2f(3,3));
         active = true;
 
     }
+
+	EnemyHomingBlip::EnemyHomingBlip() : EnemyProjectile() {
+
+		objectSprite.setTextureRect(sf::IntRect(14, 170, 7, 15));
+		speed = 1;
+		vel.y = speed;
+		SetEffectOrigin();
+		SetHitBox(sf::Vector2f(3, 3));
+		active = true;
+
+	}
 
 	EnemyLaser::EnemyLaser() : EnemyProjectile() {
 
@@ -1549,8 +1644,8 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect(0, 32, 20, 20));
         objectSprite.setOrigin(10,10);
         SetEffectOrigin();
-        vel.y = 16;
-        damage = 6;
+        vel.y = 4;
+        damage = 4;
         SetHitBox(sf::Vector2f(12,12));
 		destroyOnImpact = false;
         totalBoomerangs++;
@@ -2025,6 +2120,37 @@ namespace Entity
         
     }
 
+	void EnemyHomingBlip::Update() {
+
+		if (World::GetInstance()->Timer(*this, VERY_FAST))
+		{
+
+
+			objectSprite.setTextureRect(sf::IntRect((frame * 7), 70, 7, 15));
+
+			frame++;
+
+			if (frame >= 2)
+			{
+
+				frame = 0;
+
+			}
+
+		}
+		
+		vel.x = 0;
+		vel.y = -speed;
+
+		float angle = GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
+		RotateVector(vel, -angle);
+		objectSprite.setRotation(-angle);
+		objectSprite.move(vel.x,vel.y);
+
+	}
+
+
+
 	void HauzerSmog::Update() {
 
 		if (World::GetInstance()->Timer(*this, VERY_SLOW))
@@ -2072,31 +2198,92 @@ namespace Entity
 
 		}
 
-		objectSprite.setRotation(objectSprite.getRotation() + 10);
+		objectSprite.setRotation(objectSprite.getRotation() + 20);
 		sf::Vector2f newPos(objectSprite.getPosition().x, objectSprite.getPosition().y);
 
+		/*
 		if (World::GetInstance()->WorldScene.playerPtr) {
 
 		newPos.x += (World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x - objectSprite.getPosition().x) / timeCurve;
 		newPos.y += (World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y - objectSprite.getPosition().y) / timeCurve;
 
 		}
+		*/
 
+		/*
         if(World::GetInstance()->Timer(*this,FAST)) if(timeCurve > 10) timeCurve -= 4;
     
         objectSprite.setPosition(newPos.x + vel.x,newPos.y + vel.y);
         
+
         if(World::GetInstance()->Timer(*this,NORMAL))
         {
             vel.x *= 0.5;
             vel.y *= 0.5;
         }
+		*/
+		
+		objectSprite.move(vel.x, vel.y);
         
-        if(World::GetInstance()->Timer(*this,2000000.0)) misDestroyed = true;
+        if(World::GetInstance()->Timer(*this,1000000.0)) misDestroyed = true;
         
         if(World::GetInstance()->Timer(*this,FAST)) CreateClone(objectSprite);
         
     }
+
+	void PlayerBoomerang::HasCollided(const std::unique_ptr<Entity::Object>& a) {
+
+		objectSprite.move(-vel.x,-vel.y);
+
+		Entity::Object* obj = a.get();
+		Entity::Enemy* pobj = dynamic_cast<Entity::Enemy*>(obj);
+
+		if (pobj->active == true) {
+
+			if (a->velZ >= -3) {
+
+				if (World::GetInstance()->Timer(this, NORMAL, NODELAY)) {
+
+					a->isCollided(damage);
+					misDestroyed = destroyOnImpact;
+
+					if (pobj->defending == false) {
+
+						itemQueue particles;
+						particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+						particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+						particles.properties["itemType"] = "DamageSpark";
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+						particles.properties["itemType"] = "Spark";
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+						World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_badhit2");
+
+					}
+
+					if (pobj->defending == true) {
+
+						itemQueue particles;
+						particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+						particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+						particles.properties["itemType"] = "ShieldEffect";
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+						World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_block");
+
+
+					}
+
+
+				}
+
+			}
+		}
+
+	}
     
     void PlayerLaser::Update(){
         
@@ -2511,6 +2698,10 @@ namespace Entity
 
 	}
 
+	EnemyHomingBlip::~EnemyHomingBlip() {
+
+	}
+
 	EnemyCharge::~EnemyCharge() {
 
 		itemQueue bullet;
@@ -2521,6 +2712,8 @@ namespace Entity
 		bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
 		bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
 		bullet.properties["itemType"] = "EnemyBlip";
+		bullet.properties["Speed"] = std::to_string(1);
+
 
 		int fireDir = 0;
 		if (World::GetInstance()->WorldScene.playerPtr) fireDir = GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
@@ -2529,6 +2722,10 @@ namespace Entity
 		bullet.properties["Direction"] = std::to_string(fireDir - 10);
 		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
 		bullet.properties["Direction"] = std::to_string(fireDir + 10);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+		bullet.properties["Direction"] = std::to_string(fireDir - 20);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+		bullet.properties["Direction"] = std::to_string(fireDir + 20);
 		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
 
 	}
@@ -2634,6 +2831,10 @@ namespace Entity
     DeathPoof::~DeathPoof(){
         
     }
+
+	BlockedWave::~BlockedWave() {
+
+	}
     
     DeathBoom::~DeathBoom(){
         
@@ -3042,7 +3243,8 @@ namespace Entity
         SetShadow();
         moveType = JUMPER;
         health = 5;
-		enemyMode = 0;
+		enemyMode = 1;
+		hasAttack = 1;
     }
 
 	Spore::Spore() : Enemy()
@@ -3056,6 +3258,7 @@ namespace Entity
 		enemyMode = 0;
 		flatAnimation = true;
 		speed = 1.5;
+		hasAttack = 1;
 	}
 
 	Roach::Roach() : Enemy()
@@ -3070,7 +3273,7 @@ namespace Entity
 
 		// For roaches, speed is the DISTANCE the enemy will move
 
-		speed = 20;
+		speed = 30;
 
 	}
     
@@ -3533,26 +3736,17 @@ namespace Entity
 
 		if (hasAttack == 1) {
 
-			if (PlayerDistance(MID)) {
-
-				if (World::GetInstance()->Timer(*this, 1000000.0)) {
+				if (World::GetInstance()->Timer(*this, 2000000.0)) {
 
 					itemQueue bullet;
 					bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-					bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+					bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 3);
 					bullet.properties["itemType"] = "EnemyBlip";
 					bullet.properties["Direction"] = std::to_string(fireDir);
 					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
 
-					bullet.properties["Direction"] = std::to_string(fireDir - 10);
-					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-					bullet.properties["Direction"] = std::to_string(fireDir + 10);
-					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
 				}
 
-			}
 
 		}
 
@@ -3618,7 +3812,7 @@ namespace Entity
 
 				// this time should take in account the charge asset + bullets; there should be a small break and
 
-				if (World::GetInstance()->Timer(*this, 2000000.0)) attacking = false;
+				if (World::GetInstance()->Timer(*this, 1000000.0)) attacking = false;
 
 				// also can set "cast" animatino here as well
 
@@ -3630,11 +3824,18 @@ namespace Entity
     
     void Enemy::Draw(sf::RenderTarget& window){
         
-        World::GetInstance()->DrawObject(objectSprite);
+		if (showHurt == true) {
+			World::GetInstance()->DrawObject(objectSprite, "whiteShader");
+			showHurt = false;
+		}
+
+		else World::GetInstance()->DrawObject(objectSprite);
+
     }
 
 	void Enemy::TargetPlayer() {
 
+		//BUG
 		fireDir = GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
 	}
     
@@ -4344,6 +4545,7 @@ namespace Entity
 					int newDamage = GetRandDmg(damage);
 					health -= newDamage;
 					hurt = true;
+					showHurt = true;
 
 				}
 
@@ -4449,15 +4651,15 @@ namespace Entity
     bool Object::PlayerDistance(int distance){
         
         //BUG?
-        return sqrt((objectShadow.getPosition().x - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().x)*(objectShadow.getPosition().x - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().x) + (objectShadow.getPosition().y - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().y)*(objectShadow.getPosition().y - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().y)) <= distance ? true : false;
-        
+		if (World::GetInstance()->WorldScene.playerPtr)
+			return sqrt((objectShadow.getPosition().x - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().x)*(objectShadow.getPosition().x - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().x) + (objectShadow.getPosition().y - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().y)*(objectShadow.getPosition().y - World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition().y)) <= distance ? true : false;
+		else
+			return false;
         
     }
 
 
 	void ObjectCall(const std::unique_ptr<Entity::Object>& a) {
-
-		std::cout << "got object ..." << a->vel.y << std::endl;
 
 	}
 

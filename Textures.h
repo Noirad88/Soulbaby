@@ -46,6 +46,16 @@ namespace Textures
         void Update();
         
     };
+
+	class WhiteShader : public Shader
+	{
+
+	public:
+		WhiteShader();
+		~WhiteShader();
+		void Update();
+
+	};
     
     class RedShader : public Shader
     {
@@ -83,6 +93,8 @@ namespace Textures
         static float tick;
         WaveShader waveShader;
         RedShader redShader;
+		WhiteShader whiteShader;
+
         std::map<std::string,sf::Shader&> shaders;
 
         DamageShader dmgShader;

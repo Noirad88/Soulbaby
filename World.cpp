@@ -242,6 +242,15 @@ World::World(){
     GlobalMembers.keyboardControls[6] = sf::Keyboard::C;
 	GlobalMembers.keyboardControls[7] = sf::Keyboard::P;
 	GlobalMembers.keyboardControls[8] = sf::Keyboard::V;
+
+	GlobalMembers.joystickControls[0] = -100;
+	GlobalMembers.joystickControls[1] = -100;
+	GlobalMembers.joystickControls[2] = 100;
+	GlobalMembers.joystickControls[3] = 100;
+	GlobalMembers.joystickControls[4] = 4;
+	GlobalMembers.joystickControls[5] = 3;
+	GlobalMembers.joystickControls[6] = 0;
+
 	dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC";
     
 	GlobalMembers.playerWeapon = 0;
@@ -268,6 +277,18 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     LoadScene("map2_1");
 	testShape.setFillColor(sf::Color::Blue);
 	testShape.setSize(sf::Vector2f(200,200));
+
+	sf::Joystick::update();
+	bool joystick = sf::Joystick::isConnected(0);
+	int buttons = sf::Joystick::getButtonCount(0);
+	int axisx = sf::Joystick::hasAxis(0,sf::Joystick::Axis::X);
+	int axisy = sf::Joystick::hasAxis(0, sf::Joystick::Axis::Y);
+
+
+	std::cout << "Joystick? : " << joystick << std::endl;
+	std::cout << "Button? : " << buttons << std::endl;
+	std::cout << "Axis? : " << axisx << ", " << axisy << std::endl;
+
     
 }
 
@@ -400,6 +421,7 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 
 	if (CurrentScene->mapType != ENCOUNTER) WorldScene.levelContainer->DrawBGTop();
 
+	if(WorldScene.UIPtr) WorldScene.UIPtr->Draw(*windowWorld);
     
     if(WorldScene.transition) UpdateTransition();
      
@@ -648,6 +670,39 @@ SceneScript::SceneScript(std::string tempname, int tempmapType, float tempdurati
     mapType = tempmapType;
     duration = tempduration;
     
+}
+
+bool World::PlayerPressedButton(int button) {
+
+	bool buttonPressed = false;
+
+	if (GlobalMembers.joystick == true) {
+
+		sf::Joystick::update();
+
+		if (button == controlsUp
+			|| button == controlsDown) {
+
+		    if (sf::Joystick::getAxisPosition(0,sf::Joystick::Axis::Y) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+
+		} 
+
+		else if (button == controlsLeft
+			|| button == controlsRight) {
+
+			if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+
+
+		}
+
+		else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button]);
+
+	}
+
+	else buttonPressed = sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[button]);
+	
+	return buttonPressed;
+
 }
 
 int RoundUp(int numToRound, int multiple)

@@ -91,6 +91,9 @@ struct Attributes{
     std::array<int,7> levelsCompleted;
     std::array<int,7> weapons;
     std::array<sf::Keyboard::Key,9> keyboardControls;
+	std::array<int, 9> joystickControls;
+	bool joystick = true;
+
     int currentLevel = 0;
     int playerWeapon = 0;
 	int playerWeapon2 = 4;
@@ -166,6 +169,7 @@ struct Scene{
     std::unique_ptr<Transition> transition;
     Entity::Player* playerPtr;
     Entity::Hud* hudPtr;
+	Entity::Object* UIPtr;
 	Entity::Guide* guidePtr;
 
     bool isLoaded = false;
@@ -233,6 +237,7 @@ class World{
     void LoadSceneBank();
     void CreateCharacterScripts();
     void DrawObject(sf::Drawable& sprite, std::string shader = "");
+	bool PlayerPressedButton(int button);
 	sf::RectangleShape testShape;
     static World *GetInstance(){
         
