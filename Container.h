@@ -44,7 +44,7 @@ public:
     void UpdateObjects();
     void AddObjects();
     void CheckCollisions();
-	void PlayerDamaged();
+	static void PlayerDamaged();
     void GetCollisionArea(sf::Vector2f prevPos, sf::Vector2f currPos, sf::IntRect spriteRect);
     std::vector<int> GetProjectileObjects(std::vector<int>& vec);
 	std::vector<int> GetEnemyObjects(std::vector<int>& vec);

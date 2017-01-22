@@ -448,6 +448,15 @@ void Container::AddObjects()
 
 			}
 
+			else if ((QI)->properties["itemType"] == "Djinn")
+			{
+
+				std::unique_ptr<Entity::Djinn> ptr(new Entity::Djinn);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "Mask")
 			{
 

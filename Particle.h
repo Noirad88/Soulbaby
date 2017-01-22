@@ -885,6 +885,13 @@ namespace Entity
 		~Roach();
 
 	};
+
+	class Djinn : public Enemy
+	{
+	public:
+		Djinn();
+		~Djinn();
+	};
     
     class Squid : public Enemy
     {
@@ -980,10 +987,10 @@ namespace Entity
             int aType = 1;
             int bType = 1;
 			if (a->type == "GUI") aType = 3;
-			if (a->type == "Projectile" || a->type ==  "EnemyProjectile") aType = 2;
+			if (a->type == "Particle" || a->type == "Projectile" || a->type ==  "EnemyProjectile") aType = 2;
             if(a->type == "BG") aType = 0;
             if(b->type == "GUI") bType = 3;
-			if (b->type == "Projectile" || b->type ==  "EnemyProjectile") bType = 2;
+			if (b->type == "Particle" || b->type == "Projectile" || b->type ==  "EnemyProjectile") bType = 2;
             if(b->type == "BG") bType = 0;
             return aType < bType;
             

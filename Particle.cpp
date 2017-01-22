@@ -488,7 +488,7 @@ namespace Entity
                         
                         if(World::GetInstance()->Timer(*this,25100.0)){
                         
-                            if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])){
+                            if(World::GetInstance()->PlayerPressedButton(controlsB)){
                             
                                 newScript.erase(0);
                                 script.erase(0,1);
@@ -527,7 +527,7 @@ namespace Entity
             
             if(World::GetInstance()->Timer(*this,25200.0)){
                 
-                if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB])) misDestroyed = true;
+                if(World::GetInstance()->PlayerPressedButton(controlsB)) misDestroyed = true;
 				World::GetInstance()->WorldScene.guidePtr->ready = false;
 
             }
@@ -785,7 +785,7 @@ namespace Entity
         SetShadow();
         type = "Player";
         scaleTemp = sf::Vector2f(0.12,0);
-        SetHitBox(sf::Vector2f(6,6),1);
+        SetHitBox(sf::Vector2f(6,6),0);
         dead = false;
         if(!World::GetInstance()->CameraTarget) World::GetInstance()->SetCameraTarget(*this);
 
@@ -1158,11 +1158,15 @@ namespace Entity
 		if (shield == 0) {
 
 			objectSprite.setColor(sf::Color::Color(255, 255, 255, 50 + cos(World::GetInstance()->clock2.getElapsedTime().asMilliseconds()*0.5) * 100));
-			if (World::GetInstance()->Timer(*this, VERY_SLOW * 8)) shield = 1;
+			if (World::GetInstance()->Timer(*this, VERY_SLOW * 8)) {
+				shield = 1;
+				objectSprite.setColor(sf::Color::Color(255, 255, 255,255));
+
+			}
 
 		}
 
-		else if (shield != 0 && shield < 41) {
+		if (shield != 0 && shield < 41) {
 
 			if (World::GetInstance()->Timer(*this, VERY_SLOW*2)) shield += 1;
 			sshield.setColor(sf::Color::Color(255, 255, 255, 50 + cos(World::GetInstance()->clock2.getElapsedTime().asMilliseconds()*0.5) * 100));
@@ -1189,7 +1193,7 @@ namespace Entity
 
 
 		}
-
+				
 		objectSprite.move(vel.x, vel.y);
 		hotSpot.x = objectSprite.getPosition().x;
 		hotSpot.y = objectSprite.getPosition().y - objectSprite.getTextureRect().height / 3;
@@ -1199,6 +1203,8 @@ namespace Entity
 		*posYtemp2 = objectSprite.getPosition().y;
 
 		sshield.setPosition(objectSprite.getPosition().x - 8, (objectSprite.getPosition().y - 32)+41-shield);
+
+		if (World::GetInstance()->PlayerPressedButton(controlsSwitch)) Container::PlayerDamaged();
 
 	}
 
@@ -1552,7 +1558,8 @@ namespace Entity
     {
         
         objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_particles.png"));
-        
+		type = "Particle";
+
         
     }
     
@@ -3046,7 +3053,7 @@ namespace Entity
 
         if(enemyList[0] == ""){
             
-            enemyList[0] = "Star";
+            enemyList[0] = "Djinn";
             enemyList[1] = "Squid";
             enemyList[2] = "Slime";
             enemyList[3] = "Mask";
@@ -3274,6 +3281,26 @@ namespace Entity
 		// For roaches, speed is the DISTANCE the enemy will move
 
 		speed = 30;
+
+	}
+
+	Djinn::Djinn() : Enemy()
+	{
+		objectSprite.setTextureRect(sf::IntRect(100, 0, 140, 112));
+		SetCharacterOrigin();
+		SetShadow(); 
+		moveType = NORMAL;
+		health = 180;
+		enemyMode = 3;
+		flatAnimation = true;
+		animationSpeed = VERY_SLOW * 2;
+		hasAttack = 1;
+		SetHitBox(sf::Vector2f(45, 70), 0);
+
+
+		// For roaches, speed is the DISTANCE the enemy will move
+
+		speed = 0.5;
 
 	}
     
@@ -3836,7 +3863,7 @@ namespace Entity
 	void Enemy::TargetPlayer() {
 
 		//BUG
-		fireDir = GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
+		if(World::GetInstance()->WorldScene.playerPtr) fireDir = GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
 	}
     
     void Boss::Update(){
@@ -4369,6 +4396,10 @@ namespace Entity
         
         
     }
+
+	Djinn::~Djinn() {
+
+	}
     
     Squid::~Squid(){
         
@@ -4520,13 +4551,16 @@ namespace Entity
         
         objectSprite.setOrigin(objectSprite.getTextureRect().width/2,objectSprite.getTextureRect().height/2);
         
-    }
+    } 
     
     void Object::SetShadow()
     {
+		// Set the shadow size based on the actor size
+
         objectShadow.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png")));
-        objectShadow.setTextureRect(sf::IntRect(0, 0, 15, 5));
-        objectShadow.setOrigin(7,2);
+        if(objectSprite.getTextureRect().width >= 90) objectShadow.setTextureRect(sf::IntRect(154, 0, 50, 15));
+		else objectShadow.setTextureRect(sf::IntRect(0, 0, 15, 5));
+        objectShadow.setOrigin(objectShadow.getTextureRect().width / 2,objectShadow.getTextureRect().height/2);
         objectShadow.setPosition(objectSprite.getPosition());
         
     }

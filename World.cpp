@@ -250,6 +250,8 @@ World::World(){
 	GlobalMembers.joystickControls[4] = 4;
 	GlobalMembers.joystickControls[5] = 3;
 	GlobalMembers.joystickControls[6] = 0;
+	GlobalMembers.joystickControls[7] = 0;
+	GlobalMembers.joystickControls[8] = 1;
 
 	dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC";
     
@@ -675,10 +677,9 @@ SceneScript::SceneScript(std::string tempname, int tempmapType, float tempdurati
 bool World::PlayerPressedButton(int button) {
 
 	bool buttonPressed = false;
+	sf::Joystick::update();
 
-	if (GlobalMembers.joystick == true) {
-
-		sf::Joystick::update();
+	if (sf::Joystick::isConnected(0)) {
 
 		if (button == controlsUp
 			|| button == controlsDown) {
