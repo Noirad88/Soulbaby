@@ -1457,6 +1457,15 @@ namespace Entity
 		maxTime = 1000000.0;
 		animSpeed = VERY_FAST;
 	}
+
+	StarSpawn::StarSpawn() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(44, 168, 15, 15));
+		SetEffectOrigin();
+		maxFrame = 4;
+		maxTime = 1000000.0;
+		animSpeed = VERY_FAST;
+	}
     
     
     Hit::Hit(){
@@ -2737,6 +2746,16 @@ namespace Entity
 
 	}
 
+	StarSpawn::~StarSpawn() {
+
+		itemQueue star;
+		star.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+		star.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+		star.properties["itemType"] = "Star";
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(star);
+
+	}
+
 	HauzerSmog::~HauzerSmog() {
 
 	}
@@ -3097,7 +3116,7 @@ namespace Entity
             if(World::GetInstance()->Timer(*this, 1500000.0,NODELAY)){
                 
                 int lvlwidth = fieldSize;
-                int lvlheight = fieldSize;;
+                int lvlheight = fieldSize;
                 
                 std::random_device rd;
                 std::mt19937 mt(rd());
@@ -3106,7 +3125,7 @@ namespace Entity
                 std::uniform_int_distribution<int> randomEnemy(0,5);
                 
                 int enemyr = RandomNumber(5);
-                
+                 
                 for(int i = 0; i != 2; i++){
                     
                     
@@ -3133,7 +3152,6 @@ namespace Entity
                 if(int(bg.getColor().a)-2 < 0) bg.setColor(sf::Color(255,255,255,0));     
                 else bg.setColor(sf::Color(255,255,255,int(bg.getColor().a)-2));
                 World::GetInstance()->WorldScene.audioContainer.music.setVolume(World::GetInstance()->WorldScene.audioContainer.music.getVolume()-0.5);
-               // std::cout <<  World::GetInstance()->WorldScene.audioContainer.music.getVolume() << std::endl;   
                 
             }
             
@@ -3232,6 +3250,7 @@ namespace Entity
         SetHitBox(sf::Vector2f(16,16),1);
 		hotSpot.x = 0;
 		hotSpot.y = 0;
+		AssignedAttack = 0;
 
 
     }
@@ -3248,10 +3267,10 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect (0,0,24,24));
         SetCharacterOrigin();
         SetShadow();
-        moveType = JUMPER;
         health = 5;
 		enemyMode = 1;
-		hasAttack = 1;
+		AssignedBehavior = &Enemy::FollowPlayer;
+		AssignedMovement = &Enemy::MoveJump;
     }
 
 	Spore::Spore() : Enemy()
@@ -3260,12 +3279,11 @@ namespace Entity
 		SetHitBox(sf::Vector2f(10, 10), 1);
 		SetCharacterOrigin();
 		SetShadow();
-		moveType = NORMAL;
 		health = 5;
-		enemyMode = 0;
+		AssignedBehavior = &Enemy::RandomPosition;
+		AssignedMovement = &Enemy::MoveWalk;
 		flatAnimation = true;
 		speed = 1.5;
-		hasAttack = 1;
 	}
 
 	Roach::Roach() : Enemy()
@@ -3273,9 +3291,9 @@ namespace Entity
 		objectSprite.setTextureRect(sf::IntRect(0, 117, 37, 16));
 		SetCharacterOrigin();
 		SetShadow();
-		moveType = SLIDER;
 		health = 10;
-		enemyMode = 4;
+		AssignedBehavior = &Enemy::FollowPlayer;
+		AssignedMovement = &Enemy::MoveSlide;
 		animationSpeed = VERY_FAST;
 
 		// For roaches, speed is the DISTANCE the enemy will move
@@ -3286,21 +3304,25 @@ namespace Entity
 
 	Djinn::Djinn() : Enemy()
 	{
+
 		objectSprite.setTextureRect(sf::IntRect(100, 0, 140, 112));
 		SetCharacterOrigin();
-		SetShadow(); 
-		moveType = NORMAL;
+		SetShadow();
 		health = 180;
-		enemyMode = 3;
 		flatAnimation = true;
-		animationSpeed = VERY_SLOW * 2;
-		hasAttack = 1;
+		animationSpeed = VERY_SLOW;
+		AssignedBehavior = &Enemy::FollowPlayer;
+		AssignedMovement = &Enemy::MoveWalk;
+		AssignedAttack = &Enemy::DoubleCast;
 		SetHitBox(sf::Vector2f(45, 70), 0);
 
+		//Set child sprite(wings)
+		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_enemies.png"));
+		wings.setTextureRect(sf::IntRect(243, 0, 134, 44));
 
 		// For roaches, speed is the DISTANCE the enemy will move
 
-		speed = 0.5;
+		speed = 0.25;
 
 	}
     
@@ -3309,12 +3331,13 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect (0,24,35,35));
         SetCharacterOrigin();
         SetShadow();
-        moveType = NORMAL;
-		speed = 1.5;
+		speed = 1.5; 
         health = 10;
 		flatAnimation = true;
+		AssignedBehavior = &Enemy::LazyFollowPlayer;
+		AssignedMovement = &Enemy::MoveWalk;
 		animationSpeed = 1000.0;
-		enemyMode = 3;
+		transition = false;
         
     }
 
@@ -3323,13 +3346,13 @@ namespace Entity
 		objectSprite.setTextureRect(sf::IntRect(36, 13, 37, 45));
 		SetCharacterOrigin();
 		SetShadow();
-		moveType = NORMAL;
 		speed = 0.5;
 		health = 30;
 		flatAnimation = true;
 		animationSpeed = VERY_SLOW*2;
-		enemyMode = 3;
-		hasAttack = 2;
+		AssignedBehavior = &Enemy::FollowPlayer;
+		AssignedMovement = &Enemy::MoveWalk;
+		AssignedAttack = &Enemy::Laser;
 		SetHitBox(sf::Vector2f(25, 35), 1);
 
 
@@ -3340,10 +3363,12 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect (0,60,43,46));
         SetCharacterOrigin();
         SetShadow();
-        moveType = NORMAL;
         speed = 0.5;
         health = 60;
-        hasAttack = 3;
+		flatAnimation = false;
+		AssignedBehavior = &Enemy::FollowPlayer;
+		AssignedMovement = &Enemy::MoveWalk;
+		AssignedAttack = &Enemy::CastShoot;
         SetHitBox(sf::Vector2f(24,43),1);
 		flatAnimation = false;
 		enemyMode = 1;
@@ -3421,137 +3446,255 @@ namespace Entity
 	}
     
     // Update Functions
-    
-	void Enemy::Move() {
 
+	//Behavior functions
 
+	void Enemy::FollowPlayer() {
 
-		if (enemyMode != 3) {
+		vel.x = 0;
+		vel.y = -speed;
 
-			vel.x = 0;
-			vel.y = -speed;
+		if(AssignedMovement != &Enemy::MoveSlide) targetPosition = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition();
+		RotateVector(vel, -(GetAngle(objectSprite.getPosition(), targetPosition + varyMov)));
+
+		OffsetPosition();
+
+	}
+
+	void Enemy::LazyFollowPlayer() {
+
+		targetPosition = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition();
+
+		if (World::GetInstance()->Timer(*this, VERY_FAST, NODELAY)) {
+
+			//set slow move to player
+
+			if (objectSprite.getPosition().x < targetPosition.x + varyMov.x && vel.x < speed) vel.x += 0.15;
+			else if (objectSprite.getPosition().x > targetPosition.x + varyMov.x && vel.x > -speed) vel.x -= 0.15;
+			if (objectSprite.getPosition().y < targetPosition.y + varyMov.y && vel.y < speed) vel.y += 0.15;
+			else if (objectSprite.getPosition().y > targetPosition.y + varyMov.y && vel.y > -speed) vel.y -= 0.15;
+
 
 		}
 
-		// no target; random movement points (Slime)
+		OffsetPosition();
 
-		if (enemyMode == 0) {
+	}
 
-			//set movement in random direction
-			if (World::GetInstance()->Timer(*this, 800000.0, NODELAY) && velZ == 0) {
+	void Enemy::RandomPosition() {
 
-				targetPosition.x = RandomNumber(600);
-				targetPosition.y = RandomNumber(600);
-			}
+		vel.x = 0;
+		vel.y = -speed;
+
+		if (World::GetInstance()->Timer(*this, 800000.0, NODELAY) && velZ == 0) {
+
+			targetPosition.x = RandomNumber(600);
+			targetPosition.y = RandomNumber(600);
+		}
+
+		RotateVector(vel, -(GetAngle(objectSprite.getPosition(), targetPosition)));
+
+	}
+
+	// Move functions
+
+	void Enemy::MoveWalk() {
+
+		if (hasAttack == 0) objectSprite.move(vel.x, vel.y + velZ);
+
+		else if (moveOnAttack == false) {
+
+			if (attacking == false) objectSprite.move(vel.x, vel.y + velZ);
+
+		}
+
+		else objectSprite.move(vel.x, vel.y + velZ);
+
+	}
+
+	void Enemy::MoveSlide() {
+
+		vel.x = 0;
+		vel.y = -speed;
+	
+		if (World::GetInstance()->Timer(*this, 400000.0, NODELAY) && velZ == 0) {
+
+			int rand1 = RandomNumber(45);
+			int rand2 = RandomNumber(1);
+			if (rand2 == 0) rand1 *= -1;
+
+			RotateVector(vel, -(GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition())));
+			RotateVector(vel, rand1);
+
+			targetPosition.x = objectSprite.getPosition().x + vel.x;
+			targetPosition.y = objectSprite.getPosition().y + vel.y;
+
+		}
+
+		else {
 
 			RotateVector(vel, -(GetAngle(objectSprite.getPosition(), targetPosition)));
 
 		}
 
-		// Regular move (Squiz wizard)
+		sf::Vector2f newPos = sf::Vector2f(objectSprite.getPosition().x, objectSprite.getPosition().y);
+		newPos.x += (targetPosition.x - objectSprite.getPosition().x) / 5;
+		newPos.y += (targetPosition.y - objectSprite.getPosition().y) / 5;
+		objectSprite.setPosition(newPos.x, newPos.y);
+		
+	
+	}
 
-		else if (enemyMode == 1) {
+	void Enemy::MoveJump() {
 
-			//set move to player
-			targetPosition = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition();
-			RotateVector(vel, -(GetAngle(objectSprite.getPosition(), targetPosition + varyMov)));
+		if (velZ != 0) objectSprite.move(vel.x, vel.y + velZ);
+
+		posZ -= velZ;
+
+		if (objectSprite.getPosition().y < objectShadow.getPosition().y) {
+
+			if (World::GetInstance()->Timer(*this, VERY_FAST))velZ += 0.2;
+
 		}
 
-		// gradually locate to player (Spike ball)
-
-		else if (enemyMode == 3) {
-
-			targetPosition = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition();
-
-			if (World::GetInstance()->Timer(*this, VERY_FAST, NODELAY)) {
+		else {
 			
-				//set slow move to player
+			velZ = 0;
 
-				if (objectSprite.getPosition().x < targetPosition.x + varyMov.x && vel.x < speed) vel.x += 0.15;
-				else if (objectSprite.getPosition().x > targetPosition.x + varyMov.x && vel.x > -speed) vel.x -= 0.15;
-				if (objectSprite.getPosition().y < targetPosition.y + varyMov.y && vel.y < speed) vel.y += 0.15;
-				else if (objectSprite.getPosition().y > targetPosition.y + varyMov.y && vel.y > -speed) vel.y -= 0.15;
-				
+		}
+
+
+	}
+
+	//Attack functions
+
+	void Enemy::Shoot() {
+
+		if (World::GetInstance()->Timer(*this, 2000000.0)) {
+
+			itemQueue bullet;
+			bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 3);
+			bullet.properties["itemType"] = "EnemyBlip";
+			bullet.properties["Direction"] = std::to_string(fireDir);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+		}
+
+	}
+
+	void Enemy::Laser() {
+
+		if (attacking == false) {
+
+			if (PlayerDistance(MID)) {
+
+				if (World::GetInstance()->Timer(*this, VERY_SLOW)) {
+
+					itemQueue bullet;
+					bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+					bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+					bullet.properties["itemType"] = "EnemyLaser";
+					bullet.properties["Direction"] = std::to_string(fireDir);
+					bullet.parent = this;
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+					int rand = RandomNumber(2);
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_elsr_" + std::to_string(rand));
+					attacking = true;
+
+				}
+			}
+
+		}
+
+		else if (attacking == true) {
+
+			if (World::GetInstance()->Timer(*this, VERY_SLOW * 10)) attacking = false;
+
+		}
+
+	}
+
+	void Enemy::CastShoot() {
+
+		if (attacking == false) {
+
+			if (PlayerDistance(MID)) {
+
+				// create charge object (charge object casts bullets)
+
+				itemQueue bullet;
+				bullet.properties["PosX"] = std::to_string(hotSpot.x);
+				bullet.properties["PosY"] = std::to_string(hotSpot.y);
+				bullet.properties["itemType"] = "EnemyCharge";
+				bullet.parent = this;
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+				attacking = true;
 
 			}
 
-		
+		}
+
+		else if (attacking == true) {
+
+			//ENEMY SHOULDNT MOVE IF ATTACKING
+
+			// this time should take in account the charge asset + bullets; there should be a small break and
+
+			if (World::GetInstance()->Timer(*this, 1000000.0)) attacking = false;
+
+			// also can set "cast" animatino here as well
+
 		}
 
 
-		// regular movement (Squid wizard)
 
-		if (moveType == NORMAL) {
 
-            if(hasAttack == 0) objectSprite.move(vel.x, vel.y + velZ);
-            
-			else if (moveOnAttack == false) {
 
-				if (attacking == false) objectSprite.move(vel.x, vel.y  + velZ);
+	}
 
-			}
+	void Enemy::DoubleCast() {
 
-			else objectSprite.move(vel.x, vel.y +  velZ);
-            
-        }
+		if (attacking == false) {
 
-		// slides accross in intervals (Roach movement
+			if (PlayerDistance(MID)) {
 
-		else if (moveType == SLIDER) {
+				// create charge object (charge object casts bullets)
 
-			if (World::GetInstance()->Timer(*this, 400000.0, NODELAY) && velZ == 0) {
-
-				int rand1 = RandomNumber(45);
-				int rand2 = RandomNumber(1);
-				if (rand2 == 0) rand1 *= -1;
-
-				RotateVector(vel, -(GetAngle(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition())));
-				RotateVector(vel, rand1);
-
-				targetPosition.x = objectSprite.getPosition().x + vel.x;
-				targetPosition.y = objectSprite.getPosition().y + vel.y;
+				itemQueue bullet;
+				bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x + 50);
+				bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 35);
+				bullet.properties["itemType"] = "StarSpawn";
+				bullet.parent = this;
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+				bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x - 50);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+				attacking = true;
 
 			}
-			 
-			else {
-
-				RotateVector(vel, -(GetAngle(objectSprite.getPosition(),targetPosition)));
-
-			}
-
-			sf::Vector2f newPos = sf::Vector2f(objectSprite.getPosition().x,objectSprite.getPosition().y);
-			newPos.x += (targetPosition.x - objectSprite.getPosition().x) / 5;
-			newPos.y += (targetPosition.y - objectSprite.getPosition().y) / 5;
-			objectSprite.setPosition(newPos.x,newPos.y);
 
 		}
-		
-		// periodically jumps (Slime movement)
-        
-		else if (moveType == JUMPER){
 
-            if(velZ != 0) objectSprite.move(vel.x,vel.y + velZ);
+		else if (attacking == true) {
 
-            posZ -= velZ;
-            
-            if(objectSprite.getPosition().y < objectShadow.getPosition().y){
-                
-				if (World::GetInstance()->Timer(*this,VERY_FAST))velZ += 0.2;
-                
-            }
-            
-            else{
-                
-                velZ = 0;
-                
-            }
+			//ENEMY SHOULDNT MOVE IF ATTACKING
 
-            
-        }
+			// this time should take in account the charge asset + bullets; there should be a small break and
 
-		//setting a vector to randomly rotate target position to avoid enemy buildup
+			if (World::GetInstance()->Timer(*this, 1000000.0)) attacking = false;
 
-		if (enemyMode != 0) {
+			// also can set "cast" animatino here as well
+
+		}
+
+
+
+
+
+	}
+
+	void Enemy::OffsetPosition() {
+
 
 			if (World::GetInstance()->Timer(*this, 200000.0)) {
 
@@ -3572,12 +3715,11 @@ namespace Entity
 
 				}
 
-
 			}
 
-		}
+	}
 
-		MoveElse();
+	void Enemy::Animate() {
 
 		if (flatAnimation == true) {
 
@@ -3600,20 +3742,20 @@ namespace Entity
 			int tempdir = abs((180 - spriteDirection) / 45);
 			spriteDirection = tempdir;
 			*/
-	
-			spriteDirection = objectSprite.getPosition().x < (objectSprite.getPosition().x + vel.x) ?  1 : 0;
-		
 
-			if (World::GetInstance()->Timer(*this,animationSpeed)) {
+			spriteDirection = objectSprite.getPosition().x < (objectSprite.getPosition().x + vel.x) ? 1 : 0;
 
-				if (moveType != JUMPER) {
+
+			if (World::GetInstance()->Timer(*this, animationSpeed)) {
+
+				if (AssignedMovement != &Enemy::MoveJump) {
 
 					if (frame >= 3) frame = 0;
-					else if(moveType != SLIDER) frame++;
+					else if (AssignedMovement != &Enemy::MoveSlide) frame++;
 
-					else if (moveType == SLIDER) {
+					else if (AssignedMovement == &Enemy::MoveSlide) {
 
-						if (!IfDistance(objectSprite.getPosition(),targetPosition,2)) frame++;
+						if (!IfDistance(objectSprite.getPosition(), targetPosition, 2)) frame++;
 
 					}
 				}
@@ -3627,22 +3769,30 @@ namespace Entity
 
 			}
 
-			objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left, (((spriteDirection * 4+frame) * 174) + spriteTop), objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
+			objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left, (((spriteDirection * 4 + frame) * 174) + spriteTop), objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
 
 		}
-        
-        //remove this below to activate angle rotation (this makes the enemy always look to player)
-        
+
+	}
+    
+	void Enemy::Move() {
+
+		if (AssignedBehavior != NULL || 0) AssignedBehavior(this);
+		if (AssignedMovement != NULL || 0) AssignedMovement(this);
+		MoveElse();
+		Animate(); 
         if(targetPlayer) fireDir = GetAngle(objectSprite.getPosition(),World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition());
-        
+       
     }
     
     
     void Enemy::Act(){
 
+		// HotSpot - vector where we create objects in orientation from the enemy. We need 
+		// to flip this vector horizontally depending on the direction the sprite is facing
+
 		sf::Vector2f hs;
 		hs = hotSpot;
-
 		if (hotSpot.x != 0 && hotSpot.y != 0) {
 
 			if (objectSprite.getTextureRect().top >= 696) {
@@ -3679,11 +3829,15 @@ namespace Entity
 
 		}
         
+		//if transition is complete, run move and attack functions
+
         if(active){
             
+			//return to original position from hurtPos
+
             if(hurt == true) objectSprite.move(-hurtPos);
             if(attacking == false) Move();
-			if (hasAttack != 0) Attack();
+			Attack();
 			
 			// misc decorations
 
@@ -3707,6 +3861,8 @@ namespace Entity
             
         }
         
+		// if enemy has not fully transitioned into scene, continue to progress transition
+
         else{
             
             if(World::GetInstance()->Timer(*this,NORMAL,NODELAY)){
@@ -3757,100 +3913,35 @@ namespace Entity
     
 	void Enemy::Attack() {
 
-		//Specifc attack is executed depending on hasAttack set in constructor
-
-		//EnemyBlip
-
-		if (hasAttack == 1) {
-
-				if (World::GetInstance()->Timer(*this, 2000000.0)) {
-
-					itemQueue bullet;
-					bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-					bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 3);
-					bullet.properties["itemType"] = "EnemyBlip";
-					bullet.properties["Direction"] = std::to_string(fireDir);
-					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-				}
-
-
-		}
-
-		//EnemyLaser
-
-		if (hasAttack == 2) {
-
-				if (attacking == false) {
-
-					if (PlayerDistance(MID)) {
-
-						if (World::GetInstance()->Timer(*this, VERY_SLOW)) {
-
-							itemQueue bullet;
-							bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-							bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-							bullet.properties["itemType"] = "EnemyLaser";
-							bullet.properties["Direction"] = std::to_string(fireDir);
-							bullet.parent = this;
-							World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-							int rand = RandomNumber(2);
-							World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_elsr_" + std::to_string(rand));
-							attacking = true;
-
-						}
-					}
-
-				}
-
-				else if (attacking == true) {
-
-					if (World::GetInstance()->Timer(*this, VERY_SLOW * 10)) attacking = false;
-
-				}
-
-		}
-
-		//Wizard cast
-
-		if (hasAttack == 3) {
-
-			if (attacking == false) {
-
-				if (PlayerDistance(MID)) {
-
-						// create charge object; charge object casts bullets
-
-						itemQueue bullet;
-						bullet.properties["PosX"] = std::to_string(hotSpot.x);
-						bullet.properties["PosY"] = std::to_string(hotSpot.y);
-						bullet.properties["itemType"] = "EnemyCharge";
-						bullet.parent = this;
-						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-						attacking = true;
-
-				}
-
-			}
-
-			else if (attacking == true) {
-
-				//ENEMY SHOULDNT MOVE IF ATTACKING
-
-				// this time should take in account the charge asset + bullets; there should be a small break and
-
-				if (World::GetInstance()->Timer(*this, 1000000.0)) attacking = false;
-
-				// also can set "cast" animatino here as well
-
-			}
-
-		}
+		if(AssignedAttack != NULL || 0) AssignedAttack(this);
         
     }
     
+	void Enemy::DrawChild() {
+
+
+
+	}
+
+	void Djinn::DrawChild() {
+
+		if (World::GetInstance()->Timer(*this, VERY_FAST)) {
+
+			if (wings.getTextureRect().top >= 348) wings.setTextureRect(sf::IntRect(243, 0, 134, 44));
+
+			else wings.setTextureRect(sf::IntRect(243, wings.getTextureRect().top + 174, 134, 44));
+
+		}
+
+		wings.setPosition(objectSprite.getPosition().x-66, objectSprite.getPosition().y-100);
+		World::GetInstance()->DrawObject(wings);
+
+	}
+
     void Enemy::Draw(sf::RenderTarget& window){
         
+		DrawChild();
+
 		if (showHurt == true) {
 			World::GetInstance()->DrawObject(objectSprite, "whiteShader");
 			showHurt = false;

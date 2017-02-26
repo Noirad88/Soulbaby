@@ -149,6 +149,15 @@ void Container::AddObjects()
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
+
+			else if ((QI)->properties["itemType"] == "StarSpawn")
+			{
+
+				std::unique_ptr<Entity::StarSpawn> ptr(new Entity::StarSpawn);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "DeathPoof")
             {

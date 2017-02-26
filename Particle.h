@@ -570,6 +570,12 @@ namespace Entity
 		EnemyCharge();
 		~EnemyCharge();
 	};
+
+	class StarSpawn: public Fixed {
+	public:
+		StarSpawn();
+		~StarSpawn();
+	};
     
     class DoorDestroy: public Fixed{
     public:
@@ -782,7 +788,9 @@ namespace Entity
         int maxEnemies = 100;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
+		std::array<std::string, 3> enemyTypeCount;
         sf::Sprite bg;
+
     };
     
     class Enemy : public Object
@@ -800,7 +808,9 @@ namespace Entity
         void Act();
 		virtual void isHurt();
 		virtual void MoveElse();
+		void Animate();
         void Draw(sf::RenderTarget& window);
+		virtual void DrawChild();
         virtual void Attack();
 		void TargetPlayer();
         void Damaged();
@@ -824,19 +834,43 @@ namespace Entity
         int enemyID = 0;
 		bool attacking = false;
 		int flatAnimation = false;
-		enum movement { south, swest, west, nwest, north, neast, east, seast, idle };
-		int spriteDirection = south;
+		int spriteDirection = 0;
 		int currentDirection = 0;
         bool hurt = false;
 		bool showHurt = false;
 		bool moveOnAttack = false;
         bool targetPlayer = true;
+		void OffsetPosition();
 
         sf::Vector2f hurtPos;
 		sf::Vector2f hotSpot;
 		bool transition = true;
 		sf::Vector2f targetPosition;
-        
+
+		//boost functions are used for each enemy movement and attack; functions are set during each enemy constructor
+
+		boost::function<void(Enemy*)> AssignedBehavior;
+		boost::function<void(Enemy*)> AssignedMovement;
+		boost::function<void(Enemy*)> AssignedAttack;
+
+		//List of functions
+
+		//Behaviors
+		void FollowPlayer();
+		void LazyFollowPlayer();
+		void RandomPosition();
+
+		//Movements
+		void MoveJump();
+		void MoveWalk();
+		void MoveSlide();
+
+		//Attacks
+		void Shoot();
+		void CastShoot();
+		void Laser();
+		void DoubleCast();
+
     };
     
     class EnemyNode : public Enemy
@@ -890,6 +924,8 @@ namespace Entity
 	{
 	public:
 		Djinn();
+		void DrawChild();
+		sf::Sprite wings;
 		~Djinn();
 	};
     
