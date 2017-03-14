@@ -1231,7 +1231,7 @@ namespace Entity
         World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
         
         
-        World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_playerDeath");
+        World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_death");
         
         World::GetInstance()->ScreenShake(20);
 		//World::GetInstance()->WorldScene.playerPtr = nullptr;
@@ -1320,12 +1320,28 @@ namespace Entity
 		animSpeed = FAST;
 
 	}
+
+	EnemyPart::EnemyPart() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(10, 292, 17, 17));
+		vel.y = 0.5;
+		RotateVector(vel, RandomNumber(180));
+		SetEffectOrigin();
+		maxFrame = 8;
+		animSpeed = VERY_SLOW;
+		deacceleration = 0.5;
+
+	}
     
     Spark::~Spark(){
         
     }
 
 	EnemySpark::~EnemySpark() {
+
+	}
+
+	EnemyPart::~EnemyPart() {
 
 	}
     
@@ -2751,7 +2767,7 @@ namespace Entity
 		itemQueue star;
 		star.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
 		star.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
-		star.properties["itemType"] = "Star";
+		star.properties["itemType"] = "Eball";
 		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(star);
 
 	}
@@ -3050,10 +3066,6 @@ namespace Entity
      ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
      */
     
-    
-    // Function for collision detection
-
-    
     // Constructors
     
     int Enemy::totalEnemies = 0;
@@ -3106,42 +3118,48 @@ namespace Entity
         
         type = "BG";
 
+		//lvlEnemyBank[0] = 4; 
+		//lvlEnemyBank[1] = 4;
+		//lvlEnemyBank[2] = 32;
+
+		lvlEnemyBank[0] = 4;
+		lvlEnemyBank[1] = 4;
+		lvlEnemyBank[2] = 32;
+
     }
 
-    
+	void LevelManager::CreateEnemy(int enemy) {
+
+		int lvlwidth = fieldSize;
+		int lvlheight = fieldSize;
+
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		std::uniform_int_distribution<int> randomLeftwidth(0, lvlwidth);
+		std::uniform_int_distribution<int> randomTopheight(0, lvlheight);
+
+		Entity::itemQueue ienemy;
+		ienemy.properties["itemType"] = enemyList[3 * World::GetInstance()->GlobalMembers.currentLevel + enemy];
+		ienemy.properties["PosX"] = std::to_string(randomLeftwidth(mt));
+		ienemy.properties["PosY"] = std::to_string(randomTopheight(mt));
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(ienemy);
+		lvlEnemyBank[enemy]--;
+
+	}
+
     void LevelManager::Update(){
+       
+        if(lvlEnemyBank[0] != 0 || lvlEnemyBank[1] != 0 || lvlEnemyBank[2] != 0){
         
-        if(maxEnemies > 0){
-        
-            if(World::GetInstance()->Timer(*this, 1500000.0,NODELAY)){
-                
-                int lvlwidth = fieldSize;
-                int lvlheight = fieldSize;
-                
-                std::random_device rd;
-                std::mt19937 mt(rd());
-                std::uniform_int_distribution<int> randomLeftwidth(0,lvlwidth);
-                std::uniform_int_distribution<int> randomTopheight(0,lvlheight);
-                std::uniform_int_distribution<int> randomEnemy(0,5);
-                
-                int enemyr = RandomNumber(5);
-                 
-                for(int i = 0; i != 2; i++){
-                    
-                    
-                    Entity::itemQueue enemy;
-                    
-                    if(enemyr > 2) enemyr = 2;
-                    enemy.properties["itemType"] = enemyList[3 * World::GetInstance()->GlobalMembers.currentLevel + enemyr];
-                    //std::cout << "calling(" << 3 * World::GetInstance()->GlobalMembers.currentLevel + enemyr << "): " << enemyList[3 * World::GetInstance()->GlobalMembers.currentLevel + enemyr] << std::endl;
-                    enemy.properties["PosX"] = std::to_string(randomLeftwidth(mt));
-                    enemy.properties["PosY"] = std::to_string(randomTopheight(mt));
-                    //std::cout << "enemys left: " << maxEnemies << std:: endl;
-                    World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
-                    maxEnemies--;
-                }
-                
-            }
+			// need to figure out the correct intervals to spawn enemies
+			// big enemies should take a while to respond
+			// mid and low enemies should be intervals of big enemies.
+			// we should figure out how to end up with a big enemy spawned before all the smaller enemies 
+			// (i.e., smaller enemies should still be spawning after LAST big enemy is spawned
+
+			if (World::GetInstance()->Timer(*this, 20000000.0,NODELAY)) CreateEnemy(0);
+			if (World::GetInstance()->Timer(*this, 5000000.0, NODELAY)) CreateEnemy(1);
+			if (World::GetInstance()->Timer(*this, 600000.0, NODELAY)) CreateEnemy(2);
             
         }
         
@@ -3311,10 +3329,10 @@ namespace Entity
 		health = 180;
 		flatAnimation = true;
 		animationSpeed = VERY_SLOW;
-		AssignedBehavior = &Enemy::FollowPlayer;
+		AssignedBehavior = &Enemy::RandomPosition;
 		AssignedMovement = &Enemy::MoveWalk;
 		AssignedAttack = &Enemy::DoubleCast;
-		SetHitBox(sf::Vector2f(45, 70), 0);
+		SetHitBox(sf::Vector2f(45, 70), 1);
 
 		//Set child sprite(wings)
 		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_enemies.png"));
@@ -3340,6 +3358,21 @@ namespace Entity
 		transition = false;
         
     }
+
+	Eball::Eball() : Enemy()
+	{
+		objectSprite.setTextureRect(sf::IntRect(45, 62, 41, 41));
+		SetCharacterOrigin();
+		SetShadow();
+		speed = 0.5;
+		health = 10;
+		flatAnimation = true;
+		AssignedBehavior = &Enemy::LazyFollowPlayer;
+		AssignedMovement = &Enemy::MoveWalk;
+		animationSpeed = 2000.0;
+		transition = false;
+
+	}
 
 	Mask::Mask() : Enemy()
 	{
@@ -3421,9 +3454,9 @@ namespace Entity
     
     Mozza::Mozza(){
         
-        objectSprite.setTextureRect(sf::IntRect (0,140,140,140));
+        objectSprite.setTextureRect(sf::IntRect (0,105,175,175));
 		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses.png"));
-		wings.setTextureRect(sf::IntRect(0,0, 140, 140));
+		wings.setTextureRect(sf::IntRect(0,0, 175, 44));
         speed = 2;
         maxhealth = 1200;
         health = maxhealth;
@@ -3791,93 +3824,100 @@ namespace Entity
 		// HotSpot - vector where we create objects in orientation from the enemy. We need 
 		// to flip this vector horizontally depending on the direction the sprite is facing
 
-		sf::Vector2f hs;
-		hs = hotSpot;
-		if (hotSpot.x != 0 && hotSpot.y != 0) {
+		if (health > 0) {
 
-			if (objectSprite.getTextureRect().top >= 696) {
-
-				hotSpot.x = objectSprite.getPosition().x + hotSpot.x;
-				hotSpot.y = objectSprite.getPosition().y - hotSpot.y;
-
-			}
-
-			else {
-
-				hotSpot.x = objectSprite.getPosition().x - hotSpot.x;
-				hotSpot.y = objectSprite.getPosition().y - hotSpot.y;
-
-			}
-		}
-
-        
-		if (spriteTop == -1) spriteTop = objectSprite.getTextureRect().top;
-
-		// Creates effects for enemies that lack transition (specifically for projectile enemies)
-
-		if (!transition && !active) {
-
-			objectSprite.setColor(sf::Color(255, 255, 255, 255));
-			active = true;
-			itemQueue particles;
-			particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-			particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-			particles.properties["itemType"] = "DeathPoof";
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-
-		}
-        
-		//if transition is complete, run move and attack functions
-
-        if(active){
-            
-			//return to original position from hurtPos
-
-            if(hurt == true) objectSprite.move(-hurtPos);
-            if(attacking == false) Move();
-			Attack();
-			
-			// misc decorations
-
+			sf::Vector2f hs;
+			hs = hotSpot;
 			if (hotSpot.x != 0 && hotSpot.y != 0) {
 
-				if (World::GetInstance()->Timer(*this, SLOW)) {
+				if (objectSprite.getTextureRect().top >= 696) {
 
-
-					itemQueue particles;
-					particles.properties["PosX"] = std::to_string(hotSpot.x - 4 + RandomNumber(8));
-					particles.properties["PosY"] = std::to_string(hotSpot.y - 4 + RandomNumber(8));
-					particles.properties["itemType"] = "EnemySpark";
-					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+					hotSpot.x = objectSprite.getPosition().x + hotSpot.x;
+					hotSpot.y = objectSprite.getPosition().y - hotSpot.y;
 
 				}
 
+				else {
+
+					hotSpot.x = objectSprite.getPosition().x - hotSpot.x;
+					hotSpot.y = objectSprite.getPosition().y - hotSpot.y;
+
+				}
 			}
 
 
-            UpdateShadow();
-            
-        }
-        
-		// if enemy has not fully transitioned into scene, continue to progress transition
+			if (spriteTop == -1) spriteTop = objectSprite.getTextureRect().top;
 
-        else{
-            
-            if(World::GetInstance()->Timer(*this,NORMAL,NODELAY)){
-                
-                if( int(objectSprite.getColor().a) < 255 ) objectSprite.setColor(sf::Color(255,255,255,int(objectSprite.getColor().a)+5));
-                else active = true;
-                
-            }
-            
-            
-        }
-        
-		isHurt();
-		hotSpot = hs;
+			// Creates effects for enemies that lack transition (specifically for projectile enemies)
 
+			if (!transition && !active) {
+
+				objectSprite.setColor(sf::Color(255, 255, 255, 255));
+				active = true;
+				itemQueue particles;
+				particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+				particles.properties["itemType"] = "DeathPoof";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+			}
+
+			//if transition is complete, run move and attack functions
+
+			if (active) {
+
+				//return to original position from hurtPos
+
+				if (hurt == true) objectSprite.move(-hurtPos);
+				if (attacking == false) Move();
+				Attack();
+
+				// misc decorations
+
+				if (hotSpot.x != 0 && hotSpot.y != 0) {
+
+					if (World::GetInstance()->Timer(*this, SLOW)) {
+
+
+						itemQueue particles;
+						particles.properties["PosX"] = std::to_string(hotSpot.x - 4 + RandomNumber(8));
+						particles.properties["PosY"] = std::to_string(hotSpot.y - 4 + RandomNumber(8));
+						particles.properties["itemType"] = "EnemySpark";
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+					}
+
+				}
+
+
+				UpdateShadow();
+
+			}
+
+			// if enemy has not fully transitioned into scene, continue to progress transition
+
+			else {
+
+				if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) {
+
+					if (int(objectSprite.getColor().a) < 255) objectSprite.setColor(sf::Color(255, 255, 255, int(objectSprite.getColor().a) + 5));
+					else active = true;
+
+				}
+
+
+			}
+
+			isHurt();
+			hotSpot = hs;
+		}
+
+		else {
+
+			Die();
+		}
     }
 
 	void Enemy::isHurt() {
@@ -3907,7 +3947,6 @@ namespace Entity
     {
         
         if(!World::GetInstance()->WorldScene.playerPtr->dead)Act();
-        if( health <= 0) misDestroyed = true;
         
     }
     
@@ -4039,7 +4078,7 @@ namespace Entity
 		tempList.push_back(f4);
 		tempList.push_back(f5);
 
-		for (int i = 1; i < BehaviorList.size(); i++) {
+		for (int i = 0; i < BehaviorList.size(); i++) {
 
 			BehaviorList[i] = tempList[RandomNumber(3,0)];
 			std::cout << i << " for " << BehaviorList.size() << std::endl;
@@ -4076,8 +4115,6 @@ namespace Entity
 
 	void Mozza::Behavior1() {
 
-		//8 direction continous shot
-
 		// Dash & spreader
 
 		Idle();
@@ -4086,7 +4123,7 @@ namespace Entity
 
 		if (phase == 0) {
 
-			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_hauzerbark2");
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_enemycharge");
 			Entity::itemQueue enemy;
 			enemy.properties["itemType"] = "HauzerCharge";
 			enemy.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
@@ -4126,7 +4163,7 @@ namespace Entity
 
 				bullet.properties["Direction"] = std::to_string(fireDir + 10);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_enemy_shot");
 
 			}
 
@@ -4144,7 +4181,7 @@ namespace Entity
 
 		if (phase == 0) {
 
-			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_hauzercharge1");
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_enemycharge");
 			Entity::itemQueue enemy;
 			enemy.properties["itemType"] = "HauzerCharge";
 			enemy.properties["PosX"] = std::to_string(objectHitBox.getPosition().x - 50);
@@ -4290,7 +4327,7 @@ namespace Entity
 
 	void Mozza::Rest() {
 
-		objectSprite.setTextureRect(sf::IntRect(0, 140, 140, 140));
+		AnimateIdle();
 
 		if (World::GetInstance()->Timer(*this, 1600000.0,NODELAY)) {
 
@@ -4334,13 +4371,25 @@ namespace Entity
 		defending = true;
 	}
 
-	void Mozza::AnimateAttack() {
+	void Boss::AnimateIdle() {
 
-		if (World::GetInstance()->Timer(*this, FAST)) {
+		if (World::GetInstance()->Timer(*this, VERY_SLOW)) {
 
 			frame++;
-			if (frame >= 3) frame = 1;
-			objectSprite.setTextureRect(sf::IntRect(0, frame * 280 + 140, 140, 140));
+			if (frame >= 4) frame = 0;
+			objectSprite.setTextureRect(sf::IntRect(0,(frame * 280) + 105, 175, 175));
+			defending = false;
+
+		}
+	}
+
+	void Boss::AnimateAttack() {
+
+		if (World::GetInstance()->Timer(*this, VERY_FAST)) {
+
+			frame++;
+			if (frame >= 4) frame = 0;
+			objectSprite.setTextureRect(sf::IntRect(0, 1120 + frame * 280 + 105, 175, 175));
 			defending = false;
 
 		}
@@ -4390,26 +4439,40 @@ namespace Entity
 		if (World::GetInstance()->Timer(*this, VERY_FAST)) {
 
 			wingFrames++;
-			wings.setTextureRect(sf::IntRect(0, wingFrames*280, 140, 140));
+			wings.setTextureRect(sf::IntRect(0, wingFrames*280, 175, 44));
 			if (wingFrames >= 3) wingFrames = 0;
 
 		}
 
-		wings.setPosition(objectSprite.getPosition());
+		wings.setPosition(objectSprite.getPosition().x,objectSprite.getPosition().y+50);
 
 	}
     
 	void Mozza::Draw(sf::RenderTarget& window) {
 
-		World::GetInstance()->DrawObject(objectSprite);
+		if (showHurt == true) {
+			World::GetInstance()->DrawObject(objectSprite, "whiteShader");
+			showHurt = false;
+		}
+
+		else World::GetInstance()->DrawObject(objectSprite);
+
 		World::GetInstance()->DrawObject(healthBar);
 		World::GetInstance()->DrawObject(bossName);
 		World::GetInstance()->DrawObject(wings);
+
+
 	}
     
     void Boss::Draw(sf::RenderTarget& window){
         
-        World::GetInstance()->DrawObject(objectSprite);
+
+		if (showHurt == true) {
+			World::GetInstance()->DrawObject(objectSprite, "whiteShader");
+			showHurt = false;
+		}
+
+		else World::GetInstance()->DrawObject(objectSprite);
         World::GetInstance()->DrawObject(objectHitBox);
         World::GetInstance()->DrawObject(healthBar);
         World::GetInstance()->DrawObject(bossName);
@@ -4423,23 +4486,7 @@ namespace Entity
     
     Enemy::~Enemy()
     {
-        --totalEnemies;
-        
-        std::cout << "Enemy destroyed" << std::endl;
-        
-        itemQueue particles;
-        particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-        particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-        particles.properties["itemType"] = "DeathPoof";
-        
-        World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-        World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-        World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-        
-        particles.properties["itemType"] = "DeathBoom";
-        World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-		int randnum = RandomNumber(2);
-		World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bighit" + std::to_string(randnum));
+	
     }
     
     Boss::~Boss(){
@@ -4449,6 +4496,78 @@ namespace Entity
 		World::GetInstance()->WorldScene.audioContainer.music.stop();
     
     }
+
+	void Enemy::Die() {
+
+		
+		// if this is a large enemy, do appropriate death animation; otherwise do the small one
+
+		if (objectShadow.getTextureRect().left != 0) {
+
+			if (World::GetInstance()->Timer(*this, NORMAL)) {
+
+				int ex = RandomNumber(64, 0);
+				int ey = RandomNumber(64, 0);
+
+				itemQueue particles;
+				particles.properties["PosX"] = std::to_string((objectSprite.getPosition().x - 32) + ex);
+				particles.properties["PosY"] = std::to_string((objectSprite.getPosition().y - objectSprite.getTextureRect().height/2 + 32) - ey);
+				particles.properties["itemType"] = "DeathPoof";
+
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+				particles.properties["itemType"] = "DeathBoom";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+				int randnum = RandomNumber(2);
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bighit" + std::to_string(randnum));
+
+			}
+
+			if (World::GetInstance()->Timer(*this, VERY_SLOW * 4)) {
+
+				misDestroyed = true;
+				World::GetInstance()->ScreenShake(5);
+				itemQueue particles;
+				for (int i = 0; i != 30; i++) {
+
+					int oh = RandomNumber(85, 0);
+					int ow = RandomNumber(85, 0);
+					particles.properties["PosX"] = std::to_string((objectSprite.getPosition().x - 85/2) + ow);
+					particles.properties["PosY"] = std::to_string((objectSprite.getPosition().y - objectSprite.getTextureRect().height/2) + 85/2 - oh);
+					particles.properties["itemType"] = "EnemyPart";
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_growl");
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_stomp");
+
+
+				}
+
+
+			}
+
+		}
+
+		else {
+
+			misDestroyed = true;
+
+			itemQueue particles;
+			particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+			particles.properties["itemType"] = "DeathPoof";
+
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+
+			particles.properties["itemType"] = "DeathBoom";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+			int randnum = RandomNumber(2);
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bighit" + std::to_string(randnum));
+		}
+	}
 
 	HauzerSpire::~HauzerSpire() {
 
@@ -4476,6 +4595,10 @@ namespace Entity
     }
 
 	Roach::~Roach() {
+
+	}
+
+	Eball::~Eball() {
 
 	}
 

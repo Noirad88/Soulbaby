@@ -158,6 +158,15 @@ void Container::AddObjects()
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
+
+			else if ((QI)->properties["itemType"] == "Eball")
+			{
+
+				std::unique_ptr<Entity::Eball> ptr(new Entity::Eball);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "DeathPoof")
             {
@@ -167,6 +176,15 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "EnemyPart")
+			{
+
+				std::unique_ptr<Entity::EnemyPart> ptr(new Entity::EnemyPart);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
 
 			else if ((QI)->properties["itemType"] == "EnemySpark")
 			{
@@ -854,6 +872,7 @@ void Container::PlayerDamaged() {
 
 		World::GetInstance()->WorldScene.playerPtr->shield = 0;
 		World::GetInstance()->ScreenShake(10);
+		World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_hurtgood");
 
 
 	}

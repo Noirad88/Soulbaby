@@ -609,6 +609,13 @@ namespace Entity
 		EnemySpark();
 		~EnemySpark();
 	};
+
+	class EnemyPart : public Fixed {
+
+	public:
+		EnemyPart();
+		~EnemyPart();
+	};
     
     class DeathPoof: public Fixed{
     public:
@@ -782,14 +789,15 @@ namespace Entity
     public:
         LevelManager();
         ~LevelManager();
+		void CreateEnemy(int enemy);
         void Draw(sf::RenderTarget& window);
         void Update();
         int fieldSize = 600;
         int maxEnemies = 100;
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
-		std::array<std::string, 3> enemyTypeCount;
         sf::Sprite bg;
+		std::array<int, 3> lvlEnemyBank;
 
     };
     
@@ -809,6 +817,7 @@ namespace Entity
 		virtual void isHurt();
 		virtual void MoveElse();
 		void Animate();
+		void Die();
         void Draw(sf::RenderTarget& window);
 		virtual void DrawChild();
         virtual void Attack();
@@ -887,6 +896,14 @@ namespace Entity
         ~Star();
         
     };
+
+	class Eball : public Enemy
+	{
+	public:
+		Eball();
+		~Eball();
+
+	};
 
 	class Mask : public Enemy
 	{
@@ -981,6 +998,9 @@ namespace Entity
 		void MoveToCenter();
 		void RoachMovement();
 
+		void AnimateIdle();
+		void AnimateAttack();
+
 		int currentMovement = 0;
 		int currentAttack = 0;
         
@@ -1001,7 +1021,6 @@ namespace Entity
 		void Behavior2();
 		void Behavior3();
 		void Behavior4();
-		void AnimateAttack();
 		void Rest();
 
     };
