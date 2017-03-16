@@ -707,7 +707,8 @@ namespace Entity
 	}
 
     void Hud::Draw(sf::RenderTarget& window){
-        
+
+        /*
 		World::GetInstance()->DrawObject(objectSprite);
 
 
@@ -729,7 +730,7 @@ namespace Entity
 
 		World::GetInstance()->DrawObject(pow1Lable);
 		World::GetInstance()->DrawObject(pow2Lable);
-
+		*/
         
     }
 
@@ -1180,6 +1181,8 @@ namespace Entity
 				particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 10);
 				particles.properties["itemType"] = "ShieldEffect";
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_twinkle");
+
 					
 			}
 
@@ -1366,6 +1369,21 @@ namespace Entity
         
     }
 
+	EnemyChargeParticle::EnemyChargeParticle() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(32, 123, 15, 15));
+		vel.y = RandomNumber(40, 0);
+		SetEffectOrigin();
+		int r = RandomNumber(1, 0);
+		if(r==0) RotateVector(vel, RandomNumber(180));
+		if (r == 1) RotateVector(vel, RandomNumber(-180));
+
+		maxFrame = 8;
+		animSpeed = VERY_FAST;
+		deacceleration = 0.5;
+
+	}
+
 	HauzerCharge::HauzerCharge() : Fixed() {
 
 		objectSprite.setTextureRect(sf::IntRect(0, 241, 50, 50));
@@ -1543,6 +1561,28 @@ namespace Entity
 		SetHitBox(sf::Vector2f(6, 6));
 		laserHead.setOrigin(7.5, 7.5);
 		laserBody.setOrigin(0, 0.5);
+
+		active = true;
+		followsPlayer = true;
+		emitter = "DeathPoof";
+		emitTime = SLOW;
+
+	}
+
+	BigEnemyLaser::BigEnemyLaser() : EnemyLaser() {
+
+		objectSprite.setTextureRect(sf::IntRect(0, 152, 41, 26));
+		laserBody.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		laserHead.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		laserBody.setTextureRect(sf::IntRect(32, 79, 16, 14));
+		laserHead.setTextureRect(sf::IntRect(96, 53, 41, 41));
+		speed = 2.5;
+		maxFrame = 1;
+		vel.y = speed;
+		SetEffectOrigin();
+		SetHitBox(sf::Vector2f(12, 12));
+		laserHead.setOrigin(20.5, 20.5);
+		laserBody.setOrigin(0, 7);
 
 		active = true;
 		followsPlayer = true;
@@ -2649,6 +2689,7 @@ namespace Entity
 
 			if (lsrHdFrame != 77) lsrHdFrame += 15;
 			else lsrHdFrame = 32;
+
 			laserHead.setTextureRect(sf::IntRect(lsrHdFrame, laserHead.getTextureRect().top, laserHead.getTextureRect().width, laserHead.getTextureRect().height));
 
 		}
@@ -2668,6 +2709,61 @@ namespace Entity
 			laserBody.move(laserBodyvel);
 
 			if (i == laserBodyLength-1) {
+
+				laserBody.setTextureRect(sf::IntRect(BodyRect.left, BodyRect.top, lengthRemainder, BodyRect.height));
+				World::GetInstance()->DrawObject(laserBody);
+
+			}
+
+			else World::GetInstance()->DrawObject(laserBody);
+
+
+
+		}
+
+		laserBody.setPosition(previousBodyPos);
+		laserBody.setTextureRect(BodyRect);
+		World::GetInstance()->DrawObject(laserHead);
+		World::GetInstance()->DrawObject(objectSprite);
+
+	}
+
+	void BigEnemyLaser::Draw(sf::RenderTarget& window) {
+
+		//laserHead.setPosition(objReference->objectSprite.getPosition().x, objReference->objectSprite.getPosition().y);
+		
+		int lsrBdyFrame = laserBody.getTextureRect().left;
+		int lsrHdFrame = laserHead.getTextureRect().left;
+
+		if (World::GetInstance()->Timer(*this, VERY_FAST)) {
+
+			//laserBody.getTextureRect().left + laserBody.getTextureRect().width * 3
+
+			if (lsrBdyFrame != 80) lsrBdyFrame += 16;
+			else lsrBdyFrame = 32;
+
+			if (lsrHdFrame != 219) lsrHdFrame += 41;
+			else lsrHdFrame = 96;
+
+			laserHead.setTextureRect(sf::IntRect(lsrHdFrame, laserHead.getTextureRect().top, laserHead.getTextureRect().width, laserHead.getTextureRect().height));
+
+		}
+
+		//lsrBdyFrame = 48; 
+
+		sf::Vector2f previousBodyPos = laserBody.getPosition();
+		sf::IntRect BodyRect = sf::IntRect(lsrBdyFrame, laserBody.getTextureRect().top, laserBody.getTextureRect().width, laserBody.getTextureRect().height);
+		int distance = GetDistance(laserBody.getPosition(), objectSprite.getPosition());
+		int laserBodyLength = distance / 16;
+		int lengthRemainder = distance % 16;
+
+		World::GetInstance()->DrawObject(laserBody);
+
+		for (int i = 0; i != laserBodyLength; i++) {
+
+			laserBody.move(laserBodyvel);
+
+			if (i == laserBodyLength - 1) {
 
 				laserBody.setTextureRect(sf::IntRect(BodyRect.left, BodyRect.top, lengthRemainder, BodyRect.height));
 				World::GetInstance()->DrawObject(laserBody);
@@ -2727,6 +2823,14 @@ namespace Entity
     }
 
 	EnemyLaser::~EnemyLaser() {
+
+	}
+
+	EnemyChargeParticle::~EnemyChargeParticle() {
+
+	}
+
+	BigEnemyLaser::~BigEnemyLaser() {
 
 	}
 
@@ -3122,9 +3226,9 @@ namespace Entity
 		//lvlEnemyBank[1] = 4;
 		//lvlEnemyBank[2] = 32;
 
-		lvlEnemyBank[0] = 4;
-		lvlEnemyBank[1] = 4;
-		lvlEnemyBank[2] = 32;
+		lvlEnemyBank[0] = 0;
+		lvlEnemyBank[1] = 0;
+		lvlEnemyBank[2] = 0;
 
     }
 
@@ -4125,10 +4229,6 @@ namespace Entity
 
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_enemycharge");
 			Entity::itemQueue enemy;
-			enemy.properties["itemType"] = "HauzerCharge";
-			enemy.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
-			enemy.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemy);
 			phase = 1;
 
 		}
@@ -4177,8 +4277,9 @@ namespace Entity
 
 		// Spawn Spires
 
-		Idle();
+		AnimateIdle();
 
+		/*
 		if (phase == 0) {
 
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_enemycharge");
@@ -4214,6 +4315,58 @@ namespace Entity
 			}
 
 		}
+		*/
+
+		if (phase == 0) {
+
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_enemycharge");
+			phase = 1;
+
+		}
+
+
+		else if (phase == 1) {
+
+			if (World::GetInstance()->Timer(*this, SLOW)) {
+
+				Entity::itemQueue part;
+				part.properties["itemType"] = "EnemyChargeParticle";
+				part.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
+				part.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(part);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(part);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(part);
+
+			}
+
+			if (World::GetInstance()->Timer(*this, 1000000.0)) phase = 2;
+
+		}
+
+
+		else if (phase == 2) {
+
+					itemQueue bullet;
+					bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x-20);
+					bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+					bullet.properties["itemType"] = "BigEnemyLaser";
+					bullet.properties["Direction"] = std::to_string(fireDir);
+					bullet.parent = this;
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+					bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x + 20);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_superbeam2");
+					phase = 3;
+
+		}
+
+		else if (phase == 3 ) {
+
+			World::GetInstance()->ScreenShake(2);
+			if (World::GetInstance()->Timer(*this, VERY_SLOW * 10)) NextMovement();
+
+		}
+
 	}
 
 	void Mozza::Behavior3() {
@@ -4252,10 +4405,10 @@ namespace Entity
 
 		// 8 direction continous shot
 
-		AnimateAttack();
 
 		if (phase == 0) {
 
+			AnimateIdle();
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_hauzerbark");
 			phase = 1;
 			
@@ -4263,6 +4416,7 @@ namespace Entity
 
 		else if (phase == 1) {
 
+			AnimateIdle();
 			if (World::GetInstance()->Timer(*this, 600000.0)) { 
 				
 				phase = 2;
@@ -4274,11 +4428,14 @@ namespace Entity
 
 		else if (phase == 2) {
 
+			AnimateIdle();
 			MoveToCenter();
 			if (World::GetInstance()->Timer(*this, 1600000.0)) phase = 3;
 		}
 
 		else if (phase == 3) {
+
+			AnimateAttack();
 
 			if (World::GetInstance()->Timer(*this, SLOW)) {
 
@@ -4457,8 +4614,8 @@ namespace Entity
 
 		else World::GetInstance()->DrawObject(objectSprite);
 
-		World::GetInstance()->DrawObject(healthBar);
-		World::GetInstance()->DrawObject(bossName);
+		//World::GetInstance()->DrawObject(healthBar);
+		//World::GetInstance()->DrawObject(bossName);
 		World::GetInstance()->DrawObject(wings);
 
 

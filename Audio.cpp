@@ -63,7 +63,7 @@ void Audio::PlayMusic(std::string musicName){
     music.openFromFile(dir + "music/" + musicName + ".ogg");
     music.setLoop(true);
     music.play();
-    music.setVolume(50);
+    music.setVolume(100);
     
 }
 

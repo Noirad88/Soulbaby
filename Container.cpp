@@ -177,6 +177,17 @@ void Container::AddObjects()
                 
             }
 
+			else if ((QI)->properties["itemType"] == "EnemyChargeParticle")
+			{
+
+				std::unique_ptr<Entity::EnemyChargeParticle> ptr(new Entity::EnemyChargeParticle);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ptr->objectSprite.move(ptr->vel.x*4, ptr->vel.y*4);
+				ptr->vel = -ptr->vel;
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "EnemyPart")
 			{
 
@@ -280,6 +291,24 @@ void Container::AddObjects()
 			{
 
 				std::unique_ptr<Entity::EnemyLaser> ptr(new Entity::EnemyLaser);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				if ((QI)->properties.count("Speed")>0) ptr->vel.y = stoi((QI)->properties["Speed"]);
+				ptr->laserBody.setPosition(sf::Vector2f(ptr->objectSprite.getPosition().x, ptr->objectSprite.getPosition().y - 34));
+				ptr->laserHead.setPosition(sf::Vector2f(ptr->objectSprite.getPosition().x, ptr->objectSprite.getPosition().y - 34));
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				ptr->vel.y = -ptr->vel.y;
+				if ((QI)->properties.count("Direction"))RotateVector(ptr->vel, (-stoi((QI)->properties["Direction"])));
+				ptr->objReference = (QI)->parent;
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "BigEnemyLaser")
+			{
+
+				std::unique_ptr<Entity::BigEnemyLaser> ptr(new Entity::BigEnemyLaser);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
 				if ((QI)->properties.count("Speed")>0) ptr->vel.y = stoi((QI)->properties["Speed"]);
 				ptr->laserBody.setPosition(sf::Vector2f(ptr->objectSprite.getPosition().x, ptr->objectSprite.getPosition().y - 34));
@@ -822,6 +851,8 @@ void Container::CheckCollisions(){
 				particles.properties["PosY"] = std::to_string(ObjectContainer.at(typeInZone.at(i))->objectSprite.getPosition().y);
 				particles.properties["itemType"] = "BlockedEffect";
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_ding");
+
 
 			}
 

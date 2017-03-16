@@ -53,13 +53,13 @@ void main()
 
 vec4 tempcurr = texture2D(currentTexture, distortedTextureCoordinate);
 
-    //float newR = 0.2 * sin(time * M_PI/5.0) + 1.0;
-    //float newG = 0.3 * sin(-time * M_PI/5.0) + 1.0;
-    //float newB = 0.1 * sin(time * M_PI/5.0) + 1.0;
+    float newR = 0.2 * sin(time * M_PI/5.0) + 1.0;
+    float newG = 0.3 * sin(-time * M_PI/5.0) + 1.0;
+    float newB = 0.1 * sin(time * M_PI/5.0) + 1.0;
 
-	float newR = 1.0;
-    float newG = tempcurr.g - 0.05;
-    float newB = tempcurr.b - 0.05;
+//float newR = 1.0;
+    //float newG = tempcurr.g - 0.05;
+    //float newB = tempcurr.b - 0.05;
 
 
 vec4 acolor = texture2D(currentTexture,distortedTextureCoordinate);

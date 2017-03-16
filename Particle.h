@@ -431,6 +431,15 @@ namespace Entity
 
 	};
 
+	class BigEnemyLaser : public EnemyLaser {
+
+	public:
+		BigEnemyLaser();
+		~BigEnemyLaser();
+		virtual void Draw(sf::RenderTarget& window);
+
+	};
+
 	class Bullet : public Projectile {
 
 	public:
@@ -623,6 +632,13 @@ namespace Entity
         ~DeathPoof();
         
     };
+
+	class EnemyChargeParticle : public Fixed {
+	public:
+		EnemyChargeParticle();
+		~EnemyChargeParticle();
+
+	};
 
 	class HauzerCharge : public Fixed {
 
