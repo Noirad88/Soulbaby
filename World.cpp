@@ -254,9 +254,15 @@ World::World(){
 	GlobalMembers.joystickControls[8] = 1;
 
 	dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC";
-    
-	GlobalMembers.playerWeapon = 0;
-	GlobalMembers.playerWeapon2 = 5;
+
+	/*
+	0 = repeater
+	5 = spreader
+	*/
+
+	GlobalMembers.weapons[0] = 2;
+	GlobalMembers.weapons[5] = 2;
+	GlobalMembers.weapons[3] = 1;
 
 }
 
@@ -348,35 +354,6 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 
 	if (Timer(*this, 100.0f)) {
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0)) {
-
-			GlobalMembers.playerWeapon = 0;
-
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
-
-			GlobalMembers.playerWeapon = 1;
-
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
-
-			GlobalMembers.playerWeapon = 2;
-
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
-
-			GlobalMembers.playerWeapon = 3;
-
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
-
-			GlobalMembers.playerWeapon = 4;
-
-		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num7)) {
 

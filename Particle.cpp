@@ -608,9 +608,9 @@ namespace Entity
 		pow2Lable.setCharacterSize(16);
 
 		objectSprite.setTextureRect(sf::IntRect(0,218, 61, 34));
-		weapon1.setTextureRect(sf::IntRect(0, 271 + (15 * World::GetInstance()->GlobalMembers.playerWeapon), 21, 15));
-		weapon2.setTextureRect(sf::IntRect(0, 271 + (15 * World::GetInstance()->GlobalMembers.playerWeapon2), 21, 15));
-		std::cout << "Hud created. pw1 = " << World::GetInstance()->GlobalMembers.playerWeapon << ", pw2 = " << World::GetInstance()->GlobalMembers.playerWeapon2 << std::endl;
+		//weapon1.setTextureRect(sf::IntRect(0, 271 + (15 * World::GetInstance()->GlobalMembers.playerWeapon), 21, 15));
+		//weapon2.setTextureRect(sf::IntRect(0, 271 + (15 * World::GetInstance()->GlobalMembers.playerWeapon2), 21, 15));
+		//std::cout << "Hud created. pw1 = " << World::GetInstance()->GlobalMembers.playerWeapon << ", pw2 = " << World::GetInstance()->GlobalMembers.playerWeapon2 << std::endl;
 
 		weapon1slot.at(0) = 0;
 		weapon1slot.at(1) = 23;
@@ -899,6 +899,60 @@ namespace Entity
 		sshield.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
 		sshield.setTextureRect(sf::IntRect(103, 0, 17, 41));
 		sshield.setColor(sf::Color::Color(255, 255, 255, 50));
+
+		itemQueue bud;
+		bud.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+		bud.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 10);
+		bud.properties["itemType"] = "Buddy";
+
+
+		if (World::GetInstance()->GlobalMembers.weapons[5] > 0) {
+
+			bud.properties["BuddyPos"] = std::to_string(0);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bud);
+
+		}
+
+		if (World::GetInstance()->GlobalMembers.weapons[3] > 0) {
+
+			bud.properties["BuddyPos"] = std::to_string(1);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bud);
+		}
+
+		if (World::GetInstance()->GlobalMembers.weapons[6] > 0) {
+
+			bud.properties["BuddyPos"] = std::to_string(2);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bud);
+
+		}
+
+		if (World::GetInstance()->GlobalMembers.weapons[2] > 0) {
+
+			bud.properties["BuddyPos"] = std::to_string(3);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bud);
+
+		}
+
+		if (World::GetInstance()->GlobalMembers.weapons[6] > 0) {
+
+			bud.properties["BuddyPos"] = std::to_string(4);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bud);
+
+		}
+
+		if (World::GetInstance()->GlobalMembers.weapons[3] > 0) {
+
+			bud.properties["BuddyPos"] = std::to_string(5);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bud);
+
+		}
+
+		if (World::GetInstance()->GlobalMembers.weapons[5] > 0) {
+
+			bud.properties["BuddyPos"] = std::to_string(6);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bud);
+
+		}
     }
     
 	void BattlePlayer::Update() {
@@ -947,9 +1001,9 @@ namespace Entity
 				std::cout << "Swtiching = " << World::GetInstance()->WorldScene.hudPtr->switching << std::endl;
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
 
-				int tempWeap = World::GetInstance()->GlobalMembers.playerWeapon;
-				World::GetInstance()->GlobalMembers.playerWeapon = World::GetInstance()->GlobalMembers.playerWeapon2;
-				World::GetInstance()->GlobalMembers.playerWeapon2 = tempWeap;
+				//int tempWeap = World::GetInstance()->GlobalMembers.playerWeapon;
+				//World::GetInstance()->GlobalMembers.playerWeapon = World::GetInstance()->GlobalMembers.playerWeapon2;
+				//World::GetInstance()->GlobalMembers.playerWeapon2 = tempWeap;
 
 			}
 
@@ -962,6 +1016,11 @@ namespace Entity
 			vel.x = 0;
 			dashing = true;
 			RotateVector(vel, 45 * movement);
+			itemQueue dash;
+			dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+			dash.properties["itemType"] = "DashEffect";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
 
 			if (shield == 2) {
 
@@ -977,9 +1036,13 @@ namespace Entity
 
 		if (dashing == true) {
 
-			if (World::GetInstance()->Timer(*this, FAST, NODELAY)) {
+			if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) {
 
-				CreateClone(objectSprite, "tx_player.png");
+				itemQueue dash;
+				dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+				dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+				dash.properties["itemType"] = "SlideEffect";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
 			}
 
 			if (World::GetInstance()->Timer(*this, 140000.0)) {
@@ -1040,27 +1103,50 @@ namespace Entity
 
 		if (dashing == false) RotateVector(vel, 45 * movement);
 
+		/*
+
+		Firing:
+		Here we check which abilities we have at World::Attributes::weapons, what level they are and fire the apprproiate projectiles
+
+
+		weapons[0] = pulse (default)
+
+		Boss upgrades:
+		weapons[1] = spreader
+		weapons[2] = lance
+		weapons[3] = rail
+		weapons[4] = buster
+		weapons[5] = homing lightning
+		weapons[6] = bomb
+
+		every weapon has 6 levels, except pulse, having 7
+
+		*/
+
 		if (World::GetInstance()->PlayerPressedButton(controlsB)) {
+
+			itemQueue proj;
+			proj.properties["PosX"] = std::to_string(hotSpot.x);
+			proj.properties["PosY"] = std::to_string(hotSpot.y);
+			proj.properties["Direction"] = std::to_string(fireDir);
+			proj.properties["VelX"] = std::to_string(vel.x);
+			proj.properties["VelY"] = std::to_string(vel.y);
 
 			// repeater
 
-			if (World::GetInstance()->GlobalMembers.playerWeapon == 0 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
+			if (World::GetInstance()->GlobalMembers.weapons[0] >= 1 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
 
-				itemQueue bullet;
-				bullet.properties["PosX"] = std::to_string(hotSpot.x);
-				bullet.properties["PosY"] = std::to_string(hotSpot.y);
-				bullet.properties["Direction"] = std::to_string(fireDir);
-				bullet.properties["VelX"] = std::to_string(vel.x);
-				bullet.properties["VelY"] = std::to_string(vel.y);
-				bullet.properties["itemType"] = "PlayerLaser";
+				if (World::GetInstance()->GlobalMembers.weapons[0] > 1) proj.properties["itemType"] = "PlayerLaser" + std::to_string(World::GetInstance()->GlobalMembers.weapons[0]);
+				else proj.properties["itemType"] = "PlayerLaser";
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+
 
 			}
 
 			// cannon
 
-			else if (World::GetInstance()->GlobalMembers.playerWeapon == 6) {
+			else if (World::GetInstance()->GlobalMembers.weapons[6] >= 1) {
 
 
 				if (PlayerBomb::totalBombs == 0) {
@@ -1092,49 +1178,44 @@ namespace Entity
 
 			// rail
 
-			else if (World::GetInstance()->GlobalMembers.playerWeapon == 3 && PlayerBomb::totalBombs < 2 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
+			else if (World::GetInstance()->GlobalMembers.weapons[3] >= 1 && World::GetInstance()->Timer(*this, VERY_SLOW*16, NODELAY)) {
 
-				itemQueue bullet;
-				bullet.properties["PosX"] = std::to_string(hotSpot.x);
-				bullet.properties["PosY"] = std::to_string(hotSpot.y);
-				bullet.properties["Direction"] = std::to_string(fireDir);
-				bullet.properties["VelX"] = std::to_string(vel.x);
-				bullet.properties["VelY"] = std::to_string(vel.y);
-				bullet.properties["itemType"] = "PlayerBeam";
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+				if (World::GetInstance()->GlobalMembers.weapons[0] > 1) proj.properties["itemType"] = "PlayerBeam" + std::to_string(World::GetInstance()->GlobalMembers.weapons[5]);
+				else proj.properties["itemType"] = "PlayerBeam";
+
+				proj.properties["PosX"] = std::to_string(BuddyAB->objectSprite.getPosition().x);
+				proj.properties["PosY"] = std::to_string(BuddyAB->objectSprite.getPosition().y);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+
+				proj.properties["PosX"] = std::to_string(BuddyCB->objectSprite.getPosition().x);
+				proj.properties["PosY"] = std::to_string(BuddyCB->objectSprite.getPosition().y);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
 			}
 
 			// spreader
 
-			else if (World::GetInstance()->GlobalMembers.playerWeapon == 1 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
+			else if (World::GetInstance()->GlobalMembers.weapons[5] >= 1 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
 
-				itemQueue bullet;
-				bullet.properties["PosX"] = std::to_string(hotSpot.x);
-				bullet.properties["PosY"] = std::to_string(hotSpot.y);
-				bullet.properties["VelX"] = std::to_string(vel.x);
-				bullet.properties["VelY"] = std::to_string(vel.y);
-				bullet.properties["itemType"] = "PlayerRepeater";
-				bullet.properties["Direction"] = std::to_string(45 * fireDir);
-				std::cout << fireDir << std::endl;
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+				if (World::GetInstance()->GlobalMembers.weapons[0] > 1) proj.properties["itemType"] = "PlayerRepeater" + std::to_string(World::GetInstance()->GlobalMembers.weapons[5]);
+				else proj.properties["itemType"] = "PlayerRepeater";
+				proj.properties["PosX"] = std::to_string(BuddyA->objectSprite.getPosition().x);
+				proj.properties["PosY"] = std::to_string(BuddyA->objectSprite.getPosition().y);
+				proj.properties["Direction"] = std::to_string(fireDir + 1);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
-				bullet.properties["Direction"] = std::to_string(45 * fireDir - 20);
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+				proj.properties["PosX"] = std::to_string(BuddyD->objectSprite.getPosition().x);
+				proj.properties["PosY"] = std::to_string(BuddyD->objectSprite.getPosition().y);
+				proj.properties["Direction"] = std::to_string(fireDir - 1);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
-				bullet.properties["Direction"] = std::to_string(45 * fireDir + 20);
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
-
-
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
 
 			}
 
 			// boomerang
 
 
-			else if (World::GetInstance()->GlobalMembers.playerWeapon == 5 && World::GetInstance()->Timer(*this, VERY_SLOW * 2, NODELAY)) {
+			else if (World::GetInstance()->GlobalMembers.weapons[5] == 5 && World::GetInstance()->Timer(*this, VERY_SLOW * 2, NODELAY)) {
 
 				itemQueue bullet;
 				bullet.properties["PosX"] = std::to_string(hotSpot.x);
@@ -1172,7 +1253,7 @@ namespace Entity
 			if (World::GetInstance()->Timer(*this, VERY_SLOW*2)) shield += 1;
 			sshield.setColor(sf::Color::Color(255, 255, 255, 50 + cos(World::GetInstance()->clock2.getElapsedTime().asMilliseconds()*0.5) * 100));
 			sshield.setTextureRect(sf::IntRect(86, 41 - shield, 17, shield));
-
+			
 			if (shield >= 41) {
 
 				shield = 41;
@@ -1238,6 +1319,22 @@ namespace Entity
         
         World::GetInstance()->ScreenShake(20);
 		//World::GetInstance()->WorldScene.playerPtr = nullptr;
+
+		BuddyA = NULL;
+		BuddyAB = NULL;
+		BuddyB = NULL;
+		BuddyBB = NULL;
+		BuddyC = NULL;
+		BuddyCB = NULL;
+		BuddyD = NULL;
+
+		delete BuddyA;
+		delete BuddyAB;
+		delete BuddyB;
+		delete BuddyBB;
+		delete BuddyC;
+		delete BuddyCB;
+		delete BuddyD;
 
     }
     
@@ -1310,6 +1407,16 @@ namespace Entity
         deacceleration = 0.5;
         
     }
+
+	Electricity::Electricity() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(55, 105, 18, 29));
+		RotateVector(vel, RandomNumber(180));
+		SetEffectOrigin();
+		maxFrame = 7;
+		animSpeed = VERY_FAST;
+
+	}
 
 	EnemySpark::EnemySpark() : Fixed() {
 
@@ -1465,8 +1572,17 @@ namespace Entity
 		objectSprite.setTextureRect(sf::IntRect(0, 310, 63, 13));
 		SetCharacterOrigin();
 		maxFrame = 8;
-		animSpeed = FAST;
+		animSpeed = SLOW;
 		deacceleration = 5;
+
+	}
+
+	SlideEffect::SlideEffect() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(64, 308, 8, 15));
+		SetCharacterOrigin();
+		maxFrame = 5;
+		animSpeed = FAST;
 
 	}
     
@@ -1701,14 +1817,28 @@ namespace Entity
     {
         
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
-        objectSprite.setTextureRect(sf::IntRect(0, 0, 10, 10));
+        objectSprite.setTextureRect(sf::IntRect(0, 178, 5, 19));
         objectSprite.setOrigin(5,5);
         SetEffectOrigin();
         vel.y = 6;
-        damage = 7;
+		damage = 7;
+		maxFrame = 2;
         SetHitBox(sf::Vector2f(4,4));
         
     }
+
+	PlayerLaser2::PlayerLaser2() : PlayerLaser()
+	{
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		objectSprite.setTextureRect(sf::IntRect(0, 197, 6, 27));
+		objectSprite.setOrigin(7, 10);
+		SetEffectOrigin();
+		vel.y = 6;
+		damage = 7;
+		SetHitBox(sf::Vector2f(6,6));
+		health = 1;
+
+	}
     
     PlayerBoomerang::PlayerBoomerang() : Projectile(){
         
@@ -1729,15 +1859,45 @@ namespace Entity
     {
         
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
-        objectSprite.setTextureRect(sf::IntRect(0, 25, 7, 7));
-        objectSprite.setOrigin(3,3);
+        objectSprite.setTextureRect(sf::IntRect(0, 224, 5, 4));
+        objectSprite.setOrigin(2.5,2);
         SetEffectOrigin();
         vel.y = 3;
         damage = 3;
-        maxFrame = 3;
+        maxFrame = 2;
         SetHitBox(sf::Vector2f(3,3));
     
     }
+
+	PlayerRepeater2::PlayerRepeater2() : Projectile()
+	{
+
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		objectSprite.setTextureRect(sf::IntRect(0, 228, 5, 7));
+		objectSprite.setOrigin(2.5, 2);
+		SetEffectOrigin();
+		vel.y = 3;
+		damage = 3;
+		maxFrame = 2;
+		SetHitBox(sf::Vector2f(3, 3));
+		health = 2;
+
+	}
+
+	PlayerRepeater6::PlayerRepeater6() : Projectile()
+	{
+
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		objectSprite.setTextureRect(sf::IntRect(0, 284, 9, 25));
+		objectSprite.setOrigin(2.5, 2);
+		SetEffectOrigin();
+		vel.y = 3;
+		damage = 3;
+		maxFrame = 2;
+		SetHitBox(sf::Vector2f(3, 3));
+		health = 10;
+		destroyOnImpact = false;
+	}
     
     PlayerBombExp::PlayerBombExp() : Projectile()
     {
@@ -1812,6 +1972,39 @@ namespace Entity
         
         
     }
+
+	void Buddy::Update() 
+	{
+		if (World::GetInstance()->WorldScene.playerPtr) {
+
+			float oldx = objectSprite.getPosition().x;
+			float oldy = objectSprite.getPosition().y;
+
+			float pdir = 0.785 * (World::GetInstance()->WorldScene.playerPtr->fireDir + buddyPos + 3);
+
+			//pdir uses 45 degree angles
+			//cos uses 0.0 to 0.9
+			//45 / 360 = 0.125
+
+			std::cout << "pdir = " << pdir << std::endl;
+
+			float plx = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x;
+			float ply = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y+5;
+
+			float nx = plx + (cos(pdir) * 20.0);
+			float ny = ply + (sin(pdir) * 20.0);
+
+			oldx += (nx - oldx) / 2;
+			oldy += (ny - oldy) / 2;
+
+			objectSprite.setPosition(oldx,oldy-posZ);
+			posZ = (5 + cos(World::GetInstance()->clock2.getElapsedTime().asMilliseconds()*0.0025));
+
+			UpdateShadow();
+
+		}
+
+	}
     
 
     void Fixed::Update(){
@@ -1965,28 +2158,31 @@ namespace Entity
             for(int i = 0; i != 10; i++){
                 
                 itemQueue particles;
-                particles.properties["itemType"] = "DeathPoof";
+
+				/*
+                particles.properties["itemType"] = "Electricity";
                 
-                particles.properties["PosX"] = std::to_string(nodePosition.x + RandomNumber(20));
-                particles.properties["PosY"] = std::to_string(nodePosition.y + RandomNumber(20));
+                particles.properties["PosX"] = std::to_string(nodePosition.x + RandomNumber(10));
+                particles.properties["PosY"] = std::to_string(nodePosition.y + RandomNumber(10));
                 World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
                 
                 
-                particles.properties["PosX"] = std::to_string(nodePosition.x - RandomNumber(20));
-                particles.properties["PosY"] = std::to_string(nodePosition.y - RandomNumber(20));
+                particles.properties["PosX"] = std::to_string(nodePosition.x - RandomNumber(10));
+                particles.properties["PosY"] = std::to_string(nodePosition.y - RandomNumber(10));
                 World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
                 
                 
-                particles.properties["PosX"] = std::to_string(nodePosition.x - RandomNumber(20));
-                particles.properties["PosY"] = std::to_string(nodePosition.y + RandomNumber(20));
+                particles.properties["PosX"] = std::to_string(nodePosition.x - RandomNumber(10));
+                particles.properties["PosY"] = std::to_string(nodePosition.y + RandomNumber(10));
                 World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
                 
                 
-                particles.properties["PosX"] = std::to_string(nodePosition.x + RandomNumber(20));
-                particles.properties["PosY"] = std::to_string(nodePosition.y - RandomNumber(20));
+                particles.properties["PosX"] = std::to_string(nodePosition.x + RandomNumber(10));
+                particles.properties["PosY"] = std::to_string(nodePosition.y - RandomNumber(10));
                 World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
-                
-                
+                */
+              
+
                 particles.properties["PosX"] = std::to_string(nodePosition.x);
                 particles.properties["PosY"] = std::to_string(nodePosition.y);
                 
@@ -2356,68 +2552,7 @@ namespace Entity
 		}
 
 	}
-    
-    void PlayerLaser::Update(){
-        
-        
-        if(World::GetInstance()->Timer(*this,VERY_FAST))
-        {
-            
-            
-            objectSprite.setTextureRect(sf::IntRect((10+(frame) * 5),0,5,19));
-            objectSprite.setOrigin(2,0);
-            
-            frame++;
-            
-            if(frame >= 2)
-            {
-                
-                frame = 0;
-                
-            }
-            
-        }
-        
-        
-        objectSprite.move(vel.x,vel.y);
-
-
-    }
-    
-    void PlayerRepeater::Update(){
-        
-        
-        if(World::GetInstance()->Timer(*this,VERY_FAST))
-        {
-            
-            
-            objectSprite.setTextureRect(sf::IntRect(((frame+1) * 7),25,7,7));
-            objectSprite.setOrigin(2,0);
-            
-            frame++;
-            
-            if(frame > maxFrame)
-            {
-                
-                frame = 0;
-                
-            }
-            
-        }
-        
-        
-        if(World::GetInstance()->Timer(*this,1000000.0))
-        {
-            misDestroyed = true;
-            
-        }
-        
-        
-        
-        objectSprite.move(vel.x,vel.y);
-        
-        
-    }
+   
 
     
     void PlayerBombExp::Update(){
@@ -2622,7 +2757,14 @@ namespace Entity
 				if (World::GetInstance()->Timer(this, NORMAL, NODELAY)) {
 
 					a->isCollided(damage);
-					misDestroyed = destroyOnImpact;
+
+					if (health > 0) {
+						if (health <= 0) misDestroyed = true;
+
+						health--;
+					}
+
+					else misDestroyed = destroyOnImpact;
 
 					if (pobj->defending == false) {
 
@@ -2888,6 +3030,10 @@ namespace Entity
 
 	}
 
+	SlideEffect::~SlideEffect() {
+
+	}
+
 	BlockedEffect::~BlockedEffect() {
 
 	}
@@ -3091,6 +3237,10 @@ namespace Entity
         
         
     }
+
+	Electricity::~Electricity() {
+
+	}
     
     Laser::~Laser()
     {
@@ -3106,11 +3256,26 @@ namespace Entity
     {
         
     }
+
+	PlayerLaser2::~PlayerLaser2()
+	{
+
+	}
     
     PlayerRepeater::~PlayerRepeater()
     {
         
     }
+
+	PlayerRepeater2::~PlayerRepeater2()
+	{
+
+	}
+
+	PlayerRepeater6::~PlayerRepeater6()
+	{
+
+	}
     
     void isDestroyed(Entity::Enemy& object)
     {
@@ -3194,9 +3359,9 @@ namespace Entity
             enemyList[3] = "Mask";
             enemyList[4] = "Spore";
             enemyList[5] = "Roach";
-            enemyList[6] = "Star3";
-            enemyList[7] = "Squid3";
-            enemyList[8] = "Slime3";
+            enemyList[6] = "";
+            enemyList[7] = "";
+            enemyList[8] = "";
             enemyList[9] = "Mozza";
             enemyList[10] = "Mozza";
             enemyList[11] = "Mozza";
@@ -3226,9 +3391,9 @@ namespace Entity
 		//lvlEnemyBank[1] = 4;
 		//lvlEnemyBank[2] = 32;
 
-		lvlEnemyBank[0] = 0;
-		lvlEnemyBank[1] = 0;
-		lvlEnemyBank[2] = 0;
+		lvlEnemyBank[0] = 4;
+		lvlEnemyBank[1] = 16;
+		lvlEnemyBank[2] = 100;
 
     }
 
@@ -3253,6 +3418,15 @@ namespace Entity
 
     void LevelManager::Update(){
        
+		if (World::GetInstance()->Timer(*this, 5000000.0)) {
+
+
+			std::cout << lvlEnemyBank[0] << ".. " << lvlEnemyBank[1] << ".. " << lvlEnemyBank[2] << std::endl;
+
+
+		}
+			
+
         if(lvlEnemyBank[0] != 0 || lvlEnemyBank[1] != 0 || lvlEnemyBank[2] != 0){
         
 			// need to figure out the correct intervals to spawn enemies
@@ -3261,10 +3435,10 @@ namespace Entity
 			// we should figure out how to end up with a big enemy spawned before all the smaller enemies 
 			// (i.e., smaller enemies should still be spawning after LAST big enemy is spawned
 
-			if (World::GetInstance()->Timer(*this, 20000000.0,NODELAY)) CreateEnemy(0);
-			if (World::GetInstance()->Timer(*this, 5000000.0, NODELAY)) CreateEnemy(1);
-			if (World::GetInstance()->Timer(*this, 600000.0, NODELAY)) CreateEnemy(2);
-            
+			if (lvlEnemyBank[0] != 0 && World::GetInstance()->Timer(*this, 20000000.0,NODELAY)) CreateEnemy(0);
+			if (lvlEnemyBank[1] != 0 && World::GetInstance()->Timer(*this, 5000000.0, NODELAY)) CreateEnemy(1);
+			if (lvlEnemyBank[2] != 0 && World::GetInstance()->Timer(*this, 600000.0, NODELAY)) CreateEnemy(2);
+           
         }
         
         else if( int(bg.getColor().a) != 0 ){
@@ -3407,6 +3581,18 @@ namespace Entity
 		flatAnimation = true;
 		speed = 1.5;
 	}
+
+	Buddy::Buddy() : Object()
+	{
+		std::cout << "buddy created" << std::endl;
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+		objectSprite.setTextureRect(sf::IntRect(204, 0, 4, 8));
+		SetHitBox(sf::Vector2f(5, 5));
+		SetCharacterOrigin();
+		SetShadow();
+
+	}
+
 
 	Roach::Roach() : Enemy()
 	{
@@ -4614,8 +4800,8 @@ namespace Entity
 
 		else World::GetInstance()->DrawObject(objectSprite);
 
-		//World::GetInstance()->DrawObject(healthBar);
-		//World::GetInstance()->DrawObject(bossName);
+		World::GetInstance()->DrawObject(healthBar);
+		World::GetInstance()->DrawObject(bossName);
 		World::GetInstance()->DrawObject(wings);
 
 
@@ -4736,6 +4922,10 @@ namespace Entity
 
 	Mask::~Mask() {
 
+	}
+
+	Buddy::~Buddy() {
+		std::cout << "buddy destroyed" << std::endl;
 	}
     
     EnemyNode::~EnemyNode(){
@@ -4930,7 +5120,10 @@ namespace Entity
 
         objectShadow.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png")));
         if(objectSprite.getTextureRect().width >= 90) objectShadow.setTextureRect(sf::IntRect(154, 0, 50, 15));
-		else objectShadow.setTextureRect(sf::IntRect(0, 0, 15, 5));
+		
+		else if (objectSprite.getTextureRect().width >= 14) objectShadow.setTextureRect(sf::IntRect(0, 0, 15, 5));
+		
+		else objectShadow.setTextureRect(sf::IntRect(210, 0, 6, 3));
         objectShadow.setOrigin(objectShadow.getTextureRect().width / 2,objectShadow.getTextureRect().height/2);
         objectShadow.setPosition(objectSprite.getPosition());
         

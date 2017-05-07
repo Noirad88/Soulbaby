@@ -209,6 +209,7 @@ namespace Entity
 
 	class Guide : public GUI
 	{
+
 	public:
 		Guide();
 		void Update();
@@ -326,6 +327,23 @@ namespace Entity
 		int shield = 41;
 		sf::Sprite sshield;
 
+		//Buddys are the upgrade nodes for soulbaby. all they do is stay in one position,
+		//in orientation to soulbaby. In Battleplayer::Update() the projectiles are fired from THEIR direction
+
+		Object* BuddyA;
+		Object* BuddyAB;
+		Object* BuddyB;
+		Object* BuddyBB;
+		Object* BuddyC;
+		Object* BuddyCB;
+		Object* BuddyD;
+
+		//Object* BuddyB;
+		//Object* BuddyBB;
+		//Object* BuddyC;
+		//Object* BuddyCB;
+		//Object* BuddyD;
+
 	};
 
 	class BattlePlayer : public Player
@@ -337,6 +355,7 @@ namespace Entity
 		sf::Vector2f hotSpot;
 		void Update();
 		~BattlePlayer();
+
 
 	};
 
@@ -364,11 +383,22 @@ namespace Entity
 		float time;
 		bool rotation = false;
 		bool followsPlayer = false;
+		int health = 0;
 
 		std::string emitter = "";
 		float emitTime = 0;
 		bool emitScatter = false;
 		int emitCount = 1;
+
+	};
+
+	class Buddy : public Object {
+
+	public:
+		Buddy();
+		int buddyPos = 0;
+		void Update();
+		~Buddy();
 
 	};
 
@@ -461,10 +491,16 @@ namespace Entity
 
 	public:
 		PlayerLaser();
-		void Update();
 		void isCollided(int var = 0);
 		~PlayerLaser();
 
+	};
+
+	class PlayerLaser2 : public PlayerLaser {
+
+	public:
+		PlayerLaser2();
+		~PlayerLaser2();
 	};
 
 	class PlayerBoomerang : public Projectile {
@@ -482,11 +518,28 @@ namespace Entity
 
 	public:
 		PlayerRepeater();
-		void Update();
 		void isCollided(int var = 0);
 		~PlayerRepeater();
 
 	};
+
+	class PlayerRepeater2 : public Projectile {
+
+	public:
+		PlayerRepeater2();
+		~PlayerRepeater2();
+
+	};
+
+	class PlayerRepeater6 : public Projectile {
+
+	public:
+		PlayerRepeater6();
+		~PlayerRepeater6();
+
+	};
+
+
 
 	class Laser : public Projectile
 	{
@@ -605,12 +658,24 @@ namespace Entity
 		DashEffect();
 		~DashEffect();
 	};
+
+	class SlideEffect : public Fixed {
+	public:
+		SlideEffect();
+		~SlideEffect();
+	};
     
     class Spark: public Fixed{
     public:
         Spark();
         ~Spark();
     };
+
+	class Electricity : public Fixed {
+	public:
+		Electricity();
+		~Electricity();
+	};
 
 	class EnemySpark: public Fixed {
 

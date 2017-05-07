@@ -93,10 +93,7 @@ struct Attributes{
     std::array<sf::Keyboard::Key,9> keyboardControls;
 	std::array<int, 9> joystickControls;
 	bool joystick = true;
-
     int currentLevel = 0;
-    int playerWeapon = 0;
-	int playerWeapon2 = 4;
     
 };
 

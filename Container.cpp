@@ -112,6 +112,24 @@ void Container::AddObjects()
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
+
+			else if ((QI)->properties["itemType"] == "Electricity")
+			{
+
+				std::unique_ptr<Entity::Electricity> ptr(new Entity::Electricity);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "SlideEffect")
+			{
+
+				std::unique_ptr<Entity::SlideEffect> ptr(new Entity::SlideEffect);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "DeathBoom")
             {
@@ -202,6 +220,25 @@ void Container::AddObjects()
 
 				std::unique_ptr<Entity::EnemySpark> ptr(new Entity::EnemySpark);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "Buddy")
+			{
+
+				std::unique_ptr<Entity::Buddy> ptr(new Entity::Buddy);
+				ptr->buddyPos = stoi((QI)->properties["BuddyPos"]);
+				if (ptr->buddyPos == 0)World::GetInstance()->WorldScene.playerPtr->BuddyA = ptr.get();
+				else if (ptr->buddyPos == 1)World::GetInstance()->WorldScene.playerPtr->BuddyAB = ptr.get();
+				else if (ptr->buddyPos == 2)World::GetInstance()->WorldScene.playerPtr->BuddyB = ptr.get();
+				else if (ptr->buddyPos == 3)World::GetInstance()->WorldScene.playerPtr->BuddyBB = ptr.get();
+				else if (ptr->buddyPos == 4)World::GetInstance()->WorldScene.playerPtr->BuddyC = ptr.get();
+				else if (ptr->buddyPos == 5)World::GetInstance()->WorldScene.playerPtr->BuddyCB = ptr.get();
+				else if (ptr->buddyPos == 6)World::GetInstance()->WorldScene.playerPtr->BuddyD = ptr.get();
+
+				ptr->objectSprite.setPosition(300, 300);
+
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
@@ -384,6 +421,20 @@ void Container::AddObjects()
                     ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "PlayerLaser2")
+			{
+
+				std::unique_ptr<Entity::PlayerLaser2> ptr(new Entity::PlayerLaser2);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "PlayerBoomerang")
             {
@@ -431,10 +482,42 @@ void Container::AddObjects()
                 
                 std::unique_ptr<Entity::PlayerRepeater> ptr(new Entity::PlayerRepeater);
                 ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]),stoi((QI)->properties["PosY"]));
-                RotateVector(ptr->vel,(stoi((QI)->properties["Direction"])));
-                ObjectContainer.push_back(std::move(ptr));
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "PlayerRepeater2")
+			{
+
+				std::unique_ptr<Entity::PlayerRepeater2> ptr(new Entity::PlayerRepeater2);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "PlayerRepeater6")
+			{
+
+				std::unique_ptr<Entity::PlayerRepeater6> ptr(new Entity::PlayerRepeater6);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "PlayerBombExp")
             {
