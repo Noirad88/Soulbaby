@@ -262,7 +262,7 @@ World::World(){
 
 	GlobalMembers.weapons[0] = 2;
 	GlobalMembers.weapons[5] = 2;
-	GlobalMembers.weapons[3] = 1;
+	GlobalMembers.weapons[3] = 0;
 
 }
 
