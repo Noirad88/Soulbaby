@@ -338,71 +338,99 @@ namespace Entity
         
         std::cout << "creating texbox" << std::endl;
         
-        
         characterName = characters[name];
         
         script = World::GetInstance()->CharacterScripts.at(characterName + std::to_string(0));
         
         int lineCount = 0;
         
-        //iterate through string to insert breaks
-        
-        if(script.length() >= lineLength){
-        
-            for(int i = lineLength; i < script.length(); i+= lineLength){
-            
-                if(i <= script.length()){
-                    
-                    //check if the current string position is a letter (this logic has to be flipped for some reason)
-                    
-                    if(strncmp(&script.at(i)," ",1))
-                    {
-                        //check previous letters for the first space to break there instead of breaking mid-word
-                        
-                        for(int n = i; n != 0; n--){
-                            
-                            if(!strncmp(&script.at(n)," ",1)){
-                                
-                                script.replace(n,1,"\n");
-                                i -= i-n;
-                                break;
-                                
-                            }
-                            
-                        }
-                    
-                    }
-                    
-                    //if not, treat this letter as a space
-                    
-                    else{
-                    
-                        script.replace(i,1,"\n");
-                                                 
-                    }
-                    
-                    lineCount++;
-                    
-                    //if the max lines for the text box has been reached, insert the trigger to erase the current text to begin progressing the next lines
-                    
-                    if(lineCount == maxLines){
-                        
-                        script.replace(i,1,">");
-                        lineCount = 0;
-                    
-                    }
 
-					i++;
+        //iterate through string to insert breaks and catch user inputted pauses
+
+		for (int i = 0; i < script.length(); i++) {
+
+			//checks if user has inserted a full break here
+
+			if (!strncmp(&script.at(i), ">", 1))
+			{
+				std::cout << "user inserted break" << std::endl;
+				lineCount = 0;
+
+			}
+
+			//if not, check if there should be a line-break here or full break
+
+			else if (lineCount == 55 || lineCount == 110) {
+
+				//if string is a letter
+
+				if (strncmp(&script.at(i), " ", 1))
+				{
+					std::cout << "string is a letter: " << &script.at(i) << std::endl;
+					//check previous letters for the first space to break there instead of breaking mid-word
+
+					for (int n = i; n != 0; n--) {
+
+						if (!strncmp(&script.at(n), " ", 1)) {
+
+							script.replace(n, 1, "\n");
+							break;
+
+						}
+
+					}
+
+				}
+
+				//if not, treat this letter as a space
+				else {
+
+					std::cout << "string is a space: " << &script.at(i) << std::endl;
+
+					script.replace(i, 1, "\n");
+
+				}
+			}
+
+			else if (lineCount == 165) {
+
+				if (strncmp(&script.at(i), " ", 1))
+				{
+					std::cout << "string is a letter: " << &script.at(i) << std::endl;
+					//check previous letters for the first space to break there instead of breaking mid-word
+
+					for (int n = i; n != 0; n--) {
+
+						if (!strncmp(&script.at(n), " ", 1)) {
+
+							script.replace(n, 1, ">");
+							break;
+
+						}
+
+					}
+
+				}
+
+				//if not, treat this letter as a space
+				else {
+
+					std::cout << "string is a space: " << &script.at(i) << std::endl;
+
+					script.replace(i, 1, ">");
+
+				}
+
+				lineCount = 0;
+
+			}
+
+			lineCount++;
 
 
-                    
-                }
-                
-                else break;
-            }
-            
-        }
-        
+		}
+
+
 		std::cout << script << std::endl;
 
         scriptLength = script.length();
@@ -1134,7 +1162,7 @@ namespace Entity
 
 			// repeater
 
-			if (World::GetInstance()->GlobalMembers.weapons[0] >= 1 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
+			if (World::GetInstance()->GlobalMembers.weapons[0] >= 1 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
 
 				if (World::GetInstance()->GlobalMembers.weapons[0] > 1) proj.properties["itemType"] = "PlayerLaser" + std::to_string(World::GetInstance()->GlobalMembers.weapons[0]);
 				else proj.properties["itemType"] = "PlayerLaser";
@@ -1820,7 +1848,7 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect(0, 178, 5, 19));
         objectSprite.setOrigin(5,5);
         SetEffectOrigin();
-        vel.y = 6;
+        vel.y = 5;
 		damage = 7;
 		maxFrame = 2;
         SetHitBox(sf::Vector2f(4,4));
@@ -1833,7 +1861,7 @@ namespace Entity
 		objectSprite.setTextureRect(sf::IntRect(0, 197, 6, 27));
 		objectSprite.setOrigin(7, 10);
 		SetEffectOrigin();
-		vel.y = 6;
+		vel.y = 5;
 		damage = 7;
 		SetHitBox(sf::Vector2f(6,6));
 		health = 1;

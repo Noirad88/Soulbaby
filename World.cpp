@@ -260,8 +260,8 @@ World::World(){
 	5 = spreader
 	*/
 
-	GlobalMembers.weapons[0] = 2;
-	GlobalMembers.weapons[5] = 2;
+	GlobalMembers.weapons[0] = 1;
+	GlobalMembers.weapons[5] = 0;
 	GlobalMembers.weapons[3] = 0;
 
 }
@@ -609,8 +609,8 @@ sf::View* World::GetView(){
 
 void World::CreateCharacterScripts(){
     
-    std::string lim0 = "Say you want to have a party. You want it to be the most incredible party on the planet, one that all of your friends will remember forever. You're putting a lot of money into it, so you can't afford to fail. It's gotta be perfect. To pull off an event like this, you'll need to get a bunch of things: balloons, chairs, pizza. You decide that just holding it at some bar won't be cool enough, so you're gonna hold it in France. You hire a bunch of people to help you make this party happen, with the promise that it's going to be goddamn legendary.";
-	std::string mozza1 = "I don't really have much to say, tbh. The card, I open it and I now know what it means to hear terrified numbness being slid from out of a pouch which contains little nuggets of something and, still, all I see is you search it all, like you’re looking for the rotten bit. I know what’s coming, it’s the same thing as always : tears and yours, not mine. Never mine.";
+	std::string lim0 = "We've been able to talk for a while now.>but I just never really know what to say? God dang bro, why do you do this to me! OK dawg, I guess I do have something to talk about: I'm starting a restaurant down the hall, it's a pizza joint - AUTHENTIC BABY!!>OK, so here is the kicker: I need a name for the mascot; what do you think about Charles Entertainment Cheese?";
+	std::string mozza1 = "Well ...>I don't really have much to say, tbh.>The card, I open it and I now know what it means to hear terrified numbness being slid from out of a pouch which contains little nuggets of something and, still, all I see is you search it all, like you’re looking for the rotten bit. I know what’s coming, it’s the same thing as always : tears and yours, not mine. Never mine.";
     std::string hauzer2 = "Hmmm. Who do I have to fuck for that job?";
     std::string feet3 = "FUCK ... OFF";
 
