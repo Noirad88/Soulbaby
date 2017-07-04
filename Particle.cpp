@@ -402,7 +402,7 @@ namespace Entity
 					for (int n = i; n != 0; n--) {
 
 						if (!strncmp(&script.at(n), " ", 1)) {
-
+ 
 							script.replace(n, 1, ">");
 							break;
 
@@ -1162,7 +1162,7 @@ namespace Entity
 
 			// repeater
 
-			if (World::GetInstance()->GlobalMembers.weapons[0] >= 1 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
+			if (World::GetInstance()->GlobalMembers.weapons[0] >= 1 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
 
 				if (World::GetInstance()->GlobalMembers.weapons[0] > 1) proj.properties["itemType"] = "PlayerLaser" + std::to_string(World::GetInstance()->GlobalMembers.weapons[0]);
 				else proj.properties["itemType"] = "PlayerLaser";
