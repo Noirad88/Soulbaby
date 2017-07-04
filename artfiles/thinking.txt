@@ -1,0 +1,11 @@
+-overlay seems to be off at the moment before load
+-overlay seems to be pushed in direction which camera will go after load.
+
+-camera is updated first
+-old scene and all objects are drawn
+-transition position is updated to new scene position
+
+-the camera is set at the old position
+-the old scene and its objects are drawn
+-during the transition update, the new scene is loaded, 
+not drawn yet but the camera is indeed moved to the correct location.
