@@ -392,6 +392,17 @@ namespace Entity
 
 	};
 
+	class GameScene : public Object {
+
+	public:
+		GameScene();
+		void Update();
+		bool textboxCreated = false;
+		bool sceneDone = false;
+		~GameScene();
+
+	};
+
 	class Buddy : public Object {
 
 	public:

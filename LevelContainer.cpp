@@ -28,10 +28,7 @@ namespace Level
         World::GetInstance()->CameraTarget = nullptr;
         int sceneType = World::GetInstance()->CurrentScene->mapType;
         std::string sceneName = World::GetInstance()->CurrentScene->name;
-    
-        //// Load bg image here ///
-        
-        //sf::Image map;
+  
         
         if(sceneType == MENU){
             
@@ -177,10 +174,21 @@ namespace Level
 			CreateHud();
 
         }
+
+		if (sceneType == GAMESCENE) {
+
+
+			Entity::itemQueue scene;
+			scene.properties["itemType"] = "GameScene";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(scene);
+
+		}
         
         CreateBG();
         if(sceneName == "battle") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
 		else if (sceneName == "map2_1") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
+		else if (sceneName == "menu") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
+
         else World::GetInstance()->WorldScene.audioContainer.music.stop();
         
     }
@@ -249,49 +257,10 @@ namespace Level
     void LevelContainer::CreateBG(){
 
         LevelBG.clear();
-        
-        /*
-        if(World::GetInstance()->CurrentScene->mapType != ENCOUNTER){
-            
-            LevelBG.resize(5);
-            std::cout << lvlSize.x << std::endl;
-            
-            for(int i = 0; i != 5;i++){
-                
-                if(World::GetInstance()->WorldScene.textureContainer.textureMap.count("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + std::to_string(i) + ".png")){
-                    
-                    LevelBG[i].setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + std::to_string(i) + ".png"));
-                    
-                    //if(World::GetInstance()->CurrentScene->mapType == ENCOUNTER) LevelBG[i].setTexture(prevImg);
-                    
-                   
-                    //LevelBG[i].setTextureRect(sf::IntRect (0,0,lvlSize.x*2,lvlSize.y*2));
-                    //LevelBG[i].setOrigin((lvlSize.x*2)/2,(lvlSize.y*2)/2);
-                    //LevelBG[i].setPosition(lvlSize.x/2,lvlSize.y/2);
-                    
-                    
-                }
-                
-            }
-            
-        }
-        */
-        
-        if(World::GetInstance()->CurrentScene->mapType == MAP){
-            
-            LevelBG.resize(5);
-            
-                
-                if(World::GetInstance()->WorldScene.textureContainer.textureMap.count("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + std::to_string(0) + ".png")){
-                    
-                    LevelBG[0].setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + std::to_string(0) + ".png"));
-                    LevelBG[1].setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + "top" + ".png"));
-                 
-                }
-            
-            
-        }
-        
+        LevelBG.resize(5);
+		if(World::GetInstance()->WorldScene.textureContainer.textureMap.count("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + std::to_string(0) + ".png"))  LevelBG[0].setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + std::to_string(0) + ".png"));
+		if (World::GetInstance()->WorldScene.textureContainer.textureMap.count("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + "top" + ".png")) LevelBG[1].setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + "top" + ".png"));
+  
     }
     
     void LevelContainer::AddTile(sf::Color pixelcolor, int posX, int posY)
@@ -390,25 +359,7 @@ namespace Level
     
     void LevelContainer::DrawBG(){
         
-        // drew prevImg here
-        /*
-        if(World::GetInstance()->CurrentScene->mapType != ENCOUNTER){
-            
-            for(int layer = 0; layer != 5;layer++){
-                
-                if(LevelBG[layer].getTexture()){
-                    
-                    World::GetInstance()->windowWorld->draw(LevelBG[layer]);
-                    
-                    
-                }
-            }
-            
-        }
-         */
-        
-        if(World::GetInstance()->CurrentScene->mapType != ENCOUNTER)  World::GetInstance()->DrawObject(LevelBG[0]);
-        
+        if(World::GetInstance()->CurrentScene->mapType == MAP || World::GetInstance()->CurrentScene->mapType == GAMESCENE || World::GetInstance()->CurrentScene->mapType == MENU)  World::GetInstance()->DrawObject(LevelBG[0]);
         
     }
     

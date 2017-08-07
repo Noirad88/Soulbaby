@@ -25,7 +25,7 @@ void Transition::Update() {
 
 			if (World::GetInstance()->Timer(*this, VERY_FAST, NODELAY)) {
 
-				World::GetInstance()->WorldScene.audioContainer.music.setVolume(World::GetInstance()->WorldScene.audioContainer.music.getVolume() - 1);
+				World::GetInstance()->WorldScene.audioContainer.music.setVolume(World::GetInstance()->WorldScene.audioContainer.music.getVolume() - 2);
 			}
 		}
 
@@ -68,7 +68,7 @@ Fade::Fade(std::string mapName,bool dir ) : Transition(mapName)
 
 void Fade::FadeIn() {
 
-	transparency -= 2.5;
+	transparency -= 5;
 
 	if (transparency <= 0) isDone = true;
 
@@ -78,7 +78,7 @@ void Fade::FadeIn() {
 
 void Fade::FadeOut() {
 
-	transparency += 2.5;
+	transparency += 5;
 
 	if (transparency >= 255) {
 		LoadScene();
@@ -260,7 +260,7 @@ World::World(){
 	5 = spreader
 	*/
 
-	GlobalMembers.weapons[0] = 1;
+	GlobalMembers.weapons[0] = 2;
 	GlobalMembers.weapons[5] = 0;
 	GlobalMembers.weapons[3] = 0;
 
@@ -282,7 +282,16 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     CreateCharacterScripts();
     GlobalMembers.levelsCompleted.fill(0);
     LoadSceneBank();
-    LoadScene("map2_1");
+
+	/*
+	Scenes:
+	Nexus "map2_1"
+	Gamescene "gameScene0" - "gameScene7"
+	Level "battle"
+	Menu "menu"
+	*/
+
+	LoadScene("menu");
 	testShape.setFillColor(sf::Color::Blue);
 	testShape.setSize(sf::Vector2f(200,200));
 
@@ -302,9 +311,9 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
 
 void World::ReadyScene(std::string mapName){
     
-	WorldScene.isLoaded = false;
-   WorldScene.transition = std::unique_ptr<Transition>(new BlockFade(mapName, TRANOUT));
-
+   WorldScene.isLoaded = false;
+   if(mapName == "menu" || mapName == "gameScene0" ) WorldScene.transition = std::unique_ptr<Transition>(new Fade(mapName, TRANOUT));
+   else WorldScene.transition = std::unique_ptr<Transition>(new BlockFade(mapName, TRANOUT));
 }
 
 void World::LoadScene(std::string sceneName){
@@ -323,18 +332,31 @@ void World::LoadScene(std::string sceneName){
 
 void World::LoadSceneBank(){
     
+	SceneScript intro0("intro0", GAMESCENE);
+	SceneScript intro1("intro1", GAMESCENE);
     SceneScript Menu("menu",MENU);
-    SceneScript Map1("map1");
     SceneScript Map2("map2_1");
-    SceneScript Map3("map2_2");
-    SceneScript Map4("map2_3");
     SceneScript Battle("battle",ENCOUNTER);
+	SceneScript gameScene("gamescene0", GAMESCENE);
+	SceneScript gameScene1("gamescene1", GAMESCENE);
+	SceneScript gameScene2("gamescene2", GAMESCENE);
+	SceneScript gameScene3("gamescene3", GAMESCENE);
+	SceneScript gameScene4("gamescene4", GAMESCENE);
+	SceneScript gameScene5("gamescene5", GAMESCENE);
+	SceneScript gameScene6("gamescene6", GAMESCENE);
+
+	SceneScriptBank.insert(std::pair<std::string, SceneScript>("intro0", intro0));
+	SceneScriptBank.insert(std::pair<std::string, SceneScript>("intro1", intro1));
     SceneScriptBank.insert(std::pair<std::string,SceneScript>("menu",Menu));
-    SceneScriptBank.insert(std::pair<std::string,SceneScript>("map1",Map1));
     SceneScriptBank.insert(std::pair<std::string,SceneScript>("map2_1",Map2));
-    SceneScriptBank.insert(std::pair<std::string,SceneScript>("map2_2",Map3));
-    SceneScriptBank.insert(std::pair<std::string,SceneScript>("map2_3",Map4));
     SceneScriptBank.insert(std::pair<std::string,SceneScript>("battle",Battle));
+	SceneScriptBank.insert(std::pair<std::string, SceneScript>("gameScene0",gameScene));
+	SceneScriptBank.insert(std::pair<std::string, SceneScript>("gameScene1", gameScene1));
+	SceneScriptBank.insert(std::pair<std::string, SceneScript>("gameScene2", gameScene2));
+	SceneScriptBank.insert(std::pair<std::string, SceneScript>("gameScene3", gameScene3));
+	SceneScriptBank.insert(std::pair<std::string, SceneScript>("gameScene4", gameScene4));
+	SceneScriptBank.insert(std::pair<std::string, SceneScript>("gameScene5", gameScene5));
+	SceneScriptBank.insert(std::pair<std::string, SceneScript>("gameScene6", gameScene6));
     
 }
 
@@ -381,7 +403,6 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 
 	}
 
-
 	WorldScene.objectContainer->AddObjects();
 	WorldScene.objectContainer->RemoveObjects();
 	WorldScene.objectContainer->UpdateObjects();
@@ -398,7 +419,7 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 	WorldScene.levelContainer->DrawLevel();
 	WorldScene.objectContainer->DrawObjects(*windowWorld, *this);
 
-	if (CurrentScene->mapType != ENCOUNTER) WorldScene.levelContainer->DrawBGTop();
+	if (CurrentScene->mapType == MAP) WorldScene.levelContainer->DrawBGTop();
 
 	if(WorldScene.UIPtr) WorldScene.UIPtr->Draw(*windowWorld);
     
@@ -407,7 +428,6 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
      RemoveTimeObjects();
 
 	 testShape.setPosition(viewPos.x, viewPos.y);
-	 //DrawObject(testShape);
 }
 
 void World::UpdateTime(float timestamp){
@@ -468,11 +488,26 @@ void World::UpdateCamera(){
 
 			//
 
-			float playerPosX = (Entity::Player::dead == false) ? CameraTarget->objectSprite.getPosition().x + camOrient : Screen.getCenter().x;
-			float playerPosY = (Entity::Player::dead == false) ? CameraTarget->objectSprite.getPosition().y + camOrient : Screen.getCenter().y;
+			float playerPosX = 0;
+			float playerPosY = 0;
+
+			if (CameraTarget) {
+
+				playerPosX = CameraTarget->objectSprite.getPosition().x + camOrient;
+				playerPosY = CameraTarget->objectSprite.getPosition().y + camOrient;
+
+			}
+
+			else {
+
+				playerPosX = Screen.getCenter().x;
+				playerPosY = Screen.getCenter().y;
+
+			}
+
 
 			//Update the camera position
-			if (World::GetInstance()->WorldScene.playerPtr) {
+			if (CameraTarget) {
 
 				viewPos.x += (playerPosX - Screen.getCenter().x) / vel;
 				viewPos.y += (playerPosY - Screen.getCenter().y) / vel;
@@ -562,9 +597,10 @@ void World::UpdateCamera(){
 
 		}
 
-		if (CurrentScene->mapType == MENU) {
+		if (CurrentScene->mapType == MENU || CurrentScene->mapType == GAMESCENE) {
 
 			viewPos.x = 240;
+			viewPos.y = 135;
 			Screen.setCenter(240, 135);
 			camOrient = 0;
 			vel = 0;
@@ -609,15 +645,19 @@ sf::View* World::GetView(){
 
 void World::CreateCharacterScripts(){
     
-	std::string lim0 = "We've been able to talk for a while now.>but I just never really know what to say? God dang bro, why do you do this to me! OK dawg, I guess I do have something to talk about: I'm starting a restaurant down the hall, it's a pizza joint - AUTHENTIC BABY!!>OK, so here is the kicker: I need a name for the mascot; what do you think about Charles Entertainment Cheese?";
-	std::string mozza1 = "Well ...>I don't really have much to say, tbh.>The card, I open it and I now know what it means to hear terrified numbness being slid from out of a pouch which contains little nuggets of something and, still, all I see is you search it all, like you’re looking for the rotten bit. I know what’s coming, it’s the same thing as always : tears and yours, not mine. Never mine.";
-    std::string hauzer2 = "Hmmm. Who do I have to fuck for that job?";
-    std::string feet3 = "FUCK ... OFF";
+	std::string hawzer0 = "We've been able to talk for a while now.>but I just never really know what to say? God dang bro, why do you do this to me! OK dawg, I guess I do have something to talk about: I'm starting a restaurant down the hall, it's a pizza joint - AUTHENTIC BABY!!>OK, so here is the kicker: I need a name for the mascot; what do you think about ...>... Charles Entertainment Cheese?";
+	std::string jira0 = "Well ...>I don't really have much to say, tbh.>The card, I open it and I now know what it means to hear terrified numbness being slid from out of a pouch which contains little nuggets of something and, still, all I see is you search it all, like you’re looking for the rotten bit. I know what’s coming, it’s the same thing as always : tears and yours, not mine. Never mine.";
+	std::string doran0 = "Woo!>Do you know how hard it is to do this junk?>... Without thumbs?>Lord, you humans are so privledged. The destruction of the galaxy doesn't even phase your arrogance.";
+	std::string gurian0 = "Hmmm. Who do I have to fuck for that job?";
+    std::string lima0 = "FUCK ... OFF";
+	std::string mother0 = "...>Ahh!>So, you're here ... I'm sure you have questions. There is a lot going on.>My journey has come to an unexpected end. I will tell you my story.";
 
-    CharacterScripts.insert(std::pair<std::string,std::string>("LIM0",lim0));
-    CharacterScripts.insert(std::pair<std::string,std::string>("MOZZA0",mozza1));
-    CharacterScripts.insert(std::pair<std::string,std::string>("HAUZER2",hauzer2));
-    CharacterScripts.insert(std::pair<std::string,std::string>("FEET3",feet3));
+    CharacterScripts.insert(std::pair<std::string,std::string>("HAWZER0",hawzer0));
+    CharacterScripts.insert(std::pair<std::string,std::string>("JIRA0",jira0));
+	CharacterScripts.insert(std::pair<std::string, std::string>("DORAN0", doran0));
+    CharacterScripts.insert(std::pair<std::string,std::string>("GURIAN0",gurian0));
+    CharacterScripts.insert(std::pair<std::string,std::string>("LIMA0",lima0));
+	CharacterScripts.insert(std::pair<std::string, std::string>("MOTHER0", mother0));
     
 }
 

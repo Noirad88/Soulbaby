@@ -39,7 +39,7 @@ namespace Entity
     int Textbox::scriptLength = 0;
     int Textbox::progressSpeed = 0;
     int Textbox::textboxCount = 0;
-    std::string Textbox::characters[11] = {"LIM","MOZZA","HAUZER","FEET","NOOK"};
+    std::string Textbox::characters[11] = {"HAWZER","JIRA","DORAN","GURIAN","LIMA", "MOTHER"};
     
     bool PlayerMenu::menuUp = false;
     
@@ -55,25 +55,18 @@ namespace Entity
     }
     
     GUI::~GUI(){
-        
+
         guiCount--;
+		if (guiCount < 0) guiCount = 0;
     }
     
     MenuItem::MenuItem(std::string lableName, char typeName) : GUI(){
         
-        if(menuFnt.getInfo().family == ""){
-        
-        menuFnt.loadFromFile("/Users/darionmccoy/Dropbox/Game Design Stuff/Projects/Backup/HardSoda/HardSoda/fonts/apfont.ttf");
-         const_cast<sf::Texture&>(menuFnt.getTexture(16)).setSmooth(false);
-    
-        }
-        
-        menuLable.setFont(menuFnt);
+		menuLable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
         menuLable.setString(lableName);
-        menuLable.setPosition(70,135+(count * 15));
+        menuLable.setPosition(212,150+(count * 15));
         menuLable.setCharacterSize(16);
         menuLable.setColor(sf::Color::White);
-        
         type = typeName;
         
         if(type == SWITCH){
@@ -113,7 +106,7 @@ namespace Entity
         
         if(menuLable.getColor() == sf::Color::White){
             
-            menuLable.setColor(sf::Color::Green);
+            menuLable.setColor(sf::Color(217,88,99));
             menuLable.move(2,0);
             
         }
@@ -244,7 +237,7 @@ namespace Entity
     
     void Menu::DoMenuAction(MenuItem& item){
         
-        if(item.type == START) World::GetInstance()->ReadyScene("map1");
+        if(item.type == START) World::GetInstance()->ReadyScene("gameScene0");
         
         
         else if(item.type == DIVE){
@@ -315,7 +308,6 @@ namespace Entity
     void PlayerMenu::Update(){
         
         objectSprite.setPosition(World::GetInstance()->viewPos.x-((WINDOW_X/3)/2)+16,(World::GetInstance()->viewPos.y-((WINDOW_Y/3)/2))+16);
-        std::cout << objectSprite.getPosition().x << " | " << objectSprite.getPosition().y << std::endl;
 
     }
     
@@ -335,9 +327,7 @@ namespace Entity
 		World::GetInstance()->WorldScene.UIPtr = this;
 
         textboxCount = 1;
-        
-        std::cout << "creating texbox" << std::endl;
-        
+            
         characterName = characters[name];
         
         script = World::GetInstance()->CharacterScripts.at(characterName + std::to_string(0));
@@ -353,7 +343,6 @@ namespace Entity
 
 			if (!strncmp(&script.at(i), ">", 1))
 			{
-				std::cout << "user inserted break" << std::endl;
 				lineCount = 0;
 
 			}
@@ -366,7 +355,6 @@ namespace Entity
 
 				if (strncmp(&script.at(i), " ", 1))
 				{
-					std::cout << "string is a letter: " << &script.at(i) << std::endl;
 					//check previous letters for the first space to break there instead of breaking mid-word
 
 					for (int n = i; n != 0; n--) {
@@ -385,7 +373,6 @@ namespace Entity
 				//if not, treat this letter as a space
 				else {
 
-					std::cout << "string is a space: " << &script.at(i) << std::endl;
 
 					script.replace(i, 1, "\n");
 
@@ -396,7 +383,6 @@ namespace Entity
 
 				if (strncmp(&script.at(i), " ", 1))
 				{
-					std::cout << "string is a letter: " << &script.at(i) << std::endl;
 					//check previous letters for the first space to break there instead of breaking mid-word
 
 					for (int n = i; n != 0; n--) {
@@ -415,7 +401,6 @@ namespace Entity
 				//if not, treat this letter as a space
 				else {
 
-					std::cout << "string is a space: " << &script.at(i) << std::endl;
 
 					script.replace(i, 1, ">");
 
@@ -430,8 +415,6 @@ namespace Entity
 
 		}
 
-
-		std::cout << script << std::endl;
 
         scriptLength = script.length();
         
@@ -556,7 +539,7 @@ namespace Entity
             if(World::GetInstance()->Timer(*this,25200.0)){
                 
                 if(World::GetInstance()->PlayerPressedButton(controlsB)) misDestroyed = true;
-				World::GetInstance()->WorldScene.guidePtr->ready = false;
+				if(World::GetInstance()->WorldScene.guidePtr) World::GetInstance()->WorldScene.guidePtr->ready = false;
 
             }
             
@@ -581,7 +564,6 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect(0,42+(32*0),16,32));
         SetHitBox(sf::Vector2f(objectSprite.getTextureRect().width,objectSprite.getTextureRect().height),2);
         Object::type = "Prop";
-        std::cout << "Door created" << std::endl;
         
     }
 
@@ -610,7 +592,6 @@ namespace Entity
     
     void Door::isCollided(int var){
         
-        std::cout << "Calling ReadyScene() ..." << std::endl;
         World::GetInstance()->GlobalMembers.currentLevel = levelPath;
         World::GetInstance()->ReadyScene("battle");
     }
@@ -645,7 +626,6 @@ namespace Entity
 		weapon2slot.at(0) = 23;
 		weapon2slot.at(1) = 0;
 
-		std::cout << "viewPos = " << World::GetInstance()->viewPos.x << std::endl;
 		
 		if (switching > 1) switching = 1;
 		objectSprite.setPosition(World::GetInstance()->viewPos.x - 230, World::GetInstance()->viewPos.y - 125);
@@ -734,6 +714,31 @@ namespace Entity
 
 	}
 
+	GameScene::GameScene() {
+
+	}
+
+
+	void GameScene::Update() {
+
+		if (textboxCreated == false && World::GetInstance()->WorldScene.UIPtr == nullptr) {
+
+			itemQueue textbox;
+			textbox.properties["itemType"] = "Textbox";
+			textbox.properties["ActorName"] = std::to_string(5);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(textbox);
+			textboxCreated = true;
+
+		}
+
+		else if (textboxCreated == true && World::GetInstance()->WorldScene.UIPtr == nullptr && sceneDone == false) {
+
+			World::GetInstance()->ReadyScene("map2_1");
+			sceneDone = true;
+
+		}
+	}
+
     void Hud::Draw(sf::RenderTarget& window){
 
         /*
@@ -794,6 +799,10 @@ namespace Entity
     BattleBackground::~BattleBackground(){
         
     }
+
+	GameScene::~GameScene() {
+
+	}
 
     
     //////////////// PLAYER DEFINITIONS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -923,7 +932,6 @@ namespace Entity
         
         hotSpot.x = objectSprite.getPosition().x + 6;
         hotSpot.y = objectSprite.getPosition().y + 12;
-		std::cout << objectSprite.getPosition().x << "," << objectSprite.getPosition().y << std::endl;
 		sshield.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
 		sshield.setTextureRect(sf::IntRect(103, 0, 17, 41));
 		sshield.setColor(sf::Color::Color(255, 255, 255, 50));
@@ -1026,7 +1034,6 @@ namespace Entity
 			if (World::GetInstance()->Timer(*this, 160000.0)) {
 
 				World::GetInstance()->WorldScene.hudPtr->switching = !World::GetInstance()->WorldScene.hudPtr->switching;
-				std::cout << "Swtiching = " << World::GetInstance()->WorldScene.hudPtr->switching << std::endl;
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
 
 				//int tempWeap = World::GetInstance()->GlobalMembers.playerWeapon;
@@ -2014,7 +2021,6 @@ namespace Entity
 			//cos uses 0.0 to 0.9
 			//45 / 360 = 0.125
 
-			std::cout << "pdir = " << pdir << std::endl;
 
 			float plx = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x;
 			float ply = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y+5;
@@ -3373,7 +3379,6 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect(0,0,0,0));
 
 		std::string level = std::to_string(World::GetInstance()->GlobalMembers.currentLevel);
-		std::cout << "Current level =" << level << std::endl;
     
         bg.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_bg_" + level + ".png"));
         bg.setTextureRect(sf::IntRect (0,0,2000,2000));

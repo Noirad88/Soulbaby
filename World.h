@@ -68,6 +68,7 @@ namespace Level{
 #define MENU 0
 #define MAP 1
 #define ENCOUNTER 2
+#define GAMESCENE 3
 #define controlsLeft 0
 #define controlsUp 1
 #define controlsRight 2

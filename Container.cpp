@@ -25,16 +25,15 @@ bool normalSort (int i,int j) { return (i<j); }
 
 void Container::AddObjects()
 {
-    
+
     if(Queue.size() > 0)
     {
         
         for(QueueIterator QI = Queue.begin(); QI != Queue.end(); QI++)
         {
             
-            
             // GUI & ETC
-            
+
             if((QI)->properties["itemType"] == "Menu")
             {
                 
@@ -61,11 +60,19 @@ void Container::AddObjects()
             
             else if((QI)->properties["itemType"] == "Textbox")
             {
-                
+   
                 std::unique_ptr<Entity::Textbox> ptr(new Entity::Textbox(stoi((QI)->properties["ActorName"])));
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "GameScene")
+			{
+
+				std::unique_ptr<Entity::GameScene> ptr(new Entity::GameScene);
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "PlayerMenu")
             {

@@ -65,7 +65,7 @@ int main()
             
         }
         
-        window.clear(sf::Color::Color(0,0,0));
+        window.clear(sf::Color::Color(0,23,0));
         World::GetInstance()->Run(event,timestamp,clock);
         window.setView(*World::GetInstance()->GetView());
         window.display();
