@@ -89,6 +89,7 @@ struct Attributes{
     std::shared_ptr<int> maxVolume;
     std::shared_ptr<int> health;
     std::shared_ptr<int> textSpeed;
+	bool firstTimeInNexus = true;
     std::array<int,7> levelsCompleted;
     std::array<int,7> weapons;
     std::array<sf::Keyboard::Key,9> keyboardControls;

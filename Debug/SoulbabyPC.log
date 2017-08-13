@@ -1,48 +1,19 @@
-﻿  LevelContainer.cpp
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(56): warning C4018: '<': signed/unsigned mismatch
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(72): warning C4018: '<': signed/unsigned mismatch
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(74): warning C4018: '<': signed/unsigned mismatch
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(145): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(146): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(329): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(331): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(335): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(336): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(346): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(347): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(348): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(354): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(355): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(474): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(502): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(506): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(512): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(520): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(531): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(537): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(545): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(549): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(554): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(581): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(608): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(611): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(617): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(625): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(629): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(657): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(661): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(668): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(677): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(692): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(698): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(708): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(747): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(748): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(749): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(750): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(777): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(789): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(796): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\levelcontainer.cpp(808): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-  SoulbabyPC.vcxproj -> C:\Users\Darion\Documents\Visual Studio 2015\Projects\SoulbabyPC\Debug\SoulbabyPC.exe
-  SoulbabyPC.vcxproj -> C:\Users\Darion\Documents\Visual Studio 2015\Projects\SoulbabyPC\Debug\SoulbabyPC.pdb (Partial PDB)
+﻿  main.cpp
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\particle.h(31): fatal error C1083: Cannot open include file: 'boost/function.hpp': No such file or directory
+  World.cpp
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\particle.h(31): fatal error C1083: Cannot open include file: 'boost/function.hpp': No such file or directory
+  Textures.cpp
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\textures.cpp(236): warning C4305: '+=': truncation from 'double' to 'float'
+  Particle.cpp
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\particle.h(31): fatal error C1083: Cannot open include file: 'boost/function.hpp': No such file or directory
+  LevelContainer.cpp
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\particle.h(31): fatal error C1083: Cannot open include file: 'boost/function.hpp': No such file or directory
+  Container.cpp
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\particle.h(31): fatal error C1083: Cannot open include file: 'boost/function.hpp': No such file or directory
+  Audio.cpp
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\audio.cpp(110): warning C4244: 'initializing': conversion from 'sf::Uint64' to 'std::size_t', possible loss of data
+  Generating Code...
+  Compiling...
+  Tile.cpp
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\particle.h(31): fatal error C1083: Cannot open include file: 'boost/function.hpp': No such file or directory
+  Generating Code...

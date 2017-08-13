@@ -57,6 +57,14 @@ void Container::AddObjects()
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
+
+			else if ((QI)->properties["itemType"] == "QuakeManager")
+			{
+
+				std::unique_ptr<Entity::QuakeManager> ptr(new Entity::QuakeManager);
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "Textbox")
             {
@@ -201,6 +209,15 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "QuakeDirt")
+			{
+
+				std::unique_ptr<Entity::QuakeDirt> ptr(new Entity::QuakeDirt);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
 
 			else if ((QI)->properties["itemType"] == "EnemyChargeParticle")
 			{

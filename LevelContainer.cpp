@@ -115,9 +115,10 @@ namespace Level
                         
                     }
                 }
+
                 
                 
-                else if(it->getType() == "Actor"){
+                else if(it->getType() == "Actor" && World::GetInstance()->GlobalMembers.levelsCompleted.at(stoi(it->getProperty("Name"))) == 1){
                     
                     item.properties["PosX"] = to_string(it->getXposition());
                     item.properties["PosY"] = to_string(it->getYposition());
@@ -128,8 +129,21 @@ namespace Level
                 }
                 
                 else if (it->getType() == "Player"){
-                    
-                    CreatePlayer(MAP,it->getXposition(),it->getYposition());
+
+					/*
+					if (World::GetInstance()->GlobalMembers.firstTimeInNexus == true) {
+
+						Entity::itemQueue birth;
+						birth.properties["itemType"] = "PlayerBirth";
+						birth.properties["PosX"] = std::to_string(it->getXposition());
+						birth.properties["PosY"] = std::to_string(it->getYposition());
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(birth);
+
+					}
+
+					else CreatePlayer(MAP,it->getXposition(),it->getYposition());
+					*/
+					CreatePlayer(MAP, it->getXposition(), it->getYposition());
                 }
                 
                 World::GetInstance()->WorldScene.objectContainer->Queue.push_back(item);
@@ -150,6 +164,11 @@ namespace Level
 			guide.properties["PosX"] = std::to_string(1);
 			guide.properties["PosY"] = std::to_string(1);
 			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(guide);
+
+			guide.properties["itemType"] = "QuakeManager";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(guide);
+
+
            
           
             delete loader;
@@ -162,13 +181,14 @@ namespace Level
             enemyManager.properties["itemType"] = "LevelManager";
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemyManager);
             
-            lvlSize.x = 600;
-            lvlSize.y = 600;
+            lvlSize.x = 480;
+            lvlSize.y = 480;
             
+
             Entity::itemQueue player;
             player.properties["itemType"] = "BattlePlayer";
-            player.properties["PosX"] = std::to_string(300);
-            player.properties["PosY"] = std::to_string(300);
+            player.properties["PosX"] = std::to_string(lvlSize.x/2);
+            player.properties["PosY"] = std::to_string(lvlSize.y/2);
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(player);
             LevelBG[0].setTextureRect(sf::IntRect(0,0,0,0));
 			CreateHud();
@@ -185,9 +205,15 @@ namespace Level
 		}
         
         CreateBG();
-        if(sceneName == "battle") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
-		else if (sceneName == "map2_1") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
-		else if (sceneName == "menu") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
+        if(sceneName == "battle") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName + std::to_string(World::GetInstance()->GlobalMembers.currentLevel));
+		
+		else if (sceneName == "map2_1") {
+
+			if (World::GetInstance()->GlobalMembers.firstTimeInNexus == false) World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
+			World::GetInstance()->GlobalMembers.firstTimeInNexus = false;
+		}
+
+		//else if (sceneName == "menu") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
 
         else World::GetInstance()->WorldScene.audioContainer.music.stop();
         
@@ -198,8 +224,8 @@ namespace Level
         //std::cout << "Creating Boss ..." << std::endl;
         Entity::itemQueue boss;
         boss.properties["itemType"] = "Boss";
-        boss.properties["PosX"] = to_string(560);
-        boss.properties["PosY"] = to_string(130);
+        boss.properties["PosX"] = to_string(World::GetInstance()->WorldScene.levelContainer->lvlSize.x/2);
+        boss.properties["PosY"] = to_string(World::GetInstance()->WorldScene.levelContainer->lvlSize.y/2);
         World::GetInstance()->WorldScene.objectContainer->Queue.push_back(boss);
         
     }

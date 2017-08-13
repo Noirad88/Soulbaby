@@ -21,256 +21,261 @@
 
 namespace Entity
 {
-    
-    //////////////// GUI & RELATED ////////////////////////////////////////////////////////////////////////////////////
-    bool Player::dead = false;
-    int MenuItem::count = 0;
-    sf::Font MenuItem::menuFnt;
-    sf::Font HitNum::hitFnt;
-    int Object::center = 0;
-    int Object::bottomCenter = 1;
-    int Object::topLeft = 2;
-    int PlayerBomb::totalBombs = 0;
-    int PlayerBoomerang::totalBoomerangs = 0;
-    
-    int GUI::guiCount = 0;
-    int Textbox::lineLength = 55;
-    int Textbox::maxLines = 3;
-    int Textbox::scriptLength = 0;
-    int Textbox::progressSpeed = 0;
-    int Textbox::textboxCount = 0;
-    std::string Textbox::characters[11] = {"HAWZER","JIRA","DORAN","GURIAN","LIMA", "MOTHER"};
-    
-    bool PlayerMenu::menuUp = false;
-    
-    GUI::GUI() : Object(){
-        
-        type = "GUI";
-        guiCount++;
-        
-    }
-    
-    void GUI::Update(){
-        
-    }
-    
-    GUI::~GUI(){
 
-        guiCount--;
+	//////////////// GUI & RELATED ////////////////////////////////////////////////////////////////////////////////////
+	bool Player::dead = false;
+	int MenuItem::count = 0;
+	sf::Font MenuItem::menuFnt;
+	sf::Font HitNum::hitFnt;
+	int Object::center = 0;
+	int Object::bottomCenter = 1;
+	int Object::topLeft = 2;
+	int PlayerBomb::totalBombs = 0;
+	int PlayerBoomerang::totalBoomerangs = 0;
+
+	int GUI::guiCount = 0;
+	int Textbox::lineLength = 55;
+	int Textbox::maxLines = 3;
+	int Textbox::scriptLength = 0;
+	int Textbox::progressSpeed = 0;
+	int Textbox::textboxCount = 0;
+	std::string Textbox::characters[11] = { "HAWZER","JIRA","DORAN","GURIAN","LIMA", "MOTHER" };
+
+	bool PlayerMenu::menuUp = false;
+
+	GUI::GUI() : Object() {
+
+		type = "GUI";
+		guiCount++;
+
+	}
+
+	void GUI::Update() {
+
+	}
+
+	GUI::~GUI() {
+
+		guiCount--;
 		if (guiCount < 0) guiCount = 0;
-    }
-    
-    MenuItem::MenuItem(std::string lableName, char typeName) : GUI(){
-        
-		menuLable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
-        menuLable.setString(lableName);
-        menuLable.setPosition(212,150+(count * 15));
-        menuLable.setCharacterSize(16);
-        menuLable.setColor(sf::Color::White);
-        type = typeName;
-        
-        if(type == SWITCH){
-            
-            objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_menu_bar.png"));
-            objectSprite.setPosition(menuLable.getPosition().x + (35),menuLable.getPosition().y +7);
-            objectSprite.setTextureRect(sf::IntRect(0,0,1,10));
-            
-            if(lableName == "Volume"){
-                
-                linkedAttribute = std::weak_ptr<int>(World::GetInstance()->GlobalMembers.maxVolume);
-                objectSprite.setTextureRect(sf::IntRect(0,0,*World::GetInstance()->GlobalMembers.maxVolume,10));
-            }
-            
-            else if(lableName == "Health"){
-                
-                linkedAttribute = std::weak_ptr<int>(World::GetInstance()->GlobalMembers.health);
-                objectSprite.setTextureRect(sf::IntRect(0,0,*World::GetInstance()->GlobalMembers.health,10));
-                
-            }
-        
-        }
-        
-        count++;
-        
-    }
-    
-    
-    
-    void MenuItem::Update(){
-        
-        
-        
-    };
-    
-    void MenuItem::ToggleSelection(){
-        
-        if(menuLable.getColor() == sf::Color::White){
-            
-            menuLable.setColor(sf::Color(217,88,99));
-            menuLable.move(2,0);
-            
-        }
-        
-        else{
-            
-            menuLable.setColor(sf::Color::White);
-            menuLable.move(-2,0);
-            
-        }
-    }
-    
-    void MenuItem::Draw(sf::RenderTarget& window){
-        
-        World::GetInstance()->DrawObject(objectSprite);
-        World::GetInstance()->DrawObject(menuLable);
-        
-    }
-    
-    MenuItemHolder::MenuItemHolder() : GUI(){
-        
-        MenuItem::count = 0;
-        
-    }
-    
-    void MenuItemHolder::Update(){
-    }
-    
-    void MenuItemHolder::Draw(sf::RenderTarget &window){
-        
-    }
-    
-    MenuItemHolder::~MenuItemHolder(){
-    }
-    
-    
-    Menu::Menu() : GUI(){
-        
-        MenuItemHolder menuHolder;
-        MenuItem item1 ("Start",START);
-        MenuItem item2("Options",DIVE);
-        MenuItem item3("Quit",EXIT);
-    
-        menuHolder.menuList.push_back(item1);
-        menuHolder.menuList.push_back(item2);
-        menuHolder.menuList.push_back(item3);
-        menuHolder.menuList.at(0).ToggleSelection();
-        menuContainer.push_back(menuHolder);
-        
-    }
-    
-    void Menu::Update(){
-        
-        //curent menu is always beginning of vector and what should be drawn
-        
-        int currentScreen = menuContainer.size()-1;
-        
-        if(World::GetInstance()->Timer(*this,FAST)){
-        
-            if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])){
-                
-                World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
-                if(menuContainer.at(currentScreen).currentPos != 0){
-                    
-                    menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
-                    --menuContainer.at(currentScreen).currentPos;
-                    menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
-                    
-                }
-                
-                else{
-                    
-                    menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
-                    menuContainer.at(currentScreen).currentPos = menuContainer.at(currentScreen).menuList.size()-1;
-                    menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
-                    
-                }
-            
-            }
-            
-            if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])){
-                
-                World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
-                if(menuContainer.at(currentScreen).currentPos != menuContainer.at(currentScreen).menuList.size()-1){
-                    
-                    menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
-                    ++menuContainer.at(currentScreen).currentPos;
-                    menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
-                    
-                }
-                
-                else{
-                    
-                    menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
-                    menuContainer.at(currentScreen).currentPos = 0;
-                    menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
-                }
-                
-            }
-            
-            
-            else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft]) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))){
-                
-                --*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
-                // switch visul changes need to go here
-                std::cout << *World::GetInstance()->GlobalMembers.maxVolume << std::endl;
-                menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).objectSprite.setTextureRect(sf::IntRect(0,0,*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock(),10));
-            
-            }
-        
-            else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))){
-                
-                ++*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
-                // switch visul changes need to go here
-                std::cout << *World::GetInstance()->GlobalMembers.maxVolume << std::endl;
-                menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).objectSprite.setTextureRect(sf::IntRect(0,0,*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock(),10));
-            
-            }
-        
-            else if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsA])) DoMenuAction(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos));
-            
-            else if((sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB]) && menuContainer.size() != 1)) menuContainer.pop_back();
-                
-                
+	}
 
-        }
-    }
-    
-    void Menu::DoMenuAction(MenuItem& item){
-        
-        if(item.type == START) World::GetInstance()->ReadyScene("gameScene0");
-        
-        
-        else if(item.type == DIVE){
-            
-            MenuItemHolder menuHolder;
-            MenuItem item1 ("Volume",SWITCH);
-            MenuItem item2("Health",SWITCH);
-            
-            menuHolder.menuList.push_back(item1);
-            menuHolder.menuList.push_back(item2);
-            menuHolder.menuList.at(0).ToggleSelection();
-            menuContainer.push_back(menuHolder);
-            
-        }
-        
-        else if(item.type == EXIT) World::GetInstance()->windowWorld->close();
-    }
-    
-    bool Menu::HasSwitch(MenuItem& item){
-        
-        return item.type == SWITCH;
-        
-    }
-    
-    void Menu::Draw(sf::RenderTarget& window){
-        
-        for (auto i : menuContainer.at(menuContainer.size()-1).menuList) i.Draw(window);
-        
-    }
-    
-    Menu::~Menu(){
-        
-    
+	MenuItem::MenuItem(std::string lableName, char typeName) : GUI() {
+
+		menuLable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
+		menuLable.setString(lableName);
+		menuLable.setPosition(212, 150 + (count * 15));
+		menuLable.setCharacterSize(16);
+		menuLable.setColor(sf::Color::White);
+		type = typeName;
+
+		if (type == SWITCH) {
+
+			objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_menu_bar.png"));
+			objectSprite.setPosition(menuLable.getPosition().x + (35), menuLable.getPosition().y + 7);
+			objectSprite.setTextureRect(sf::IntRect(0, 0, 1, 10));
+
+			if (lableName == "Volume") {
+
+				linkedAttribute = std::weak_ptr<int>(World::GetInstance()->GlobalMembers.maxVolume);
+				objectSprite.setTextureRect(sf::IntRect(0, 0, *World::GetInstance()->GlobalMembers.maxVolume, 10));
+			}
+
+			else if (lableName == "Health") {
+
+				linkedAttribute = std::weak_ptr<int>(World::GetInstance()->GlobalMembers.health);
+				objectSprite.setTextureRect(sf::IntRect(0, 0, *World::GetInstance()->GlobalMembers.health, 10));
+
+			}
+
+		}
+
+		count++;
+
+	}
+
+
+
+	void MenuItem::Update() {
+
+
+
+	};
+
+	void MenuItem::ToggleSelection() {
+
+		if (menuLable.getColor() == sf::Color::White) {
+
+			menuLable.setColor(sf::Color(217, 88, 99));
+			menuLable.move(2, 0);
+
+		}
+
+		else {
+
+			menuLable.setColor(sf::Color::White);
+			menuLable.move(-2, 0);
+
+		}
+	}
+
+	void MenuItem::Draw(sf::RenderTarget& window) {
+
+		World::GetInstance()->DrawObject(objectSprite);
+		World::GetInstance()->DrawObject(menuLable);
+
+	}
+
+	MenuItemHolder::MenuItemHolder() : GUI() {
+
+		MenuItem::count = 0;
+
+	}
+
+	void MenuItemHolder::Update() {
+	}
+
+	void MenuItemHolder::Draw(sf::RenderTarget &window) {
+
+	}
+
+	MenuItemHolder::~MenuItemHolder() {
+	}
+
+
+	Menu::Menu() : GUI() {
+
+		MenuItemHolder menuHolder;
+		MenuItem item1("Start", START);
+		MenuItem item2("Options", DIVE);
+		MenuItem item3("Quit", EXIT);
+
+		menuHolder.menuList.push_back(item1);
+		menuHolder.menuList.push_back(item2);
+		menuHolder.menuList.push_back(item3);
+		menuHolder.menuList.at(0).ToggleSelection();
+		menuContainer.push_back(menuHolder);
+
+	}
+
+	void Menu::Update() {
+
+		//curent menu is always beginning of vector and what should be drawn
+
+		int currentScreen = menuContainer.size() - 1;
+
+		if (World::GetInstance()->Timer(*this, FAST)) {
+
+			if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])) {
+
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
+				if (menuContainer.at(currentScreen).currentPos != 0) {
+
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					--menuContainer.at(currentScreen).currentPos;
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+
+				}
+
+				else {
+
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					menuContainer.at(currentScreen).currentPos = menuContainer.at(currentScreen).menuList.size() - 1;
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+
+				}
+
+			}
+
+			if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])) {
+
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
+				if (menuContainer.at(currentScreen).currentPos != menuContainer.at(currentScreen).menuList.size() - 1) {
+
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					++menuContainer.at(currentScreen).currentPos;
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+
+				}
+
+				else {
+
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					menuContainer.at(currentScreen).currentPos = 0;
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+				}
+
+			}
+
+
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft]) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
+
+				--*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
+				// switch visul changes need to go here
+				std::cout << *World::GetInstance()->GlobalMembers.maxVolume << std::endl;
+				menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).objectSprite.setTextureRect(sf::IntRect(0, 0, *menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock(), 10));
+
+			}
+
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
+
+				++*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
+				// switch visul changes need to go here
+				std::cout << *World::GetInstance()->GlobalMembers.maxVolume << std::endl;
+				menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).objectSprite.setTextureRect(sf::IntRect(0, 0, *menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock(), 10));
+
+			}
+
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsA])) DoMenuAction(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos));
+
+			else if ((sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB]) && menuContainer.size() != 1)) menuContainer.pop_back();
+
+
+
+		}
+	}
+
+	void Menu::DoMenuAction(MenuItem& item) {
+
+		if (item.type == START) World::GetInstance()->ReadyScene("gameScene0");
+
+
+		else if (item.type == DIVE) {
+
+			MenuItemHolder menuHolder;
+			MenuItem item1("Volume", SWITCH);
+			MenuItem item2("Health", SWITCH);
+
+			menuHolder.menuList.push_back(item1);
+			menuHolder.menuList.push_back(item2);
+			menuHolder.menuList.at(0).ToggleSelection();
+			menuContainer.push_back(menuHolder);
+
+		}
+
+		else if (item.type == EXIT) World::GetInstance()->windowWorld->close();
+	}
+
+	bool Menu::HasSwitch(MenuItem& item) {
+
+		return item.type == SWITCH;
+
+	}
+
+	void Menu::Draw(sf::RenderTarget& window) {
+
+		for (auto i : menuContainer.at(menuContainer.size() - 1).menuList) i.Draw(window);
+
+	}
+
+	Menu::~Menu() {
+
+
+	}
+
+	QuakeManager::QuakeManager(){
+
+		std::cout << "quake manager created" << std::endl;
     }
 
 	Guide::Guide() {
@@ -285,6 +290,36 @@ namespace Entity
     MenuItem::~MenuItem(){
     
     }
+
+	QuakeManager::~QuakeManager() {
+
+	}
+
+	void QuakeManager::Update() {
+
+		if (World::GetInstance()->Timer(*this, VERY_SLOW*2, NODELAY)) {
+
+			int roll = RandomNumber(10);
+
+			if (roll == 1) {
+
+				World::GetInstance()->ScreenShake(5);
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_quake");
+				World::GetInstance()->viewPos.x;
+
+				itemQueue dirt;
+				dirt.properties["PosX"] = std::to_string(World::GetInstance()->CameraTarget->objectSprite.getPosition().x + RandomNumber(100));
+				dirt.properties["PosY"] = std::to_string(World::GetInstance()->CameraTarget->objectSprite.getPosition().y + RandomNumber (100));
+				dirt.properties["itemType"] = "QuakeDirt";
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dirt);
+
+
+			}
+
+		}
+
+
+	}
     
     PlayerMenu::PlayerMenu(){
         
@@ -1489,6 +1524,12 @@ namespace Entity
 	EnemyPart::~EnemyPart() {
 
 	}
+
+	PlayerBirth::PlayerBirth() : Fixed() {
+
+
+
+	}
     
     DoorDestroy::DoorDestroy() : Fixed(){
         
@@ -1633,6 +1674,16 @@ namespace Entity
         deacceleration = 0.25;
         
     }
+
+	QuakeDirt::QuakeDirt() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(16,128, 2, 2));
+		vel.y = 1;
+		maxTime = VERY_SLOW*5;
+		acceleration = 2;
+		SetEffectOrigin();
+
+	}
 
 	EnemyCharge::EnemyCharge() : Fixed() {
 
@@ -2007,6 +2058,11 @@ namespace Entity
         
         
     }
+
+	void PlayerBirth::Update() {
+
+
+	}
 
 	void Buddy::Update() 
 	{
@@ -2998,6 +3054,10 @@ namespace Entity
         
     }
 
+	QuakeDirt::~QuakeDirt() {
+
+	}
+
 	EnemyLaser::~EnemyLaser() {
 
 	}
@@ -3011,6 +3071,11 @@ namespace Entity
 	}
 
 	EnemyHomingBlip::~EnemyHomingBlip() {
+
+	}
+
+	PlayerBirth::~PlayerBirth() {
+
 
 	}
 
@@ -3432,8 +3497,8 @@ namespace Entity
 
 	void LevelManager::CreateEnemy(int enemy) {
 
-		int lvlwidth = fieldSize;
-		int lvlheight = fieldSize;
+		int lvlwidth = World::GetInstance()->WorldScene.levelContainer->lvlSize.x;
+		int lvlheight = World::GetInstance()->WorldScene.levelContainer->lvlSize.y;
 
 		std::random_device rd;
 		std::mt19937 mt(rd());
@@ -3516,8 +3581,8 @@ namespace Entity
     {
         
         objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_actors.png"));
-        objectSprite.setTextureRect(sf::IntRect (0,actor * 191,16,24));
-        name = Textbox::characters[character];
+        objectSprite.setTextureRect(sf::IntRect ((1 + actor) * 16,0 * 24,16,24));
+        name = actor;
         SetCharacterOrigin();
         SetShadow();
         type = "Actor";
@@ -3529,21 +3594,20 @@ namespace Entity
         
         Move();
         UpdateShadow();
-        objectSprite.setScale(Sine(),Sine());
     }
     
     void Actor::Move()
     {
         if(PlayerDistance(CLOSE)){
             actorMovement = RoundUp((GetAngle(objectShadow.getPosition(),World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition())),45);
-        objectSprite.setTextureRect(sf::IntRect(framePos * 16, abs(((180 - actorMovement) / 45) * 24),16, 24));
+        objectSprite.setTextureRect(sf::IntRect((1+name) * 16, abs(((180 - actorMovement) / 45) * 24),16, 24));
         }
         
-        else if(idleBehavior == none) objectSprite.setTextureRect(sf::IntRect(framePos * 16, south,16, 24));
+        else if(idleBehavior == none) objectSprite.setTextureRect(sf::IntRect((1+name) * 16, south,16, 24));
         
         else if(idleBehavior == looking){
             
-            if(World::GetInstance()->Timer(*this,VERY_SLOW,DELAY)) objectSprite.setTextureRect(sf::IntRect(framePos * 16, RandomNumber(7)*24,16, 24));
+            if(World::GetInstance()->Timer(*this,VERY_SLOW*10,DELAY)) objectSprite.setTextureRect(sf::IntRect((1+name) * 16, RandomNumber(7)*24,16, 24));
         
             }
         

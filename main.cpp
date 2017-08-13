@@ -10,6 +10,8 @@
 #define WINDOW_X 480*2
 
 #define WINDOW_Y 270*2
+#define SCREEN_X sf::VideoMode::getDesktopMode().width
+#define SCREEN_Y sf::VideoMode::getDesktopMode().height
 #define PROJ_DIR "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC"
 
 #include "Container.h"
@@ -28,6 +30,11 @@ int main()
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
     window.setKeyRepeatEnabled(true);
+	std::cout << "this screen is: " << SCREEN_X << " by " << SCREEN_Y << std::endl;
+
+
+	
+
     sf::Event event;
         
     sf::Clock clock;

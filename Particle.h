@@ -135,6 +135,14 @@ namespace Entity
 
 	};
 
+	class QuakeManager : public Object
+	{
+	public: QuakeManager();
+			void Update();
+			~QuakeManager();
+
+	};
+
 	class MenuItem : public GUI
 	{
 		friend class MenuItemHolder;
@@ -629,6 +637,14 @@ namespace Entity
 
 	};
 
+	class QuakeDirt : public Fixed {
+
+	public: QuakeDirt();
+			~QuakeDirt();
+
+	};
+
+
 	class PlayerBeam : public Fixed {
 	public:
 		PlayerBeam();
@@ -656,6 +672,14 @@ namespace Entity
         void Update();
         ~DoorDestroy();
     };
+
+	class PlayerBirth : public Fixed {
+	public:
+		PlayerBirth();
+		void Update();
+		~PlayerBirth();
+		int phase = 0;
+	};
     
     class SpriteClone: public Fixed{
     public:
@@ -865,7 +889,7 @@ namespace Entity
         void Move();
         int framePos = 0;
         void isCollided(int var = 0);
-        std::string name = "";
+        int name = 0;
         int character = 0;
         int moveType = IDLE;
         enum movement {south,swest, west, nwest, north, neast, east, seast, idle};

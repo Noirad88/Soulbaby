@@ -306,7 +306,6 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
 	std::cout << "Button? : " << buttons << std::endl;
 	std::cout << "Axis? : " << axisx << ", " << axisy << std::endl;
 
-    
 }
 
 void World::ReadyScene(std::string mapName){
@@ -373,6 +372,11 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 
 	UpdateTime(timestamp);
 	eventWorld = &event;
+
+	//sf::Time test = WorldScene.audioContainer.music.getPlayingOffset();
+
+	//if (test.asMilliseconds() >= 6850)  WorldScene.audioContainer.music.play();
+	//std::cout << test.asMilliseconds() << std::endl;
 
 	if (Timer(*this, 100.0f)) {
 
