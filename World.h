@@ -17,6 +17,8 @@
 #include <memory>
 #include <map>
 #include <sstream>
+//#include "resource.h"
+//#include "winuser.h"
 
 #define DELAY 0
 #define NODELAY 1
@@ -91,6 +93,7 @@ struct Attributes{
     std::shared_ptr<int> textSpeed;
 	bool firstTimeInNexus = true;
     std::array<int,7> levelsCompleted;
+	std::array<int, 7> abilitiesGot;
     std::array<int,7> weapons;
     std::array<sf::Keyboard::Key,9> keyboardControls;
 	std::array<int, 9> joystickControls;
@@ -228,6 +231,7 @@ class World{
     bool IsPlayerActive();
 	bool IsPlayerCameraTarget();
     void ResetCamera();
+	void CreateResourceMap();
     void ReadyScene(std::string mapName);
     void UpdateTransition();
     void UpdateTime(float timestamp);
@@ -351,6 +355,7 @@ class World{
     sf::Clock *clockWorld;
     static sf::Clock clock2;
 	std::string dir;
+	std::string resourceFile;
     
     std::unique_ptr<Transition> TransitionOverlay;
     

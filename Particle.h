@@ -154,6 +154,7 @@ namespace Entity
 		void Draw(sf::RenderTarget& window);
 		void ToggleSelection();
 		sf::Text menuLable;
+		sf::Sprite hand;
 		static sf::Font menuFnt;
 		char type;
 		std::weak_ptr<int> linkedAttribute;

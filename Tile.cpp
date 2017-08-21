@@ -23,7 +23,7 @@ namespace Level
     
     Platform::Platform(sf::Color pixelcolor, int posX, int posY) : Tile (pixelcolor, posX,posY){
         
-        tSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_tile.png")));
+        tSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_tile")));
         tSprite.setPosition(posX,posY);
         
         top = tSprite.getPosition().y;
@@ -35,7 +35,7 @@ namespace Level
     
     Mover::Mover(sf::Color pixelcolor, int posX, int posY) : Platform (pixelcolor, posX,posY){
         
-        tSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_tile0.png")));
+        tSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_tile0")));
         tSprite.setColor(sf::Color::Magenta);
         tSprite.setPosition(posX,posY);
         

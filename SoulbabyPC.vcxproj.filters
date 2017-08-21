@@ -9,9 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{730c1b6c-21a4-4eff-985c-17cfb2f7400c}</UniqueIdentifier>
+      <Extensions>png;ogg;wav</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -116,5 +116,276 @@
     <ClInclude Include="TMXLoader\TMXTileSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="levels\.DS_Store" />
+    <None Include="packages.config" />
+    <None Include="music\battle0.ogg">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="music\battle1.ogg">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="wave11.bin" />
+    <None Include="wave12.bin" />
+    <None Include="wave13.bin" />
+    <None Include="music\battle4.ogg">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="music\battle5.ogg">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="music\boss.ogg">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="music\map2_1.ogg">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="music\menu.ogg">
+      <Filter>Assets</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SoulbabyPC1.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="textures\tx_actors.png" />
+    <Image Include="textures\tx_battle_bg_0.png" />
+    <Image Include="levels\tx_battle_bg_0.png" />
+    <Image Include="levels\tx_battle_bg_1.png" />
+    <Image Include="levels\tx_battle_bg_2.png" />
+    <Image Include="levels\tx_battle_bg_3.png" />
+    <Image Include="levels\tx_battle_bg_4.png" />
+    <Image Include="textures\tx_bosses.png" />
+    <Image Include="textures\tx_enemies.png" />
+    <Image Include="textures\tx_enemies-old.png" />
+    <Image Include="levels\tx_gamescene0_bg_0.png" />
+    <Image Include="textures\tx_map.png" />
+    <Image Include="levels\tx_map2_1_bg_0.png" />
+    <Image Include="textures\tx_misc.png" />
+    <Image Include="textures\tx_particles.png" />
+    <Image Include="textures\tx_player.png" />
+    <Image Include="textures\tx_portraits.png" />
+    <Image Include="textures\tx_projectiles.png" />
+    <Image Include="textures\tx_scenes.png" />
+    <Image Include="textures\tx_smoke.png" />
+    <Image Include="textures\tx_tile.png" />
+    <Image Include="levels\tx_map2_1_bg_top.png" />
+    <Image Include="levels\tx_menu_bg_0.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="fonts\basis33.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="sfx\sfx_attk.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_badhit2.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_big_exp.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bighit0.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bighit1.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bighit2.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_block.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bomb_exp.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bomb_shoot.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bombexp.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bossdash.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bouncyhit.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_break_2.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bullet_exp.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bump.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_dash.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_dash2.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_death.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_die.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_ding.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_elsr_0.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_elsr_1.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_elsr_2.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_enemy_hit.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_enemy_shot.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_enemycharge.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_enmylsr.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_exp.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_exp2.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_exp3.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_exp4.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_faintexp.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_fall.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_frission.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_growl.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_hardbouncyhit.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_hauzerbark.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_hauzerbark2.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_hauzerbreath.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_hauzercharge1.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_hurtgood.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_jump.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_jump2.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_jump3.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_jump4.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_jump6.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_land.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_laser.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_laser_b.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_laser3.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_laser9.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_lighthit.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_playerDeath.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_plrhurt.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_poplaser.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_quake.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_s.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_smallexp.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_smallexphard.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_smbomb.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_sound_txt.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_step.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_stomp.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_superbeam.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_superbeam2.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_twinkle.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_txt.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_yes.wav">
+      <Filter>Assets</Filter>
+    </Media>
   </ItemGroup>
 </Project>

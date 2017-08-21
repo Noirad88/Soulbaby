@@ -157,6 +157,8 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <ClInclude Include="rapidxml_iterators.hpp" />
     <ClInclude Include="rapidxml_print.hpp" />
     <ClInclude Include="rapidxml_utils.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TMXLoader\TMXLoader.h" />
@@ -167,6 +169,124 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <ClInclude Include="TMXLoader\TMXTileLayer.h" />
     <ClInclude Include="TMXLoader\TMXTileSet.h" />
     <ClInclude Include="World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="levels\.DS_Store" />
+    <None Include="music\battle0.ogg" />
+    <None Include="music\battle1.ogg" />
+    <None Include="music\battle4.ogg" />
+    <None Include="music\battle5.ogg" />
+    <None Include="music\boss.ogg" />
+    <None Include="music\map2_1.ogg" />
+    <None Include="music\menu.ogg" />
+    <None Include="packages.config" />
+    <None Include="wave11.bin" />
+    <None Include="wave12.bin" />
+    <None Include="wave13.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SoulbabyPC1.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="levels\tx_battle_bg_0.png" />
+    <Image Include="levels\tx_battle_bg_1.png" />
+    <Image Include="levels\tx_battle_bg_2.png" />
+    <Image Include="levels\tx_battle_bg_3.png" />
+    <Image Include="levels\tx_battle_bg_4.png" />
+    <Image Include="levels\tx_gamescene0_bg_0.png" />
+    <Image Include="levels\tx_map2_1_bg_0.png" />
+    <Image Include="levels\tx_map2_1_bg_top.png" />
+    <Image Include="levels\tx_menu_bg_0.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DeploymentContent>
+    </Image>
+    <Image Include="textures\tx_actors.png" />
+    <Image Include="textures\tx_battle_bg_0.png" />
+    <Image Include="textures\tx_bosses.png" />
+    <Image Include="textures\tx_enemies-old.png" />
+    <Image Include="textures\tx_enemies.png" />
+    <Image Include="textures\tx_map.png" />
+    <Image Include="textures\tx_misc.png" />
+    <Image Include="textures\tx_particles.png" />
+    <Image Include="textures\tx_player.png" />
+    <Image Include="textures\tx_portraits.png" />
+    <Image Include="textures\tx_projectiles.png" />
+    <Image Include="textures\tx_scenes.png" />
+    <Image Include="textures\tx_smoke.png" />
+    <Image Include="textures\tx_tile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="fonts\basis33.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="sfx\sfx_attk.wav" />
+    <Media Include="sfx\sfx_badhit2.wav" />
+    <Media Include="sfx\sfx_bighit0.wav" />
+    <Media Include="sfx\sfx_bighit1.wav" />
+    <Media Include="sfx\sfx_bighit2.wav" />
+    <Media Include="sfx\sfx_big_exp.wav" />
+    <Media Include="sfx\sfx_block.wav" />
+    <Media Include="sfx\sfx_bombexp.wav" />
+    <Media Include="sfx\sfx_bomb_exp.wav" />
+    <Media Include="sfx\sfx_bomb_shoot.wav" />
+    <Media Include="sfx\sfx_bossdash.wav" />
+    <Media Include="sfx\sfx_bouncyhit.wav" />
+    <Media Include="sfx\sfx_break_2.wav" />
+    <Media Include="sfx\sfx_bullet_exp.wav" />
+    <Media Include="sfx\sfx_bump.wav" />
+    <Media Include="sfx\sfx_dash.wav" />
+    <Media Include="sfx\sfx_dash2.wav" />
+    <Media Include="sfx\sfx_death.wav" />
+    <Media Include="sfx\sfx_die.wav" />
+    <Media Include="sfx\sfx_ding.wav" />
+    <Media Include="sfx\sfx_elsr_0.wav" />
+    <Media Include="sfx\sfx_elsr_1.wav" />
+    <Media Include="sfx\sfx_elsr_2.wav" />
+    <Media Include="sfx\sfx_enemycharge.wav" />
+    <Media Include="sfx\sfx_enemy_hit.wav" />
+    <Media Include="sfx\sfx_enemy_shot.wav" />
+    <Media Include="sfx\sfx_enmylsr.wav" />
+    <Media Include="sfx\sfx_exp.wav" />
+    <Media Include="sfx\sfx_exp2.wav" />
+    <Media Include="sfx\sfx_exp3.wav" />
+    <Media Include="sfx\sfx_exp4.wav" />
+    <Media Include="sfx\sfx_faintexp.wav" />
+    <Media Include="sfx\sfx_fall.wav" />
+    <Media Include="sfx\sfx_frission.wav" />
+    <Media Include="sfx\sfx_growl.wav" />
+    <Media Include="sfx\sfx_hardbouncyhit.wav" />
+    <Media Include="sfx\sfx_hauzerbark.wav" />
+    <Media Include="sfx\sfx_hauzerbark2.wav" />
+    <Media Include="sfx\sfx_hauzerbreath.wav" />
+    <Media Include="sfx\sfx_hauzercharge1.wav" />
+    <Media Include="sfx\sfx_hurtgood.wav" />
+    <Media Include="sfx\sfx_jump.wav" />
+    <Media Include="sfx\sfx_jump2.wav" />
+    <Media Include="sfx\sfx_jump3.wav" />
+    <Media Include="sfx\sfx_jump4.wav" />
+    <Media Include="sfx\sfx_jump6.wav" />
+    <Media Include="sfx\sfx_land.wav" />
+    <Media Include="sfx\sfx_laser.wav" />
+    <Media Include="sfx\sfx_laser3.wav" />
+    <Media Include="sfx\sfx_laser9.wav" />
+    <Media Include="sfx\sfx_laser_b.wav" />
+    <Media Include="sfx\sfx_lighthit.wav" />
+    <Media Include="sfx\sfx_playerDeath.wav" />
+    <Media Include="sfx\sfx_plrhurt.wav" />
+    <Media Include="sfx\sfx_poplaser.wav" />
+    <Media Include="sfx\sfx_quake.wav" />
+    <Media Include="sfx\sfx_s.wav" />
+    <Media Include="sfx\sfx_smallexp.wav" />
+    <Media Include="sfx\sfx_smallexphard.wav" />
+    <Media Include="sfx\sfx_smbomb.wav" />
+    <Media Include="sfx\sfx_sound_txt.wav" />
+    <Media Include="sfx\sfx_step.wav" />
+    <Media Include="sfx\sfx_stomp.wav" />
+    <Media Include="sfx\sfx_superbeam.wav" />
+    <Media Include="sfx\sfx_superbeam2.wav" />
+    <Media Include="sfx\sfx_twinkle.wav" />
+    <Media Include="sfx\sfx_txt.wav" />
+    <Media Include="sfx\sfx_yes.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,0 +1,370 @@
+The file contains the following resources:
+
+Type: PNG
+	Name: 104
+		Language: 1033
+		hResInfo == 18ebd0,  Size == 44896
+
+	Name: 106
+		Language: 1033
+		hResInfo == 18ebe0,  Size == 174363
+
+	Name: 107
+		Language: 1033
+		hResInfo == 18ebf0,  Size == 5535
+
+	Name: 108
+		Language: 1033
+		hResInfo == 18ec00,  Size == 13610
+
+	Name: 109
+		Language: 1033
+		hResInfo == 18ec10,  Size == 2321
+
+	Name: 110
+		Language: 1033
+		hResInfo == 18ec20,  Size == 6926
+
+	Name: 111
+		Language: 1033
+		hResInfo == 18ec30,  Size == 6518
+
+	Name: 112
+		Language: 1033
+		hResInfo == 18ec40,  Size == 1399
+
+	Name: 113
+		Language: 1033
+		hResInfo == 18ec50,  Size == 931
+
+	Name: 114
+		Language: 1033
+		hResInfo == 18ec60,  Size == 4093
+
+	Name: 115
+		Language: 1033
+		hResInfo == 18ec70,  Size == 1289
+
+	Name: 116
+		Language: 1033
+		hResInfo == 18ec80,  Size == 1420
+
+	Name: 117
+		Language: 1033
+		hResInfo == 18ec90,  Size == 1353
+
+	Name: 118
+		Language: 1033
+		hResInfo == 18eca0,  Size == 959
+
+	Name: 119
+		Language: 1033
+		hResInfo == 18ecb0,  Size == 1302
+
+	Name: 120
+		Language: 1033
+		hResInfo == 18ecc0,  Size == 1136
+
+	Name: 121
+		Language: 1033
+		hResInfo == 18ecd0,  Size == 45451
+
+	Name: 123
+		Language: 1033
+		hResInfo == 18ece0,  Size == 3520
+
+	Name: 4294967234
+		Language: 1033
+		hResInfo == 18ecf0,  Size == 9068
+
+	Name: 4294967236
+		Language: 1033
+		hResInfo == 18ed00,  Size == 4398
+
+	Name: 4294967237
+		Language: 1033
+		hResInfo == 18ed10,  Size == 37230
+
+Type: TXT
+	Name: 4294967238
+		Language: 1033
+		hResInfo == 18ed20,  Size == 8920
+
+Type: WAVE
+	Name: 125
+		Language: 1033
+		hResInfo == 18ed30,  Size == 17716
+
+	Name: 126
+		Language: 1033
+		hResInfo == 18ed40,  Size == 12438
+
+	Name: 127
+		Language: 1033
+		hResInfo == 18ed50,  Size == 52108
+
+	Name: 4294967168
+		Language: 1033
+		hResInfo == 18ed60,  Size == 21480
+
+	Name: 4294967169
+		Language: 1033
+		hResInfo == 18ed70,  Size == 21480
+
+	Name: 4294967170
+		Language: 1033
+		hResInfo == 18ed80,  Size == 21480
+
+	Name: 4294967171
+		Language: 1033
+		hResInfo == 18ed90,  Size == 32342
+
+	Name: 4294967172
+		Language: 1033
+		hResInfo == 18eda0,  Size == 259210
+
+	Name: 4294967173
+		Language: 1033
+		hResInfo == 18edb0,  Size == 133138
+
+	Name: 4294967174
+		Language: 1033
+		hResInfo == 18edc0,  Size == 11408
+
+	Name: 4294967175
+		Language: 1033
+		hResInfo == 18edd0,  Size == 106908
+
+	Name: 4294967176
+		Language: 1033
+		hResInfo == 18ede0,  Size == 209508
+
+	Name: 4294967177
+		Language: 1033
+		hResInfo == 18edf0,  Size == 169704
+
+	Name: 4294967178
+		Language: 1033
+		hResInfo == 18ee00,  Size == 41144
+
+	Name: 4294967179
+		Language: 1033
+		hResInfo == 18ee10,  Size == 10188
+
+	Name: 4294967180
+		Language: 1033
+		hResInfo == 18ee20,  Size == 52558
+
+	Name: 4294967181
+		Language: 1033
+		hResInfo == 18ee30,  Size == 10188
+
+	Name: 4294967182
+		Language: 1033
+		hResInfo == 18ee40,  Size == 379318
+
+	Name: 4294967183
+		Language: 1033
+		hResInfo == 18ee50,  Size == 5548
+
+	Name: 4294967184
+		Language: 1033
+		hResInfo == 18ee60,  Size == 212776
+
+	Name: 4294967185
+		Language: 1033
+		hResInfo == 18ee70,  Size == 49870
+
+	Name: 4294967186
+		Language: 1033
+		hResInfo == 18ee80,  Size == 49870
+
+	Name: 4294967187
+		Language: 1033
+		hResInfo == 18ee90,  Size == 49870
+
+	Name: 4294967188
+		Language: 1033
+		hResInfo == 18eea0,  Size == 46432
+
+	Name: 4294967189
+		Language: 1033
+		hResInfo == 18eeb0,  Size == 58254
+
+	Name: 4294967190
+		Language: 1033
+		hResInfo == 18eec0,  Size == 197080
+
+	Name: 4294967191
+		Language: 1033
+		hResInfo == 18eed0,  Size == 10550
+
+	Name: 4294967192
+		Language: 1033
+		hResInfo == 18eee0,  Size == 36748
+
+	Name: 4294967193
+		Language: 1033
+		hResInfo == 18eef0,  Size == 65932
+
+	Name: 4294967194
+		Language: 1033
+		hResInfo == 18ef00,  Size == 24706
+
+	Name: 4294967195
+		Language: 1033
+		hResInfo == 18ef10,  Size == 34932
+
+	Name: 4294967196
+		Language: 1033
+		hResInfo == 18ef20,  Size == 413882
+
+	Name: 4294967197
+		Language: 1033
+		hResInfo == 18ef30,  Size == 10550
+
+	Name: 4294967198
+		Language: 1033
+		hResInfo == 18ef40,  Size == 209508
+
+	Name: 4294967199
+		Language: 1033
+		hResInfo == 18ef50,  Size == 180374
+
+	Name: 4294967200
+		Language: 1033
+		hResInfo == 18ef60,  Size == 209514
+
+	Name: 4294967201
+		Language: 1033
+		hResInfo == 18ef70,  Size == 34566
+
+	Name: 4294967202
+		Language: 1033
+		hResInfo == 18ef80,  Size == 24086
+
+	Name: 4294967203
+		Language: 1033
+		hResInfo == 18ef90,  Size == 93468
+
+	Name: 4294967204
+		Language: 1033
+		hResInfo == 18efa0,  Size == 191392
+
+	Name: 4294967205
+		Language: 1033
+		hResInfo == 18efb0,  Size == 59376
+
+	Name: 4294967206
+		Language: 1033
+		hResInfo == 18efc0,  Size == 17128
+
+	Name: 4294967207
+		Language: 1033
+		hResInfo == 18efd0,  Size == 10550
+
+	Name: 4294967208
+		Language: 1033
+		hResInfo == 18efe0,  Size == 32414
+
+	Name: 4294967209
+		Language: 1033
+		hResInfo == 18eff0,  Size == 10692
+
+	Name: 4294967210
+		Language: 1033
+		hResInfo == 18f000,  Size == 21500
+
+	Name: 4294967211
+		Language: 1033
+		hResInfo == 18f010,  Size == 10550
+
+	Name: 4294967212
+		Language: 1033
+		hResInfo == 18f020,  Size == 10604
+
+	Name: 4294967213
+		Language: 1033
+		hResInfo == 18f030,  Size == 169704
+
+	Name: 4294967214
+		Language: 1033
+		hResInfo == 18f040,  Size == 24300
+
+	Name: 4294967215
+		Language: 1033
+		hResInfo == 18f050,  Size == 231148
+
+	Name: 4294967216
+		Language: 1033
+		hResInfo == 18f060,  Size == 994
+
+	Name: 4294967217
+		Language: 1033
+		hResInfo == 18f070,  Size == 495694
+
+	Name: 4294967218
+		Language: 1033
+		hResInfo == 18f080,  Size == 27038
+
+	Name: 4294967219
+		Language: 1033
+		hResInfo == 18f090,  Size == 10550
+
+	Name: 4294967220
+		Language: 1033
+		hResInfo == 18f0a0,  Size == 216894
+
+	Name: 4294967221
+		Language: 1033
+		hResInfo == 18f0b0,  Size == 10188
+
+	Name: 4294967222
+		Language: 1033
+		hResInfo == 18f0c0,  Size == 29232
+
+	Name: 4294967223
+		Language: 1033
+		hResInfo == 18f0d0,  Size == 45646
+
+	Name: 4294967224
+		Language: 1033
+		hResInfo == 18f0e0,  Size == 121806
+
+	Name: 4294967225
+		Language: 1033
+		hResInfo == 18f0f0,  Size == 10188
+
+	Name: 4294967226
+		Language: 1033
+		hResInfo == 18f100,  Size == 10550
+
+	Name: 4294967227
+		Language: 1033
+		hResInfo == 18f110,  Size == 173604
+
+	Name: 4294967228
+		Language: 1033
+		hResInfo == 18f120,  Size == 180368
+
+	Name: 4294967229
+		Language: 1033
+		hResInfo == 18f130,  Size == 272234
+
+	Name: 4294967230
+		Language: 1033
+		hResInfo == 18f140,  Size == 212782
+
+	Name: 4294967231
+		Language: 1033
+		hResInfo == 18f150,  Size == 10188
+
+	Name: 4294967232
+		Language: 1033
+		hResInfo == 18f160,  Size == 22902
+
+Type: 24
+	Name: 1
+		Language: 1033
+		hResInfo == 18f170,  Size == 381
+

@@ -14,7 +14,7 @@
 Audio::Audio(){
     
     //Uses dirent.h to open up the sfx folder directory, get all the sound file names, and create a map to add sound buffers and retrive with file name/key
-    
+    /*
 	std::string dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC/";
 
     DIR *dip;
@@ -42,14 +42,14 @@ Audio::Audio(){
     }
     
     closedir(dip);
+	*/
     
 }
 
 void Audio::PlaySFX(std::string soundName){
     
-    audioIter iter = AudioContainer.find(soundName + ".wav");
+    audioIter iter = AudioContainer.find(soundName);
     iter->second.sample.setBuffer(iter->second.buffer);
-    //iter->second.sample.stop();
     iter->second.sample.setVolume(80);
     iter->second.sample.play();
 
@@ -57,10 +57,8 @@ void Audio::PlaySFX(std::string soundName){
 
 void Audio::PlayMusic(std::string musicName){
     
-	std::string dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC/";
-
     music.stop();
-    music.openFromFile(dir + "music/" + musicName + ".ogg");
+	music.openFromStream(MusicContainer.at(musicName));
     music.setLoop(true);
     music.play();
     music.setVolume(100);

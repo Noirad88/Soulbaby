@@ -30,8 +30,8 @@ namespace Textures
         sf::Sprite object;
         sf::Sprite sprite;
         mutable sf::RenderTexture renderTexture;
-        sf::Texture objectTexture;
-        sf::Texture distortionMap;
+        sf::Texture* objectTexture;
+        sf::Texture* distortionMap;
         float transparency = 10.0;
         virtual void Update();
 
@@ -82,22 +82,26 @@ namespace Textures
         
     public:
         TextureContainer();
+		~TextureContainer();
         void Update();
+		void CreateShaderInstances();
         sf::Texture& SetTexture(std::string temp_name);
         sf::Font& GetFont(std::string font = "");
         sf::Font GameFont;
 		sf::Font GameFont2;
         sf::Texture* SetTextureForShapes(std::string temp_name);
-        std::map<std::string,sf::Texture*> textureMap;
+        static std::map<std::string,sf::Texture*> textureMap;
+		static std::map<std::string, sf::MemoryInputStream> shaderMap;
+
         bool set = false;
         static float tick;
-        WaveShader waveShader;
-        RedShader redShader;
-		WhiteShader whiteShader;
+        WaveShader* waveShader;
+        RedShader* redShader;
+		WhiteShader* whiteShader;
 
         std::map<std::string,sf::Shader&> shaders;
 
-        DamageShader dmgShader;
+        DamageShader* dmgShader;
 		std::string dir;
         
         

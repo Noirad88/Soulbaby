@@ -99,7 +99,7 @@ void Fade::Draw() {
 BlockFade::BlockFade(std::string mapName, bool dir) : Transition(mapName)
 {
 
-	tile.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+	tile.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
 	tile.setTextureRect(sf::IntRect(48, 48, 32, 32));
 
 }
@@ -217,6 +217,8 @@ void World::UpdateTransition(){
 
 World::World(){
     
+	CreateResourceMap();
+
     /*
      
     Setting controls
@@ -266,6 +268,24 @@ World::World(){
 
 }
 
+void World::CreateResourceMap() {
+
+	/*
+	//Get resource list from resource file
+	HRSRC str2 = FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_TXT1), "TXT");
+	HGLOBAL data2 = LoadResource(NULL, str2);
+	LPVOID ptr = GlobalLock(data2);
+	char *charData = (char*)ptr;
+	int s = 4354 * 2;
+	char charst[4354 * 2];
+	std::string list;
+	for (int i = 0; i < s; i += 2) list.push_back(charData[i]);
+	std::cout << list << std::endl;
+	resourceFile = list;
+	*/
+
+}
+
 void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events){
     
     GlobalMembers.maxVolume = std::shared_ptr<int> (new int(80));
@@ -281,6 +301,7 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     
     CreateCharacterScripts();
     GlobalMembers.levelsCompleted.fill(0);
+	WorldScene.textureContainer.CreateShaderInstances();
     LoadSceneBank();
 
 	/*
@@ -655,6 +676,7 @@ void World::CreateCharacterScripts(){
 	std::string gurian0 = "Hmmm. Who do I have to fuck for that job?";
     std::string lima0 = "FUCK ... OFF";
 	std::string mother0 = "...>Ahh!>So, you're here ... I'm sure you have questions. There is a lot going on.>My journey has come to an unexpected end. I will tell you my story.";
+	std::string getability = ">So, how can I help you?";
 
     CharacterScripts.insert(std::pair<std::string,std::string>("HAWZER0",hawzer0));
     CharacterScripts.insert(std::pair<std::string,std::string>("JIRA0",jira0));
@@ -662,6 +684,8 @@ void World::CreateCharacterScripts(){
     CharacterScripts.insert(std::pair<std::string,std::string>("GURIAN0",gurian0));
     CharacterScripts.insert(std::pair<std::string,std::string>("LIMA0",lima0));
 	CharacterScripts.insert(std::pair<std::string, std::string>("MOTHER0", mother0));
+	CharacterScripts.insert(std::pair<std::string, std::string>("GETABILITY0", getability));
+
     
 }
 

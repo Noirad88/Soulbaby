@@ -21,6 +21,7 @@ struct AudioItem{
     
 };
 
+
 class Audio
 {
     
@@ -33,6 +34,8 @@ class Audio
         void Update();
         sf::Music music;
         std::map<std::string,AudioItem> AudioContainer;
+		std::map<std::string, sf::MemoryInputStream> MusicContainer;
+
         bool limiter;
     
 };

@@ -61,17 +61,19 @@ namespace Entity
 	}
 
 	MenuItem::MenuItem(std::string lableName, char typeName) : GUI() {
-
+		// hand icon
+		hand.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
+		hand.setTextureRect(sf::IntRect(154, 15, 13, 8));
 		menuLable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
 		menuLable.setString(lableName);
 		menuLable.setPosition(212, 150 + (count * 15));
 		menuLable.setCharacterSize(16);
-		menuLable.setColor(sf::Color::White);
+		menuLable.setColor(sf::Color(150, 150, 150));
 		type = typeName;
 
 		if (type == SWITCH) {
 
-			objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_menu_bar.png"));
+			objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_menu_bar"));
 			objectSprite.setPosition(menuLable.getPosition().x + (35), menuLable.getPosition().y + 7);
 			objectSprite.setTextureRect(sf::IntRect(0, 0, 1, 10));
 
@@ -106,7 +108,7 @@ namespace Entity
 
 		if (menuLable.getColor() == sf::Color::White) {
 
-			menuLable.setColor(sf::Color(217, 88, 99));
+			menuLable.setColor(sf::Color(150, 150, 150));
 			menuLable.move(2, 0);
 
 		}
@@ -115,6 +117,7 @@ namespace Entity
 
 			menuLable.setColor(sf::Color::White);
 			menuLable.move(-2, 0);
+			hand.setPosition(menuLable.getPosition().x-17, menuLable.getPosition().y + 8);
 
 		}
 	}
@@ -123,6 +126,12 @@ namespace Entity
 
 		World::GetInstance()->DrawObject(objectSprite);
 		World::GetInstance()->DrawObject(menuLable);
+
+		if (menuLable.getColor() == sf::Color::White) {
+
+			World::GetInstance()->DrawObject(hand);
+
+		}
 
 	}
 
@@ -155,6 +164,8 @@ namespace Entity
 		menuHolder.menuList.push_back(item3);
 		menuHolder.menuList.at(0).ToggleSelection();
 		menuContainer.push_back(menuHolder);
+
+
 
 	}
 
@@ -222,15 +233,18 @@ namespace Entity
 				++*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
 				// switch visul changes need to go here
 				std::cout << *World::GetInstance()->GlobalMembers.maxVolume << std::endl;
-				menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).objectSprite.setTextureRect(sf::IntRect(0, 0, *menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock(), 10));
+				//menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).objectSprite.setTextureRect(sf::IntRect(0, 0, *menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock(), 10));
 
 			}
 
-			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsA])) DoMenuAction(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos));
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsA])) {
+
+				DoMenuAction(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos));
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
+
+			}
 
 			else if ((sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB]) && menuContainer.size() != 1)) menuContainer.pop_back();
-
-
 
 		}
 	}
@@ -265,6 +279,7 @@ namespace Entity
 	void Menu::Draw(sf::RenderTarget& window) {
 
 		for (auto i : menuContainer.at(menuContainer.size() - 1).menuList) i.Draw(window);
+		World::GetInstance()->DrawObject(objectSprite);
 
 	}
 
@@ -280,7 +295,7 @@ namespace Entity
 
 	Guide::Guide() {
 
-		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
 		objectSprite.setTextureRect(sf::IntRect(60, 218, 24, 18));
 		SetCharacterOrigin();
 		Entity::GUI::guiCount--;
@@ -323,7 +338,7 @@ namespace Entity
     
     PlayerMenu::PlayerMenu(){
         
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_portraits.png"));
+        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_portraits"));
         objectSprite.setTextureRect(sf::IntRect(0,0,50,100));
         
         itemName.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
@@ -453,12 +468,12 @@ namespace Entity
 
         scriptLength = script.length();
         
-        backDrop.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+        backDrop.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
         backDrop.setTextureRect(sf::IntRect(0,138,448,80));
         
         // objectsprite is portrait sprite
         
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_portraits.png"));
+        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_portraits"));
         
         portraitSize = sf::Vector2i(80,100);
         
@@ -473,7 +488,7 @@ namespace Entity
         boxNameBG.setFillColor((sf::Color::Black));
         boxName.setCharacterSize(16);
         
-        boxArrow.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+        boxArrow.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
         boxArrow.setTextureRect(sf::IntRect(15,0,5,5));
         
         progressSpeed = *World::GetInstance()->GlobalMembers.textSpeed.get();
@@ -584,7 +599,7 @@ namespace Entity
     
     BattleBackground::BattleBackground(){
                 
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_bg_" + std::to_string(World::GetInstance()->GlobalMembers.currentLevel) + ".png"));
+        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_bg_" + std::to_string(World::GetInstance()->GlobalMembers.currentLevel)));
         objectSprite.setTextureRect(sf::IntRect (0,0,2000,2000));
         objectSprite.setOrigin(2000/2,2000/2);
         type = "BG";
@@ -595,7 +610,7 @@ namespace Entity
         
         levelPath = stoi(pathway.erase(0,pathway.find("_")+1));
         
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
         objectSprite.setTextureRect(sf::IntRect(0,42+(32*0),16,32));
         SetHitBox(sf::Vector2f(objectSprite.getTextureRect().width,objectSprite.getTextureRect().height),2);
         Object::type = "Prop";
@@ -640,9 +655,9 @@ namespace Entity
         
 		// Background hud
 
-		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
-        weapon1.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
-		weapon2.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
+        weapon1.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
+		weapon2.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
 
 		pow1Lable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont("small"));
 		pow2Lable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont("small"));
@@ -847,7 +862,7 @@ namespace Entity
     {
         
         std::cout << "Player created" << std::endl;
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_player.png"));
+        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_player"));
         objectSprite.setTextureRect(sf::IntRect(0, south, 13, 24));
         SetCharacterOrigin();
         spriteHeight = objectSprite.getTextureRect().height;
@@ -879,21 +894,6 @@ namespace Entity
     {
         
         // Walking
-        
-        if(sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsPause])){
-            
-            if(!PlayerMenu::menuUp){
-                
-                itemQueue menu;
-                menu.properties["itemType"] = "PlayerMenu";
-                World::GetInstance()->WorldScene.objectContainer->Queue.push_back(menu);
-                PlayerMenu::menuUp = true;
-                
-            }
-            
-            else PlayerMenu::menuUp = false;
-            
-        }
         
         if(World::GetInstance()->IsPlayerActive()){
             
@@ -967,7 +967,7 @@ namespace Entity
         
         hotSpot.x = objectSprite.getPosition().x + 6;
         hotSpot.y = objectSprite.getPosition().y + 12;
-		sshield.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+		sshield.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
 		sshield.setTextureRect(sf::IntRect(103, 0, 17, 41));
 		sshield.setColor(sf::Color::Color(255, 255, 255, 50));
 
@@ -1031,6 +1031,7 @@ namespace Entity
 		if (dashing == false) {
 
 			if (!World::GetInstance()->WorldScene.transition) {
+			
 
 				if ((World::GetInstance()->PlayerPressedButton(controlsDown)
 					&& World::GetInstance()->PlayerPressedButton(controlsLeft))) movement = swest;
@@ -1064,7 +1065,7 @@ namespace Entity
 
 		// Animation
 
-		if (World::GetInstance()->PlayerPressedButton(controlsA)) {
+		if (World::GetInstance()->IsPlayerActive() && World::GetInstance()->PlayerPressedButton(controlsA)) {
 
 			if (World::GetInstance()->Timer(*this, 160000.0)) {
 
@@ -1080,7 +1081,7 @@ namespace Entity
 		}
 
 
-		if (dashing == false && movement != idle &&  World::GetInstance()->PlayerPressedButton(controlsC)) {
+		if (World::GetInstance()->IsPlayerActive() && dashing == false && movement != idle &&  World::GetInstance()->PlayerPressedButton(controlsC)) {
 
 			vel.y = 6;
 			vel.x = 0;
@@ -1193,7 +1194,7 @@ namespace Entity
 
 		*/
 
-		if (World::GetInstance()->PlayerPressedButton(controlsB)) {
+		if (World::GetInstance()->IsPlayerActive() && World::GetInstance()->PlayerPressedButton(controlsB)) {
 
 			itemQueue proj;
 			proj.properties["PosX"] = std::to_string(hotSpot.x);
@@ -1358,8 +1359,6 @@ namespace Entity
 
 		sshield.setPosition(objectSprite.getPosition().x - 8, (objectSprite.getPosition().y - 32)+41-shield);
 
-		if (World::GetInstance()->PlayerPressedButton(controlsSwitch)) Container::PlayerDamaged();
-
 	}
 
 	void Player::Draw(sf::RenderTarget& window) {
@@ -1367,11 +1366,13 @@ namespace Entity
 			World::GetInstance()->DrawObject(objectSprite);
 			if(shield != 0 ) World::GetInstance()->DrawObject(sshield);
 
+
 	}
     
     BattlePlayer::~BattlePlayer(){
         
         itemQueue particles;
+
         particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
         particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
         particles.properties["itemType"] = "DeathPoof";
@@ -1429,7 +1430,7 @@ namespace Entity
     Fixed::Fixed() : Particle(){
         
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_particles.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_particles")));
         
         if(assetHeight == 0){
                 
@@ -1533,7 +1534,7 @@ namespace Entity
     
     DoorDestroy::DoorDestroy() : Fixed(){
         
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
         objectSprite.setTextureRect(sf::IntRect(0,42+(32*0),16,32));
         maxFrame = 3;
         animSpeed = 1000000.0;
@@ -1706,7 +1707,7 @@ namespace Entity
     
     Hit::Hit(){
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_hit.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_hit")));
         objectSprite.setTextureRect(sf::IntRect(0, 0, 30, 30));
         objectSprite.setOrigin(15,15);
     
@@ -1716,7 +1717,7 @@ namespace Entity
     Projectile::Projectile() : Object ()
     {
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
         type = "Projectile";
         
     }
@@ -1752,8 +1753,8 @@ namespace Entity
 	EnemyLaser::EnemyLaser() : EnemyProjectile() {
 
 		objectSprite.setTextureRect(sf::IntRect(0, 55, 16, 13));
-		laserBody.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
-		laserHead.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		laserBody.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		laserHead.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
 		laserBody.setTextureRect(sf::IntRect(32, 55, 16, 2));
 		laserHead.setTextureRect(sf::IntRect(32, 58, 15, 15));
 		speed = 2;
@@ -1774,8 +1775,8 @@ namespace Entity
 	BigEnemyLaser::BigEnemyLaser() : EnemyLaser() {
 
 		objectSprite.setTextureRect(sf::IntRect(0, 152, 41, 26));
-		laserBody.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
-		laserHead.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		laserBody.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		laserHead.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
 		laserBody.setTextureRect(sf::IntRect(32, 79, 16, 14));
 		laserHead.setTextureRect(sf::IntRect(96, 53, 41, 41));
 		speed = 2.5;
@@ -1824,7 +1825,7 @@ namespace Entity
     Particle::Particle() : Object ()
     {
         
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_particles.png"));
+        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_particles"));
 		type = "Particle";
 
         
@@ -1844,7 +1845,7 @@ namespace Entity
     
     PropFlame::PropFlame() : Prop(){
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
         objectSprite.setTextureRect(sf::IntRect(0, 5, 11, 30));
         maxFrame = 5;
         animSpd = SLOW;
@@ -1893,7 +1894,7 @@ namespace Entity
     Bullet::Bullet() : Projectile ()
     {
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
         objectSprite.setTextureRect(sf::IntRect(0, 0, 25, 4));
         damage = 6;
         
@@ -1902,7 +1903,7 @@ namespace Entity
     PlayerLaser::PlayerLaser() : Projectile()
     {
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
         objectSprite.setTextureRect(sf::IntRect(0, 178, 5, 19));
         objectSprite.setOrigin(5,5);
         SetEffectOrigin();
@@ -1915,7 +1916,7 @@ namespace Entity
 
 	PlayerLaser2::PlayerLaser2() : PlayerLaser()
 	{
-		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
 		objectSprite.setTextureRect(sf::IntRect(0, 197, 6, 27));
 		objectSprite.setOrigin(7, 10);
 		SetEffectOrigin();
@@ -1928,7 +1929,7 @@ namespace Entity
     
     PlayerBoomerang::PlayerBoomerang() : Projectile(){
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
         objectSprite.setTextureRect(sf::IntRect(0, 32, 20, 20));
         objectSprite.setOrigin(10,10);
         SetEffectOrigin();
@@ -1944,7 +1945,7 @@ namespace Entity
     PlayerRepeater::PlayerRepeater() : Projectile()
     {
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
         objectSprite.setTextureRect(sf::IntRect(0, 224, 5, 4));
         objectSprite.setOrigin(2.5,2);
         SetEffectOrigin();
@@ -1958,7 +1959,7 @@ namespace Entity
 	PlayerRepeater2::PlayerRepeater2() : Projectile()
 	{
 
-		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
 		objectSprite.setTextureRect(sf::IntRect(0, 228, 5, 7));
 		objectSprite.setOrigin(2.5, 2);
 		SetEffectOrigin();
@@ -1973,7 +1974,7 @@ namespace Entity
 	PlayerRepeater6::PlayerRepeater6() : Projectile()
 	{
 
-		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
 		objectSprite.setTextureRect(sf::IntRect(0, 284, 9, 25));
 		objectSprite.setOrigin(2.5, 2);
 		SetEffectOrigin();
@@ -1988,7 +1989,7 @@ namespace Entity
     PlayerBombExp::PlayerBombExp() : Projectile()
     {
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
         objectSprite.setTextureRect(sf::IntRect(0, 0, 80, 80));
         SetEffectOrigin();
         vel.y = 0;
@@ -2003,7 +2004,7 @@ namespace Entity
     Explosion::Explosion() : Object ()
     {
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_polygon.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_polygon")));
         objectSprite.setOrigin(40,40);
         objectSprite.setTextureRect(sf::IntRect(0, 0, 80, 80));
         
@@ -2020,7 +2021,7 @@ namespace Entity
     Laser::Laser() : Projectile ()
     {
         
-        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_blip_3.png")));
+        objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_blip_3")));
         objectSprite.setOrigin(3,3);
         objectSprite.setTextureRect(sf::IntRect(0, 0, 6, 6));
         Projectile::damage = 10;
@@ -3445,7 +3446,7 @@ namespace Entity
 
 		std::string level = std::to_string(World::GetInstance()->GlobalMembers.currentLevel);
     
-        bg.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_bg_" + level + ".png"));
+        bg.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_bg_" + level + ""));
         bg.setTextureRect(sf::IntRect (0,0,2000,2000));
         bg.setOrigin(2000/2,2000/2);
 
@@ -3580,7 +3581,7 @@ namespace Entity
     Actor::Actor(int actor) : character(actor), Object()
     {
         
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_actors.png"));
+        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_actors"));
         objectSprite.setTextureRect(sf::IntRect ((1 + actor) * 16,0 * 24,16,24));
         name = actor;
         SetCharacterOrigin();
@@ -3634,7 +3635,7 @@ namespace Entity
     {
         enemyID = totalEnemies;
         ++totalEnemies;
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_enemies.png"));
+        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_enemies"));
         type = "Enemy";
         scaleTemp = sf::Vector2f(0.12,0);
         objectSprite.setColor(sf::Color(255,255,255,0));
@@ -3682,7 +3683,7 @@ namespace Entity
 	Buddy::Buddy() : Object()
 	{
 		std::cout << "buddy created" << std::endl;
-		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png"));
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
 		objectSprite.setTextureRect(sf::IntRect(204, 0, 4, 8));
 		SetHitBox(sf::Vector2f(5, 5));
 		SetCharacterOrigin();
@@ -3722,7 +3723,7 @@ namespace Entity
 		SetHitBox(sf::Vector2f(45, 70), 1);
 
 		//Set child sprite(wings)
-		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_enemies.png"));
+		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_enemies"));
 		wings.setTextureRect(sf::IntRect(243, 0, 134, 44));
 
 		// For roaches, speed is the DISTANCE the enemy will move
@@ -3814,7 +3815,7 @@ namespace Entity
     Boss::Boss()
     {
         std::cout << "Boss created" << std::endl;
-		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses.png"));
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses"));
         healthBar.setSize(sf::Vector2f(0,8));
         healthBar.setFillColor(sf::Color::Yellow);
         bossName.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
@@ -3842,7 +3843,7 @@ namespace Entity
     Mozza::Mozza(){
         
         objectSprite.setTextureRect(sf::IntRect (0,105,175,175));
-		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses.png"));
+		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses"));
 		wings.setTextureRect(sf::IntRect(0,0, 175, 44));
         speed = 2;
         maxhealth = 1200;
@@ -4484,7 +4485,7 @@ namespace Entity
 		oldy += (300 - oldy) / 25;
 
 		objectSprite.setPosition(oldx, oldy);
-		if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) CreateClone(objectSprite, "tx_bosses.png",false);
+		if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) CreateClone(objectSprite, "tx_bosses",false);
 
 	}
 
@@ -5215,7 +5216,7 @@ namespace Entity
     {
 		// Set the shadow size based on the actor size
 
-        objectShadow.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc.png")));
+        objectShadow.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
         if(objectSprite.getTextureRect().width >= 90) objectShadow.setTextureRect(sf::IntRect(154, 0, 50, 15));
 		
 		else if (objectSprite.getTextureRect().width >= 14) objectShadow.setTextureRect(sf::IntRect(0, 0, 15, 5));
@@ -5296,7 +5297,7 @@ namespace Entity
         clone.properties["PosX"] = std::to_string(sprite.getPosition().x);
         clone.properties["PosY"] = std::to_string(sprite.getPosition().y);
 		if (color == false) clone.properties["Color"] = "Red";
-        if (type == "") clone.properties["Sprite"] = "tx_projectiles.png";
+        if (type == "") clone.properties["Sprite"] = "tx_projectiles";
         else clone.properties["Sprite"] = type;
         
         clone.properties["RectX"] = std::to_string(sprite.getTextureRect().left);

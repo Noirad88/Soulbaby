@@ -118,7 +118,7 @@ namespace Level
 
                 
                 
-                else if(it->getType() == "Actor" && World::GetInstance()->GlobalMembers.levelsCompleted.at(stoi(it->getProperty("Name"))) == 1){
+                else if(it->getType() == "Actor" && World::GetInstance()->GlobalMembers.levelsCompleted.at(stoi(it->getProperty("Name"))) >= 1){
                     
                     item.properties["PosX"] = to_string(it->getXposition());
                     item.properties["PosY"] = to_string(it->getYposition());
@@ -205,15 +205,15 @@ namespace Level
 		}
         
         CreateBG();
-        if(sceneName == "battle") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName + std::to_string(World::GetInstance()->GlobalMembers.currentLevel));
+        if(sceneName == "battle") World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_" + sceneName + std::to_string(World::GetInstance()->GlobalMembers.currentLevel));
 		
 		else if (sceneName == "map2_1") {
 
-			if (World::GetInstance()->GlobalMembers.firstTimeInNexus == false) World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
+			if (World::GetInstance()->GlobalMembers.firstTimeInNexus == false) World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_" + sceneName);
 			World::GetInstance()->GlobalMembers.firstTimeInNexus = false;
 		}
 
-		//else if (sceneName == "menu") World::GetInstance()->WorldScene.audioContainer.PlayMusic(sceneName);
+		else if (sceneName == "menu") World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_" + sceneName);
 
         else World::GetInstance()->WorldScene.audioContainer.music.stop();
         
@@ -284,8 +284,8 @@ namespace Level
 
         LevelBG.clear();
         LevelBG.resize(5);
-		if(World::GetInstance()->WorldScene.textureContainer.textureMap.count("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + std::to_string(0) + ".png"))  LevelBG[0].setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + std::to_string(0) + ".png"));
-		if (World::GetInstance()->WorldScene.textureContainer.textureMap.count("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + "top" + ".png")) LevelBG[1].setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + "top" + ".png"));
+		if(World::GetInstance()->WorldScene.textureContainer.textureMap.count("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + std::to_string(0) + ""))  LevelBG[0].setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + std::to_string(0)));
+		if (World::GetInstance()->WorldScene.textureContainer.textureMap.count("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + "top")) LevelBG[1].setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_" + World::GetInstance()->CurrentScene->name + "_bg_" + "top"));
   
     }
     
