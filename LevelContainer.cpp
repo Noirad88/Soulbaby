@@ -46,8 +46,9 @@ namespace Level
             // Loading the map reference image
             
             TMXLoader* loader = new TMXLoader();
-            loader->loadMap(sceneName, "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC/levels/" + sceneName + ".tmx");
-            
+            //loader->loadMap(sceneName, "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC/levels/" + sceneName + ".tmx");
+			loader->loadMapData(sceneName, levelMap.at("lvl_" + sceneName));
+
             sf::Vector2u mapvec = sf::Vector2u(loader->getMap(sceneName)->getWidth(),loader->getMap(sceneName)->getHeight());
             
             for(int i = 0; i < mapvec.y*16; i++){
@@ -213,7 +214,7 @@ namespace Level
 			World::GetInstance()->GlobalMembers.firstTimeInNexus = false;
 		}
 
-		else if (sceneName == "menu") World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_" + sceneName);
+		//else if (sceneName == "menu") World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_" + sceneName);
 
         else World::GetInstance()->WorldScene.audioContainer.music.stop();
         

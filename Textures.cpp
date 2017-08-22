@@ -26,26 +26,26 @@ namespace Textures{
     
     WaveShader::WaveShader(){
        
-		distortionMap = new sf::Texture;
-		objectTexture = new sf::Texture;
+
 		std::string dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC/";
 
-		shader.loadFromStream(TextureContainer::shaderMap.at("sh_redoverlay"), TextureContainer::shaderMap.at("sh_sine"));
+		shader.loadFromStream(TextureContainer::shaderMap.at("sh_redoverlay"), sf::Shader::Fragment);
+	
 
-		objectTexture = TextureContainer::textureMap.at("tx_menu_item");
+		objectTexture = *TextureContainer::textureMap.at("tx_map");
 
-        objectTexture->setRepeated(true);
-        object.setTexture(*objectTexture);
+        objectTexture.setRepeated(true);
+        object.setTexture(objectTexture);
         object.setTextureRect(sf::IntRect(0,0,100,100));
         object.setScale(10, 10);
         
         // It is important to set repeated to true to enable scrolling upwards
-        distortionMap->setRepeated(true);
+        distortionMap.setRepeated(true);
         
         // Setting smooth to true lets us use small maps even on larger images
-        distortionMap->setSmooth(true);
+        distortionMap.setSmooth(true);
         
-		distortionMap = TextureContainer::textureMap.at("tx_map");
+		distortionMap = *TextureContainer::textureMap.at("tx_map");
         
         renderTexture.create(400, 300);
         
@@ -67,7 +67,9 @@ namespace Textures{
     DamageShader::DamageShader()
     {
 		shader.loadFromStream(TextureContainer::shaderMap.at("sh_damage"), sf::Shader::Fragment);
-    }
+
+	}
+
     
     Shader::~Shader(){
         
@@ -91,14 +93,6 @@ namespace Textures{
 
 	TextureContainer::~TextureContainer() {
 
-		delete dmgShader;
-		delete whiteShader;
-		delete redShader;
-		delete waveShader->distortionMap;
-		delete waveShader->objectTexture;
-		delete waveShader;
-
-
 	}
     
     void Shader::Update(){
@@ -108,7 +102,7 @@ namespace Textures{
     void WaveShader::Update(){
         
         shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
-        shader.setParameter("distortionMapTexture", *distortionMap);
+        shader.setParameter("distortionMapTexture", distortionMap);
         shader.setParameter("time", TextureContainer::tick);
         shader.setParameter("distortionFactor",0);
         shader.setParameter("wave_amplitude",20,20);
@@ -133,7 +127,8 @@ namespace Textures{
     }
     
     TextureContainer::TextureContainer(){
-        
+      
+
 		/*
 		dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC/";
         //Uses dirent.h to open up the textures directory, get all texture file names, create a map of file names/textures
@@ -212,11 +207,15 @@ namespace Textures{
 
 	void TextureContainer::CreateShaderInstances() {
 
-		waveShader = new WaveShader;
-		dmgShader = new DamageShader;
-		redShader = new RedShader;
-		whiteShader = new WhiteShader;
-		
+		waveShader = std::shared_ptr<WaveShader>(new WaveShader);
+		redShader = std::shared_ptr<RedShader>(new RedShader);
+		whiteShader = std::shared_ptr<WhiteShader>(new WhiteShader);
+		dmgShader = std::shared_ptr<DamageShader>(new DamageShader);
+
+		shaders.insert(std::pair<std::string, sf::Shader&>("redShader", redShader.get()->shader));
+		shaders.insert(std::pair<std::string, sf::Shader&>("waveShader", waveShader.get()->shader));
+		shaders.insert(std::pair<std::string, sf::Shader&>("whiteShader", whiteShader.get()->shader));
+		shaders.insert(std::pair<std::string, sf::Shader&>("damageShader", dmgShader.get()->shader));
 
 	}
     

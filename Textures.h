@@ -14,6 +14,8 @@
 #include <dirent.h>
 #include <sstream>
 #include <string>
+#include <memory>
+
 
 
 namespace Textures
@@ -30,8 +32,8 @@ namespace Textures
         sf::Sprite object;
         sf::Sprite sprite;
         mutable sf::RenderTexture renderTexture;
-        sf::Texture* objectTexture;
-        sf::Texture* distortionMap;
+        sf::Texture objectTexture;
+        sf::Texture distortionMap;
         float transparency = 10.0;
         virtual void Update();
 
@@ -95,13 +97,16 @@ namespace Textures
 
         bool set = false;
         static float tick;
-        WaveShader* waveShader;
-        RedShader* redShader;
-		WhiteShader* whiteShader;
+
+		std::shared_ptr<WaveShader> waveShader;
+		std::shared_ptr<RedShader> redShader;
+		std::shared_ptr<WhiteShader> whiteShader;
+		std::shared_ptr<DamageShader> dmgShader;
+
+
 
         std::map<std::string,sf::Shader&> shaders;
 
-        DamageShader* dmgShader;
 		std::string dir;
         
         

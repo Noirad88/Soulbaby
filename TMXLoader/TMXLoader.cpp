@@ -32,6 +32,7 @@ TMXLoader::~TMXLoader()
 }
 
 
+
 void TMXLoader::loadMap(std::string mapName, std::string filePath)
 {
     // String to hold file contents
@@ -63,6 +64,33 @@ void TMXLoader::loadMap(std::string mapName, std::string filePath)
     {
         std::cout << "TMXLoader: map '" << mapName << "' at '" << filePath << "' could not be loaded." << std::endl;
     }
+}
+
+void TMXLoader::loadMapData(std::string mapName, ::string mapData)
+{
+	std::string fileContents = "";
+
+	// String to hold file contents
+	loadData(mapData, fileContents);
+
+	std::cout << mapData << std::endl;
+
+		// Create new RapidXML document instance to use to parse map data
+		rapidxml::xml_document<char> m_currentMap;
+		m_currentMap.parse<0>((char*)fileContents.c_str());
+		rapidxml::xml_node<> *parentNode = m_currentMap.first_node("map");
+
+		// Add new TMXMap to m_mapContainer
+		m_mapContainer[mapName] = std::unique_ptr<TMXMap>(new TMXMap());
+
+		// Load the map settings, tilesets and layers
+		loadMapSettings(m_mapContainer[mapName], parentNode);
+		loadTileSets(m_mapContainer[mapName], parentNode);
+		loadLayers(m_mapContainer[mapName], parentNode);
+		loadObjectLayers(m_mapContainer[mapName], parentNode);
+
+		std::cout << "TMXLoader: loaded map '" << mapName << "' successfully" << std::endl;
+	
 }
 
 
@@ -439,5 +467,24 @@ bool TMXLoader::loadFile(std::string filePath, std::string &fileContents)
     }
     return false;
 }
+
+bool TMXLoader::loadData(std::string mapContents, std::string &fileContents)
+{
+	std::ifstream file(mapContents, std::ios::in | std::ios::binary);
+
+	if (file)
+	{
+		file.seekg(0, std::ios::end);
+		fileContents.resize(file.tellg());
+		file.seekg(0, std::ios::beg);
+		file.read(&fileContents[0], fileContents.size());
+		file.close();
+
+		return true;
+	}
+	return false;
+}
+
+
 
 

@@ -1194,7 +1194,7 @@ namespace Entity
 
 		*/
 
-		if (World::GetInstance()->IsPlayerActive() && World::GetInstance()->PlayerPressedButton(controlsB)) {
+		if (World::GetInstance()->PlayerPressedButton(controlsB)) {
 
 			itemQueue proj;
 			proj.properties["PosX"] = std::to_string(hotSpot.x);
@@ -3561,7 +3561,7 @@ namespace Entity
             boss.properties["itemType"] = enemyList[19 + World::GetInstance()->GlobalMembers.currentLevel];;
             //std::cout << "enemys left: " << maxEnemies << std:: endl;
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(boss);
-            World::GetInstance()->WorldScene.audioContainer.PlayMusic("boss");
+            World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_boss");
                 
         }
         

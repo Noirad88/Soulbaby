@@ -17,6 +17,7 @@
 #include <memory>
 #include <map>
 #include <sstream>
+
 //#include "resource.h"
 //#include "winuser.h"
 
@@ -231,7 +232,6 @@ class World{
     bool IsPlayerActive();
 	bool IsPlayerCameraTarget();
     void ResetCamera();
-	void CreateResourceMap();
     void ReadyScene(std::string mapName);
     void UpdateTransition();
     void UpdateTime(float timestamp);

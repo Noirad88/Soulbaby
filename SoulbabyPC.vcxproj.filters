@@ -150,6 +150,14 @@
     <None Include="music\menu.ogg">
       <Filter>Assets</Filter>
     </None>
+    <None Include="shaders\blur.frag" />
+    <None Include="shaders\damage.frag" />
+    <None Include="shaders\redoverlay.frag" />
+    <None Include="shaders\sine.frag" />
+    <None Include="shaders\sine.vert" />
+    <None Include="shaders\wave.vert" />
+    <None Include="shaders\whiteoverlay.frag" />
+    <None Include="levels\map2_1.tmx" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SoulbabyPC1.rc" />

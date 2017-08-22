@@ -14,6 +14,7 @@
 #define SCREEN_Y sf::VideoMode::getDesktopMode().height
 #define PROJ_DIR "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC"
 
+
 #include "resource.h"
 #include "winuser.h"
 #include "winbase.h"
@@ -23,35 +24,48 @@
 #include "Audio.h"
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include "ResourcePath.hpp"
 
 World* World::Worldptr = nullptr;
 
-int main()
-{
+std::string StreamToString(char* charData) {
 
-	// Getting resource list
+	std::ostringstream stream;
+	int i = 0;
+	while (charData != NULL && charData[i] != '\0') {
+
+		stream << charData[i];
+		i += 2;
+
+	}
+
+	return 	stream.str();
+
+}
+
+void CreateResourceMap() {
+
 	HRSRC str2 = FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(r_resourceList), "TXT");
 	HGLOBAL data2 = LoadResource(NULL, str2);
 	LPVOID ptr = GlobalLock(data2);
-	char *charData = (char*)ptr;
-	int s = 4354*3;
-	char charst[4354 * 3];
-	std::string list;
-	for (int i = 0; i < s; i += 2) list.push_back(charData[i]);	
-	//std::cout << list << std::endl;
-
+	char* charData = (char*)ptr;
+	std::string list = StreamToString(charData);
+	std::cout << list << std::endl;
 	int firstID = 142;
 	size_t endi = list.find("Next", 4);
 
+
 	//get the first ID and setup iterating
 
-	for (int i = firstID; i < endi; i+= 45) {
-		std::cout << i << " of " << endi << std::endl;
-		int resourceID = stoi(list.substr(i,3));
-		std::string resourceName = list.substr(i-32, list.find_first_of(' ',i-32) - (i-32));
+	for (int i = firstID; i < endi; i += 45) {
+
+
+		//std::cout << i << " of " << endi << std::endl;
+		int resourceID = stoi(list.substr(i, 3));
+		std::string resourceName = list.substr(i - 32, list.find_first_of(' ', i - 32) - (i - 32));
 		std::string resourceType = list.substr(i - 32, list.find_first_of('_', i - 32) - (i - 32));
-		std::cout << resourceID << " | " << resourceName << " | " << resourceType << std::endl;
+		//std::cout << resourceID << " | " << resourceName << " | " << resourceType << std::endl;
 
 
 		//Check type and create to insert into correct container
@@ -70,7 +84,7 @@ int main()
 			texture->loadFromStream(str);
 			if (resourceName.find("battle") || resourceName.find("bg")) texture->setRepeated(true);
 			World::GetInstance()->WorldScene.textureContainer.textureMap.insert(std::pair<std::string, sf::Texture*>(resourceName, texture));
-			
+
 		}
 
 		else if (resourceType == "sfx") {
@@ -100,7 +114,7 @@ int main()
 			if (data2) std::cout << data2 << std::endl;
 			sf::MemoryInputStream str2;
 			str2.open(data2, SizeofResource(GetModuleHandle(NULL), wav));
-			World::GetInstance()->WorldScene.audioContainer.MusicContainer.insert(std::pair<std::string,sf::MemoryInputStream>(resourceName, str2));
+			World::GetInstance()->WorldScene.audioContainer.MusicContainer.insert(std::pair<std::string, sf::MemoryInputStream>(resourceName, str2));
 
 		}
 
@@ -109,7 +123,7 @@ int main()
 
 		}
 
-		else if (resourceType == "txt") {
+		else if (resourceType == "sh") {
 
 			HRSRC str2 = FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(resourceID), "TXT");
 			HGLOBAL data2 = LoadResource(NULL, str2);
@@ -120,7 +134,24 @@ int main()
 
 		}
 
+		else if (resourceType == "lvl") {
+
+			HRSRC str2 = FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(resourceID), "TXT");
+			HGLOBAL data2 = LoadResource(NULL, str2);
+			LPVOID ptr = GlobalLock(data2);
+			char* charData = (char*)ptr;
+			std::string item = StreamToString(charData);
+			World::GetInstance()->WorldScene.levelContainer->levelMap.insert(std::pair<std::string, std::string>(resourceName, item));
+
+		}
+
 	}
+
+}
+
+int main()
+{
+	CreateResourceMap();
 
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(WINDOW_X,WINDOW_Y), "SFML window", sf::Style::Titlebar);

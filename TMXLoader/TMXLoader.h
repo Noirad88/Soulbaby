@@ -43,6 +43,8 @@ public:
     /* Map methods */
 public:
     void loadMap(std::string mapName, std::string filePath);
+	void loadMapData(std::string mapName, std::string mapData);
+
     TMXMap* getMap(std::string mapName);
     
     /* Debug methods */
@@ -60,6 +62,8 @@ private:
     /* File loading helper functions */
 private:
     bool loadFile(std::string filePath, std::string &fileContents);
+	bool loadData(std::string mapContents, std::string &fileContents);
+
 
     /* Unordered map container for loaded Maps */
 private:

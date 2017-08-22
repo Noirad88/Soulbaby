@@ -172,6 +172,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
   </ItemGroup>
   <ItemGroup>
     <None Include="levels\.DS_Store" />
+    <None Include="levels\map2_1.tmx" />
     <None Include="music\battle0.ogg" />
     <None Include="music\battle1.ogg" />
     <None Include="music\battle4.ogg" />
@@ -180,6 +181,13 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <None Include="music\map2_1.ogg" />
     <None Include="music\menu.ogg" />
     <None Include="packages.config" />
+    <None Include="shaders\blur.frag" />
+    <None Include="shaders\damage.frag" />
+    <None Include="shaders\redoverlay.frag" />
+    <None Include="shaders\sine.frag" />
+    <None Include="shaders\sine.vert" />
+    <None Include="shaders\wave.vert" />
+    <None Include="shaders\whiteoverlay.frag" />
     <None Include="wave11.bin" />
     <None Include="wave12.bin" />
     <None Include="wave13.bin" />

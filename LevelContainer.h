@@ -111,6 +111,8 @@ namespace Level
         std::vector<std::shared_ptr<Tile>> LvlContainer;
         sf::Vector2f view;
         std::vector<std::shared_ptr< std::vector<TileItem>> > levelArray;
+		std::map<std::string, std::string> levelMap;
+
         
         sf::IntRect boundingRect;
         sf::RectangleShape recShape;

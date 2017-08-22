@@ -217,8 +217,6 @@ void World::UpdateTransition(){
 
 World::World(){
     
-	CreateResourceMap();
-
     /*
      
     Setting controls
@@ -265,24 +263,6 @@ World::World(){
 	GlobalMembers.weapons[0] = 2;
 	GlobalMembers.weapons[5] = 0;
 	GlobalMembers.weapons[3] = 0;
-
-}
-
-void World::CreateResourceMap() {
-
-	/*
-	//Get resource list from resource file
-	HRSRC str2 = FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_TXT1), "TXT");
-	HGLOBAL data2 = LoadResource(NULL, str2);
-	LPVOID ptr = GlobalLock(data2);
-	char *charData = (char*)ptr;
-	int s = 4354 * 2;
-	char charst[4354 * 2];
-	std::string list;
-	for (int i = 0; i < s; i += 2) list.push_back(charData[i]);
-	std::cout << list << std::endl;
-	resourceFile = list;
-	*/
 
 }
 
