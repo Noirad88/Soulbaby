@@ -6,6 +6,8 @@
 #include <functional>
 #include <random>
 #include <stddef.h>
+#include <memory.h>
+
 
 #define WINDOW_X 480*2
 
@@ -118,8 +120,16 @@ void CreateResourceMap() {
 
 		}
 
+		else if (resourceType == "ft") {
 
-		else if (resourceType == "font") {
+			HRSRC str2 = FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(resourceID), "TXT");
+			HGLOBAL data2 = LoadResource(NULL, str2);
+			LPVOID ptr = GlobalLock(data2);
+			char* charData = (char*)ptr;
+			sf::MemoryInputStream str3;
+			str3.open(data2, SizeofResource(GetModuleHandle(NULL), str2));
+			World::GetInstance()->WorldScene.textureContainer.Fontdata = str3;
+
 
 		}
 
@@ -131,7 +141,6 @@ void CreateResourceMap() {
 			str.open(data2, SizeofResource(GetModuleHandle(NULL), str2));
 			//need to figure out where to keep txt files (no container)
 			World::GetInstance()->WorldScene.textureContainer.shaderMap.insert(std::pair<std::string, sf::MemoryInputStream>(resourceName, str));
-
 		}
 
 		else if (resourceType == "lvl") {
@@ -140,8 +149,17 @@ void CreateResourceMap() {
 			HGLOBAL data2 = LoadResource(NULL, str2);
 			LPVOID ptr = GlobalLock(data2);
 			char* charData = (char*)ptr;
-			std::string item = StreamToString(charData);
-			World::GetInstance()->WorldScene.levelContainer->levelMap.insert(std::pair<std::string, std::string>(resourceName, item));
+			std::ostringstream stream;
+			int i = 0;
+			while (charData != NULL && charData[i] != '\0') {
+
+				stream << charData[i];
+				i++;
+
+			}
+			std::string lvldata = stream.str();
+			World::GetInstance()->WorldScene.levelContainer->levelMap.insert(std::pair<std::string, std::string>(resourceName,lvldata));
+
 
 		}
 

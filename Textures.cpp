@@ -29,7 +29,7 @@ namespace Textures{
 
 		std::string dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC/";
 
-		shader.loadFromStream(TextureContainer::shaderMap.at("sh_redoverlay"), sf::Shader::Fragment);
+		shader.loadFromStream(TextureContainer::shaderMap.at("sh_sinef"), sf::Shader::Fragment);
 	
 
 		objectTexture = *TextureContainer::textureMap.at("tx_map");
@@ -216,6 +216,9 @@ namespace Textures{
 		shaders.insert(std::pair<std::string, sf::Shader&>("waveShader", waveShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("whiteShader", whiteShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("damageShader", dmgShader.get()->shader));
+
+		GameFont.loadFromStream(Fontdata);
+		const_cast<sf::Texture&>(GameFont.getTexture(16)).setSmooth(false);
 
 	}
     

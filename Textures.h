@@ -90,6 +90,7 @@ namespace Textures
         sf::Texture& SetTexture(std::string temp_name);
         sf::Font& GetFont(std::string font = "");
         sf::Font GameFont;
+		sf::MemoryInputStream Fontdata;
 		sf::Font GameFont2;
         sf::Texture* SetTextureForShapes(std::string temp_name);
         static std::map<std::string,sf::Texture*> textureMap;

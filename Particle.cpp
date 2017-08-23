@@ -9,6 +9,7 @@
 #include "Particle.h"
 #include "ResourcePath.hpp"
 #include <math.h>
+#include <memory>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>

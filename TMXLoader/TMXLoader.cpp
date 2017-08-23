@@ -68,12 +68,7 @@ void TMXLoader::loadMap(std::string mapName, std::string filePath)
 
 void TMXLoader::loadMapData(std::string mapName, ::string mapData)
 {
-	std::string fileContents = "";
-
-	// String to hold file contents
-	loadData(mapData, fileContents);
-
-	std::cout << mapData << std::endl;
+	std::string fileContents = mapData;
 
 		// Create new RapidXML document instance to use to parse map data
 		rapidxml::xml_document<char> m_currentMap;

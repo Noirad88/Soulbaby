@@ -78,6 +78,7 @@
     <LibraryPath>C:\Program Files %28x86%29\SFML-2.3.2\lib;$(LibraryPath)</LibraryPath>
     <SourcePath>C:\Users\Darion\Documents\Visual Studio 2015\Projects\SoulbabyPC\SoulbabyPC;$(SourcePath)</SourcePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
+    <TargetName>Soulbaby</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -114,7 +115,7 @@
     <PreBuildEvent>
       <Command>echo PREBUILD starting for $(Targetname)
 
-xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
+xcopy "$(ProjectDir)*.dll"  "$(OutDir)lib\" /y
 </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -213,6 +214,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Image Include="textures\tx_bosses.png" />
     <Image Include="textures\tx_enemies-old.png" />
     <Image Include="textures\tx_enemies.png" />
+    <Image Include="textures\tx_icon.ico" />
     <Image Include="textures\tx_map.png" />
     <Image Include="textures\tx_misc.png" />
     <Image Include="textures\tx_particles.png" />
