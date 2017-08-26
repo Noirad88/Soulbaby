@@ -131,20 +131,19 @@ namespace Level
                 
                 else if (it->getType() == "Player"){
 
-					/*
+				
 					if (World::GetInstance()->GlobalMembers.firstTimeInNexus == true) {
 
 						Entity::itemQueue birth;
 						birth.properties["itemType"] = "PlayerBirth";
-						birth.properties["PosX"] = std::to_string(it->getXposition());
-						birth.properties["PosY"] = std::to_string(it->getYposition());
+						birth.properties["PosX"] = std::to_string(it->getXposition()+8);
+						birth.properties["PosY"] = std::to_string(it->getYposition()+8);
 						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(birth);
 
 					}
 
 					else CreatePlayer(MAP,it->getXposition(),it->getYposition());
-					*/
-					CreatePlayer(MAP, it->getXposition(), it->getYposition());
+					
                 }
                 
                 World::GetInstance()->WorldScene.objectContainer->Queue.push_back(item);

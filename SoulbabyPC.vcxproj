@@ -79,6 +79,7 @@
     <SourcePath>C:\Users\Darion\Documents\Visual Studio 2015\Projects\SoulbabyPC\SoulbabyPC;$(SourcePath)</SourcePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
     <TargetName>Soulbaby</TargetName>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -111,11 +112,13 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>echo PREBUILD starting for $(Targetname)
 
-xcopy "$(ProjectDir)*.dll"  "$(OutDir)lib\" /y
+xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
 </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -184,6 +187,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)lib\" /y
     <None Include="packages.config" />
     <None Include="shaders\blur.frag" />
     <None Include="shaders\damage.frag" />
+    <None Include="shaders\glitch.frag" />
     <None Include="shaders\redoverlay.frag" />
     <None Include="shaders\sine.frag" />
     <None Include="shaders\sine.vert" />
@@ -296,6 +300,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)lib\" /y
     <Media Include="sfx\sfx_superbeam2.wav" />
     <Media Include="sfx\sfx_twinkle.wav" />
     <Media Include="sfx\sfx_txt.wav" />
+    <Media Include="sfx\sfx_wigglyscrech.wav" />
     <Media Include="sfx\sfx_yes.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

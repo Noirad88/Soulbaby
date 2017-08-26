@@ -5,6 +5,5 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerEnvironment>PATH=%PATH%;$(ProjectDir)lib</LocalDebuggerEnvironment>
   </PropertyGroup>
 </Project>

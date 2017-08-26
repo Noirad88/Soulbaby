@@ -302,6 +302,24 @@ void Container::AddObjects()
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
+
+			else if ((QI)->properties["itemType"] == "LargeCharge")
+			{
+
+				std::unique_ptr<Entity::LargeCharge> ptr(new Entity::LargeCharge);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "PlayerSpawn")
+			{
+
+				std::unique_ptr<Entity::PlayerSpawn> ptr(new Entity::PlayerSpawn);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "DoorDestroy")
             {
@@ -311,6 +329,15 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "PlayerBirth")
+			{
+
+				std::unique_ptr<Entity::PlayerBirth> ptr(new Entity::PlayerBirth);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "BigExp")
             {

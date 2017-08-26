@@ -158,6 +158,7 @@
     <None Include="shaders\wave.vert" />
     <None Include="shaders\whiteoverlay.frag" />
     <None Include="levels\map2_1.tmx" />
+    <None Include="shaders\glitch.frag" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SoulbabyPC1.rc" />
@@ -394,6 +395,9 @@
       <Filter>Assets</Filter>
     </Media>
     <Media Include="sfx\sfx_yes.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_wigglyscrech.wav">
       <Filter>Assets</Filter>
     </Media>
   </ItemGroup>

@@ -674,13 +674,6 @@ namespace Entity
         ~DoorDestroy();
     };
 
-	class PlayerBirth : public Fixed {
-	public:
-		PlayerBirth();
-		void Update();
-		~PlayerBirth();
-		int phase = 0;
-	};
     
     class SpriteClone: public Fixed{
     public:
@@ -797,6 +790,24 @@ namespace Entity
         static int totalBombs;
         
     };
+
+	class LargeCharge : public Fixed {
+
+	public:
+		LargeCharge();
+		~LargeCharge();
+
+	};
+
+	class PlayerSpawn : public Fixed {
+
+	public:
+		PlayerSpawn();
+		void Draw(sf::RenderTarget& window);
+		~PlayerSpawn();
+
+	};
+
     
     class Explosion : public Object
     {
@@ -863,6 +874,15 @@ namespace Entity
         ~PropFlame();
     
     };
+
+	class PlayerBirth : public Prop {
+	public:
+		PlayerBirth();
+		void Update();
+		void Draw(sf::RenderTarget& window);
+		~PlayerBirth();
+		int phase = 0;
+	};
     
     class HitNum: public Object{
        

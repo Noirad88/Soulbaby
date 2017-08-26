@@ -7,15 +7,13 @@
 #include <random>
 #include <stddef.h>
 #include <memory.h>
+#include <math.h>
 
-
-#define WINDOW_X 480*2
-
-#define WINDOW_Y 270*2
 #define SCREEN_X sf::VideoMode::getDesktopMode().width
 #define SCREEN_Y sf::VideoMode::getDesktopMode().height
+#define WINDOW_X (SCREEN_X/480)*480
+#define WINDOW_Y (SCREEN_Y/270)*270
 #define PROJ_DIR "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC"
-
 
 #include "resource.h"
 #include "winuser.h"
@@ -53,8 +51,8 @@ void CreateResourceMap() {
 	LPVOID ptr = GlobalLock(data2);
 	char* charData = (char*)ptr;
 	std::string list = StreamToString(charData);
-	std::cout << list << std::endl;
-	int firstID = 142;
+	//std::cout << list << std::endl;
+	int firstID = 144;
 	size_t endi = list.find("Next", 4);
 
 
@@ -67,7 +65,7 @@ void CreateResourceMap() {
 		int resourceID = stoi(list.substr(i, 3));
 		std::string resourceName = list.substr(i - 32, list.find_first_of(' ', i - 32) - (i - 32));
 		std::string resourceType = list.substr(i - 32, list.find_first_of('_', i - 32) - (i - 32));
-		//std::cout << resourceID << " | " << resourceName << " | " << resourceType << std::endl;
+		std::cout << resourceID << " | " << resourceName << " | " << resourceType << std::endl;
 
 
 		//Check type and create to insert into correct container
@@ -78,9 +76,7 @@ void CreateResourceMap() {
 			texture = new sf::Texture;
 			texture->setSmooth(false);
 			HRSRC source = FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(resourceID), "PNG");
-			if (source) std::cout << source << std::endl;
 			HGLOBAL data = LoadResource(NULL, source);
-			if (data) std::cout << data << std::endl;
 			sf::MemoryInputStream str;
 			str.open(data, SizeofResource(GetModuleHandle(NULL), source));
 			texture->loadFromStream(str);
@@ -96,9 +92,7 @@ void CreateResourceMap() {
 			AudioItem item;
 
 			HRSRC wav = FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(resourceID), "WAVE");
-			if (wav) std::cout << wav << std::endl;
 			HGLOBAL data = LoadResource(NULL, wav);
-			if (data) std::cout << data2 << std::endl;
 			sf::MemoryInputStream str2;
 			str2.open(data, SizeofResource(GetModuleHandle(NULL), wav));
 			item.buffer.loadFromStream(str2);
@@ -111,9 +105,7 @@ void CreateResourceMap() {
 
 			sf::Music sound;
 			HRSRC wav = FindResource(GetModuleHandle(NULL), MAKEINTRESOURCE(resourceID), "OGG");
-			if (wav) std::cout << wav << std::endl;
 			HGLOBAL data2 = LoadResource(NULL, wav);
-			if (data2) std::cout << data2 << std::endl;
 			sf::MemoryInputStream str2;
 			str2.open(data2, SizeofResource(GetModuleHandle(NULL), wav));
 			World::GetInstance()->WorldScene.audioContainer.MusicContainer.insert(std::pair<std::string, sf::MemoryInputStream>(resourceName, str2));
@@ -172,7 +164,10 @@ int main()
 	CreateResourceMap();
 
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(WINDOW_X,WINDOW_Y), "SFML window", sf::Style::Titlebar);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_X,WINDOW_Y), "SFML window", sf::Style::None);
+	sf::VideoMode userMode = sf::VideoMode::getDesktopMode();
+	std::cout << userMode.width << " x " << userMode.height << std::endl;
+
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
     window.setKeyRepeatEnabled(true);

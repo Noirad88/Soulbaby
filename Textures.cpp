@@ -8,15 +8,14 @@
 
 #include "Textures.h"
 #include "ResourcePath.hpp"
-#ifndef PROJ_DIR
-#define PROJ_DIR "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC/"
-#endif
+#include <random>
 
 
 namespace Textures{
 
 	std::map<std::string, sf::Texture*> TextureContainer::textureMap;
 	std::map<std::string, sf::MemoryInputStream> TextureContainer::shaderMap;
+	sf::View* TextureContainer::gameView;
     
     float TextureContainer::tick = 0;
     
@@ -27,12 +26,9 @@ namespace Textures{
     WaveShader::WaveShader(){
        
 
-		std::string dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC/";
-
-		shader.loadFromStream(TextureContainer::shaderMap.at("sh_sinef"), sf::Shader::Fragment);
+		//shader.loadFromStream(TextureContainer::shaderMap.at("sh_sine"), TextureContainer::shaderMap.at("sh_wave"));
 	
-
-		objectTexture = *TextureContainer::textureMap.at("tx_map");
+		//objectTexture = *TextureContainer::textureMap.at("tx_map");
 
         objectTexture.setRepeated(true);
         object.setTexture(objectTexture);
@@ -45,7 +41,7 @@ namespace Textures{
         // Setting smooth to true lets us use small maps even on larger images
         distortionMap.setSmooth(true);
         
-		distortionMap = *TextureContainer::textureMap.at("tx_map");
+		//distortionMap = *TextureContainer::textureMap.at("tx_map");
         
         renderTexture.create(400, 300);
         
@@ -62,6 +58,11 @@ namespace Textures{
 	WhiteShader::WhiteShader()
 	{
 		shader.loadFromStream(TextureContainer::shaderMap.at("sh_whiteoverlay"), sf::Shader::Fragment);
+	}
+
+	GlitchShader::GlitchShader()
+	{
+		shader.loadFromStream(TextureContainer::shaderMap.at("sh_glitch"), sf::Shader::Fragment);
 	}
     
     DamageShader::DamageShader()
@@ -82,6 +83,10 @@ namespace Textures{
     WaveShader::~WaveShader(){
         
     }
+
+	GlitchShader::~GlitchShader() {
+
+	}
 
 	WhiteShader::~WhiteShader() {
 
@@ -119,6 +124,44 @@ namespace Textures{
 	void WhiteShader::Update() {
 
 		shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
+	}
+
+	void GlitchShader::Update() {
+
+		float r;
+		float g;
+		float b;
+
+		if (mode == 1.0) {
+
+			std::random_device rd;
+			std::mt19937 mt(rd());
+			std::uniform_int_distribution<int> rand(0, 20);
+
+			r = rand(mt) * 0.05;
+			g = rand(mt) * 0.05;
+			b = rand(mt) * 0.05;
+			sf::Vector2f view = TextureContainer::gameView->getCenter();
+
+			shader.setParameter("r", r);
+			shader.setParameter("g", g);
+			shader.setParameter("b", b);
+
+		}
+
+		else {
+
+			shader.setParameter("r", opac);
+			shader.setParameter("g", opac);
+			shader.setParameter("b", opac);
+			if(opac > 0.0) opac-=0.005;
+
+
+		} 
+
+		shader.setParameter("mode", mode);
+		shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
+
 	}
     
     void DamageShader::Update(){
@@ -211,11 +254,15 @@ namespace Textures{
 		redShader = std::shared_ptr<RedShader>(new RedShader);
 		whiteShader = std::shared_ptr<WhiteShader>(new WhiteShader);
 		dmgShader = std::shared_ptr<DamageShader>(new DamageShader);
+		glitchShader = std::shared_ptr<GlitchShader>(new GlitchShader);
+
 
 		shaders.insert(std::pair<std::string, sf::Shader&>("redShader", redShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("waveShader", waveShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("whiteShader", whiteShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("damageShader", dmgShader.get()->shader));
+		shaders.insert(std::pair<std::string, sf::Shader&>("glitchShader", glitchShader.get()->shader));
+
 
 		GameFont.loadFromStream(Fontdata);
 		const_cast<sf::Texture&>(GameFont.getTexture(16)).setSmooth(false);
@@ -248,6 +295,7 @@ namespace Textures{
     void TextureContainer::Update(){
         
         waveShader->Update();
+		glitchShader->Update();
         tick += 0.005;
         
     }

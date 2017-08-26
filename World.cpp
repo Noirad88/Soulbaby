@@ -271,7 +271,8 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     GlobalMembers.maxVolume = std::shared_ptr<int> (new int(80));
     GlobalMembers.health = std::shared_ptr<int> (new int(30));
     GlobalMembers.textSpeed = std::shared_ptr<int> (new int(5));
-    Screen.setSize(WINDOW_X/3, WINDOW_Y/3);
+	Screen.setSize(WINDOW_X/3, WINDOW_Y/3);
+
     
     clockWorld = &clock;
     windowWorld = &window;
@@ -282,6 +283,7 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     CreateCharacterScripts();
     GlobalMembers.levelsCompleted.fill(0);
 	WorldScene.textureContainer.CreateShaderInstances();
+	WorldScene.textureContainer.gameView = &Screen;
     LoadSceneBank();
 
 	/*
@@ -671,7 +673,9 @@ void World::CreateCharacterScripts(){
 
 void World::DrawObject(sf::Drawable& sprite, std::string shader){
     
-    if(WorldScene.playerPtr->dead) windowWorld->draw(sprite,&WorldScene.textureContainer.shaders.at("redShader"));
+	if(shader == "bypass") windowWorld->draw(sprite);
+    else if(WorldScene.playerPtr->dead) windowWorld->draw(sprite,&WorldScene.textureContainer.shaders.at("redShader"));
+	else if(worldShader == 1) windowWorld->draw(sprite, &WorldScene.textureContainer.shaders.at("glitchShader"));
     else if (shader != "") windowWorld->draw(sprite,&WorldScene.textureContainer.shaders.at(shader));
     else windowWorld->draw(sprite);
 

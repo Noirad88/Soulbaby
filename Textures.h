@@ -58,6 +58,18 @@ namespace Textures
 		void Update();
 
 	};
+
+	class GlitchShader : public Shader
+	{
+
+	public:
+		GlitchShader();
+		~GlitchShader();
+		void Update();
+		float mode = 1.0;
+		float opac;
+
+	};
     
     class RedShader : public Shader
     {
@@ -92,6 +104,7 @@ namespace Textures
         sf::Font GameFont;
 		sf::MemoryInputStream Fontdata;
 		sf::Font GameFont2;
+		static sf::View* gameView;
         sf::Texture* SetTextureForShapes(std::string temp_name);
         static std::map<std::string,sf::Texture*> textureMap;
 		static std::map<std::string, sf::MemoryInputStream> shaderMap;
@@ -103,11 +116,8 @@ namespace Textures
 		std::shared_ptr<RedShader> redShader;
 		std::shared_ptr<WhiteShader> whiteShader;
 		std::shared_ptr<DamageShader> dmgShader;
-
-
-
+		std::shared_ptr<GlitchShader> glitchShader;
         std::map<std::string,sf::Shader&> shaders;
-
 		std::string dir;
         
         

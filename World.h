@@ -346,6 +346,7 @@ class World{
     bool isShaking = false;
     int quakeStrength = 20;
     Entity::Object *CameraTarget;
+	int worldShader = 0;
     
     Attributes GlobalMembers;
     std::map<std::string,std::string> CharacterScripts;

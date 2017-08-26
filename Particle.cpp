@@ -323,12 +323,6 @@ namespace Entity
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_quake");
 				World::GetInstance()->viewPos.x;
 
-				itemQueue dirt;
-				dirt.properties["PosX"] = std::to_string(World::GetInstance()->CameraTarget->objectSprite.getPosition().x + RandomNumber(100));
-				dirt.properties["PosY"] = std::to_string(World::GetInstance()->CameraTarget->objectSprite.getPosition().y + RandomNumber (100));
-				dirt.properties["itemType"] = "QuakeDirt";
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dirt);
-
 
 			}
 
@@ -1437,7 +1431,7 @@ namespace Entity
                 
             sf::Texture temp = *objectSprite.getTexture();
             sf::Vector2u tempSize = temp.getSize();
-            assetHeight = tempSize.y/8;
+            assetHeight = tempSize.y/10;
             
         }
         
@@ -1527,11 +1521,6 @@ namespace Entity
 
 	}
 
-	PlayerBirth::PlayerBirth() : Fixed() {
-
-
-
-	}
     
     DoorDestroy::DoorDestroy() : Fixed(){
         
@@ -1576,6 +1565,26 @@ namespace Entity
 		animSpeed = VERY_FAST;
 		maxTime = 6000000.0;
 		maxFrame = 8;
+
+	}
+
+	LargeCharge::LargeCharge() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(64, 0, 96, 112));
+		SetEffectOrigin();
+		animSpeed = VERY_FAST;
+		maxTime = 6000000.0;
+		maxFrame = 10;
+
+	}
+
+	PlayerSpawn::PlayerSpawn() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(144, 0, 41, 41));
+		SetEffectOrigin();
+		animSpeed = VERY_FAST;
+		maxTime = 6000000.0;
+		maxFrame = 4;
 
 	}
     
@@ -1846,6 +1855,7 @@ namespace Entity
     
     PropFlame::PropFlame() : Prop(){
         
+
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
         objectSprite.setTextureRect(sf::IntRect(0, 5, 11, 30));
         maxFrame = 5;
@@ -1853,6 +1863,17 @@ namespace Entity
         frame = RandomNumber(5);
         
     }
+
+	PlayerBirth::PlayerBirth() : Prop() {
+
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
+		objectSprite.setTextureRect(sf::IntRect(0, 251, 105, 114));
+		objectSprite.setOrigin(105 / 2, 114 / 2);
+		animSpd = VERY_FAST;
+		maxFrame = 1;
+		World::GetInstance()->SetCameraTarget(*this);
+
+	}
     
     float Object::GetYPosition(){
         
@@ -2062,6 +2083,72 @@ namespace Entity
     }
 
 	void PlayerBirth::Update() {
+
+		Prop::Update();
+
+		if (phase == 0 && World::GetInstance()->Timer(*this, VERY_SLOW * 20)) {
+
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_frission");
+			World::GetInstance()->WorldScene.textureContainer.glitchShader->mode = 0.0;
+			World::GetInstance()->WorldScene.textureContainer.glitchShader->opac = 1.0;
+			World::GetInstance()->worldShader = 1;
+
+
+			phase = 1;
+
+
+		}
+
+		else if (phase == 1 && World::GetInstance()->Timer(*this, VERY_SLOW * 10)) {
+
+			itemQueue charge;
+			charge.properties["PosX"] = std::to_string(objectSprite.getPosition().x+4);
+			charge.properties["PosY"] = std::to_string(objectSprite.getPosition().y-25);
+			charge.properties["itemType"] = "LargeCharge";
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_wigglyscreech");
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(charge);
+			World::GetInstance()->WorldScene.textureContainer.glitchShader->mode = 1.0;
+
+
+			phase = 2;
+
+		}
+
+		else if (phase == 2 && World::GetInstance()->Timer(*this, VERY_SLOW*5)) {
+
+			itemQueue charge2;
+			charge2.properties["PosX"] = std::to_string(objectSprite.getPosition().x-1);
+			charge2.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+			charge2.properties["itemType"] = "PlayerSpawn";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(charge2);
+
+			phase = 3;
+
+		}
+
+		if (phase >= 2
+			&& World::GetInstance()->Timer(*this, SLOW)) {
+
+			World::GetInstance()->ScreenShake(5);
+		}
+
+		else if (phase == 3 && World::GetInstance()->Timer(*this, VERY_SLOW * 40)) {
+
+			misDestroyed = true;
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_twinkle");
+			World::GetInstance()->WorldScene.textureContainer.glitchShader->opac = 1.0;
+			World::GetInstance()->worldShader = 0;
+
+			itemQueue charge2;
+			charge2.properties["PosX"] = std::to_string(519);
+			charge2.properties["PosY"] = std::to_string(808);
+			charge2.properties["itemType"] = "ShieldEffect";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(charge2);
+			World::GetInstance()->CameraTarget = World::GetInstance()->WorldScene.playerPtr;
+
+
+		}
+
 
 
 	}
@@ -2728,7 +2815,18 @@ namespace Entity
         
         if(maxFrame != 0){
         
-            if(World::GetInstance()->Timer(*this,animSpd,NODELAY)) frame = (frame == maxFrame) ? 0 : frame+1;
+			if (World::GetInstance()->Timer(*this, animSpd, NODELAY)) {
+
+				if (frame == maxFrame){ 
+					
+					objectSprite.setTextureRect(sf::IntRect(0, objectSprite.getTextureRect().top, objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
+					frame = 0;
+
+				}
+
+				else frame++;
+
+			}
         
         }
     }
@@ -2911,6 +3009,13 @@ namespace Entity
         
     }
 
+	void PlayerBirth::Draw(sf::RenderTarget& window) {
+
+		if(phase >= 1) World::GetInstance()->DrawObject(objectSprite,"bypass");
+
+	}
+
+
 	void EnemyLaser::Draw(sf::RenderTarget& window) {
 
 		int lsrBdyFrame = laserBody.getTextureRect().left;
@@ -3023,6 +3128,13 @@ namespace Entity
         World::GetInstance()->DrawObject(objectShadow);
         
     }
+
+	void PlayerSpawn::Draw(sf::RenderTarget& window)
+	{
+
+		World::GetInstance()->DrawObject(objectSprite,"bypass");
+
+	}
     
     void HitNum::Draw(sf::RenderTarget& window)
     {
@@ -3032,6 +3144,8 @@ namespace Entity
         
         
     }
+
+
     
     // Desctructors
     
@@ -3135,6 +3249,11 @@ namespace Entity
 
 	}
 
+	PlayerSpawn::~PlayerSpawn() {
+
+		World::GetInstance()->WorldScene.levelContainer->CreatePlayer(0,519,819);
+	}
+
 	BlockedEffect::~BlockedEffect() {
 
 	}
@@ -3155,6 +3274,10 @@ namespace Entity
         
         
     }
+
+	LargeCharge::~LargeCharge() {
+
+	}
     
     PlayerBomb::~PlayerBomb(){
         
