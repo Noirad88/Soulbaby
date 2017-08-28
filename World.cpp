@@ -260,9 +260,7 @@ World::World(){
 	5 = spreader
 	*/
 
-	GlobalMembers.weapons[0] = 2;
-	GlobalMembers.weapons[5] = 0;
-	GlobalMembers.weapons[3] = 0;
+	GlobalMembers.weapons[0] = 1;
 
 }
 
@@ -282,6 +280,7 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     
     CreateCharacterScripts();
     GlobalMembers.levelsCompleted.fill(0);
+
 	WorldScene.textureContainer.CreateShaderInstances();
 	WorldScene.textureContainer.gameView = &Screen;
     LoadSceneBank();
@@ -627,7 +626,8 @@ void World::SetCameraTarget(Entity::Object& target){
 
 bool World::IsPlayerActive(){
     
-    return (CameraTarget == WorldScene.playerPtr) && (Entity::GUI::guiCount == 0) && (!WorldScene.transition);
+    return (CameraTarget == WorldScene.playerPtr) && (!World::GetInstance()->WorldScene.UIPtr
+	) && (!WorldScene.transition);
     
 }
 

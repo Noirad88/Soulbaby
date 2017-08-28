@@ -136,7 +136,7 @@ namespace Textures{
 
 			std::random_device rd;
 			std::mt19937 mt(rd());
-			std::uniform_int_distribution<int> rand(0, 20);
+			std::uniform_int_distribution<int> rand(10, 20);
 
 			r = rand(mt) * 0.05;
 			g = rand(mt) * 0.05;
@@ -263,9 +263,11 @@ namespace Textures{
 		shaders.insert(std::pair<std::string, sf::Shader&>("damageShader", dmgShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("glitchShader", glitchShader.get()->shader));
 
-
 		GameFont.loadFromStream(Fontdata);
+		GameFontSmall.loadFromStream(FontdataSmall);
 		const_cast<sf::Texture&>(GameFont.getTexture(16)).setSmooth(false);
+		const_cast<sf::Texture&>(GameFontSmall.getTexture(16)).setSmooth(false);
+
 
 	}
     
@@ -280,9 +282,9 @@ namespace Textures{
     sf::Font& TextureContainer::GetFont(std::string font){
         
         //std::cout << temp_name << std::endl;
-        if(font == "") return GameFont;
+		if (font == "") return GameFont;
 
-		else return GameFont2;
+		else return GameFontSmall;
         
     }
     

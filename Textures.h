@@ -101,10 +101,12 @@ namespace Textures
 		void CreateShaderInstances();
         sf::Texture& SetTexture(std::string temp_name);
         sf::Font& GetFont(std::string font = "");
-        sf::Font GameFont;
 		sf::MemoryInputStream Fontdata;
-		sf::Font GameFont2;
+		sf::MemoryInputStream FontdataSmall;
 		static sf::View* gameView;
+		sf::Font GameFont;
+		sf::Font GameFontSmall;
+
         sf::Texture* SetTextureForShapes(std::string temp_name);
         static std::map<std::string,sf::Texture*> textureMap;
 		static std::map<std::string, sf::MemoryInputStream> shaderMap;

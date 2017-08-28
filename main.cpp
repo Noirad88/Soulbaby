@@ -120,7 +120,8 @@ void CreateResourceMap() {
 			char* charData = (char*)ptr;
 			sf::MemoryInputStream str3;
 			str3.open(data2, SizeofResource(GetModuleHandle(NULL), str2));
-			World::GetInstance()->WorldScene.textureContainer.Fontdata = str3;
+			if(resourceName == "ft_apfont") World::GetInstance()->WorldScene.textureContainer.FontdataSmall = str3;
+			else World::GetInstance()->WorldScene.textureContainer.Fontdata = str3;
 
 
 		}

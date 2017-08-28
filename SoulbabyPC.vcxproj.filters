@@ -191,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="fonts\basis33.ttf" />
+    <Font Include="fonts\apfont.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="sfx\sfx_attk.wav">
@@ -398,6 +399,15 @@
       <Filter>Assets</Filter>
     </Media>
     <Media Include="sfx\sfx_wigglyscrech.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_static.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_lswallow.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_lightdash.wav">
       <Filter>Assets</Filter>
     </Media>
   </ItemGroup>

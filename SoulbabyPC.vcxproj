@@ -230,6 +230,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Image Include="textures\tx_tile.png" />
   </ItemGroup>
   <ItemGroup>
+    <Font Include="fonts\apfont.ttf" />
     <Font Include="fonts\basis33.ttf" />
   </ItemGroup>
   <ItemGroup>
@@ -284,7 +285,9 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Media Include="sfx\sfx_laser3.wav" />
     <Media Include="sfx\sfx_laser9.wav" />
     <Media Include="sfx\sfx_laser_b.wav" />
+    <Media Include="sfx\sfx_lightdash.wav" />
     <Media Include="sfx\sfx_lighthit.wav" />
+    <Media Include="sfx\sfx_lswallow.wav" />
     <Media Include="sfx\sfx_playerDeath.wav" />
     <Media Include="sfx\sfx_plrhurt.wav" />
     <Media Include="sfx\sfx_poplaser.wav" />
@@ -294,6 +297,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Media Include="sfx\sfx_smallexphard.wav" />
     <Media Include="sfx\sfx_smbomb.wav" />
     <Media Include="sfx\sfx_sound_txt.wav" />
+    <Media Include="sfx\sfx_static.wav" />
     <Media Include="sfx\sfx_step.wav" />
     <Media Include="sfx\sfx_stomp.wav" />
     <Media Include="sfx\sfx_superbeam.wav" />

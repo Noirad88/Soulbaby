@@ -124,7 +124,6 @@ namespace Level
                     item.properties["PosX"] = to_string(it->getXposition());
                     item.properties["PosY"] = to_string(it->getYposition());
                     item.properties["Name"] = it->getProperty("Name");
-                    //item.properties["MovementType"] = it->getProperty("Movement");
                     item.properties["itemType"] = it->getType();
                     
                 }
@@ -143,6 +142,9 @@ namespace Level
 					}
 
 					else CreatePlayer(MAP,it->getXposition(),it->getYposition());
+					Entity::itemQueue hud;
+					hud.properties["itemType"] = "Hud";
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(hud);
 					
                 }
                 

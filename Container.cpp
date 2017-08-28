@@ -50,6 +50,7 @@ void Container::AddObjects()
                 
             }
 
+
 			else if ((QI)->properties["itemType"] == "Guide")
 			{
 
@@ -230,6 +231,17 @@ void Container::AddObjects()
 
 			}
 
+			else if ((QI)->properties["itemType"] == "PlayerChargeParticle")
+			{
+
+				std::unique_ptr<Entity::PlayerChargeParticle> ptr(new Entity::PlayerChargeParticle);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ptr->objectSprite.move(ptr->vel.x * 4, ptr->vel.y * 4);
+				ptr->vel = -ptr->vel;
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "EnemyPart")
 			{
 
@@ -312,10 +324,37 @@ void Container::AddObjects()
 
 			}
 
+			else if ((QI)->properties["itemType"] == "ActionSpark")
+			{
+
+				std::unique_ptr<Entity::ActionSpark> ptr(new Entity::ActionSpark);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "PlayerSpawn")
 			{
 
 				std::unique_ptr<Entity::PlayerSpawn> ptr(new Entity::PlayerSpawn);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "PlayerEgg")
+			{
+
+				std::unique_ptr<Entity::PlayerEgg> ptr(new Entity::PlayerEgg);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "PlayerPoint")
+			{
+
+				std::unique_ptr<Entity::PlayerPoint> ptr(new Entity::PlayerPoint);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
 				ObjectContainer.push_back(std::move(ptr));
 

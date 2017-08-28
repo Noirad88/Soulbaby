@@ -203,18 +203,15 @@ namespace Entity
 
 		~Hud();
 
-		sf::Sprite weapon1;
-		sf::Sprite weapon2;
-		std::array<int, 2> weapon1slot;
-		std::array<int, 2> weapon2slot;
-		sf::Vector2f newPos;
-		sf::Vector2f newPos2;
+		sf::Sprite selectedWeapon;
 		sf::Text pow1Lable;
 		sf::Text pow2Lable;
-		bool switching = false;
+		sf::RectangleShape manaBar;
+		float manaFillBar = 0;
 
 
 	};
+
 
 	class Guide : public GUI
 	{
@@ -335,6 +332,8 @@ namespace Entity
 		bool menuUp = false;
 		int shield = 41;
 		sf::Sprite sshield;
+		int mana = 0;
+
 
 		//Buddys are the upgrade nodes for soulbaby. all they do is stay in one position,
 		//in orientation to soulbaby. In Battleplayer::Update() the projectiles are fired from THEIR direction
@@ -590,6 +589,7 @@ namespace Entity
 		int frame = 0;
 		float gravity = 0.4f;
 		bool isAnimated = true;
+		bool hasParent = false;
 
 	};
 
@@ -630,6 +630,7 @@ namespace Entity
 		float maxTime = 0;
 		float animSpeed = 5.0f;
 		float spdReduceRate = 0;
+		bool dontLoop = false;
 		int top = -1;
 		static int spriteRotation;
 		float deacceleration = 0;
@@ -665,6 +666,14 @@ namespace Entity
 	public:
 		StarSpawn();
 		~StarSpawn();
+	};
+
+	class PlayerPoint : public Fixed {
+	public:
+		PlayerPoint();
+		void Update();
+		~PlayerPoint();
+
 	};
     
     class DoorDestroy: public Fixed{
@@ -734,6 +743,13 @@ namespace Entity
 
 	};
 
+	class PlayerChargeParticle : public Fixed {
+	public:
+		PlayerChargeParticle();
+		~PlayerChargeParticle();
+
+	};
+
 	class HauzerCharge : public Fixed {
 
 	public:
@@ -799,12 +815,29 @@ namespace Entity
 
 	};
 
+	class ActionSpark : public Fixed {
+
+	public:
+		ActionSpark();
+		~ActionSpark();
+	};
+
 	class PlayerSpawn : public Fixed {
 
 	public:
 		PlayerSpawn();
 		void Draw(sf::RenderTarget& window);
 		~PlayerSpawn();
+
+	};
+
+	class PlayerEgg : public Fixed {
+
+	public:
+		PlayerEgg();
+		void Draw(sf::RenderTarget& window);
+		Object* parent;
+		~PlayerEgg();
 
 	};
 
