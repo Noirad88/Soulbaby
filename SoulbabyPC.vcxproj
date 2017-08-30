@@ -187,6 +187,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <None Include="packages.config" />
     <None Include="shaders\blur.frag" />
     <None Include="shaders\damage.frag" />
+    <None Include="shaders\dim.frag" />
     <None Include="shaders\glitch.frag" />
     <None Include="shaders\redoverlay.frag" />
     <None Include="shaders\sine.frag" />

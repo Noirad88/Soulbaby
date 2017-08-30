@@ -46,12 +46,28 @@ Audio::Audio(){
     
 }
 
-void Audio::PlaySFX(std::string soundName){
+void Audio::PlaySFX(std::string soundName, bool multipleInstances){
     
     audioIter iter = AudioContainer.find(soundName);
-    iter->second.sample.setBuffer(iter->second.buffer);
-    iter->second.sample.setVolume(80);
-    iter->second.sample.play();
+
+	if (multipleInstances == false) {
+
+		if (AudioContainer.at(soundName).sample.getStatus() == sf::Sound::Status::Stopped) {
+
+			iter->second.sample.setBuffer(iter->second.buffer);
+			iter->second.sample.setVolume(80);
+			iter->second.sample.play();
+		}
+
+	}
+
+	else {
+
+		iter->second.sample.setBuffer(iter->second.buffer);
+		iter->second.sample.setVolume(80);
+		iter->second.sample.play();
+
+	}
 
 }
 

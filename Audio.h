@@ -28,7 +28,7 @@ class Audio
     public:
         Audio();
         ~Audio();
-        void PlaySFX(std::string soundName);
+        void PlaySFX(std::string soundName, bool multipleInstances = 1);
         void PlayMusic(std::string musicName = "map1");
 		void playLoopedMusic(float length, std::string musicName = "map1");
         void Update();

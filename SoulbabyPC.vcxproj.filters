@@ -159,6 +159,7 @@
     <None Include="shaders\whiteoverlay.frag" />
     <None Include="levels\map2_1.tmx" />
     <None Include="shaders\glitch.frag" />
+    <None Include="shaders\dim.frag" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SoulbabyPC1.rc" />

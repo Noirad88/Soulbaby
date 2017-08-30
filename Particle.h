@@ -199,13 +199,21 @@ namespace Entity
 	public:
 		Hud();
 		void Update();
+		void Expand();
 		void Draw(sf::RenderTarget& window);
+		bool isExpanded = false;
+
 
 		~Hud();
 
 		sf::Sprite selectedWeapon;
 		sf::Text pow1Lable;
 		sf::Text pow2Lable;
+		sf::Sprite hand;
+		sf::Sprite selectionItems;
+		std::vector<int> itemList;
+		int selectState = 0;
+		float expandTween = 0;
 		sf::RectangleShape manaBar;
 		float manaFillBar = 0;
 
@@ -330,6 +338,8 @@ namespace Entity
 		bool isCollided = false;
 		static bool dead;
 		bool menuUp = false;
+		bool chargeFlag = false;
+		bool jumpFlag = false;
 		int shield = 41;
 		sf::Sprite sshield;
 		int mana = 0;

@@ -55,8 +55,15 @@ namespace Textures
 	public:
 		WhiteShader();
 		~WhiteShader();
-		void Update();
 
+	};
+
+	class DimShader : public Shader
+	{
+
+	public:
+		DimShader();
+		~DimShader();
 	};
 
 	class GlitchShader : public Shader
@@ -77,7 +84,6 @@ namespace Textures
     public:
         RedShader();
         ~RedShader();
-        void Update();
         
     };
     
@@ -106,6 +112,7 @@ namespace Textures
 		static sf::View* gameView;
 		sf::Font GameFont;
 		sf::Font GameFontSmall;
+		bool dimWorld = false;
 
         sf::Texture* SetTextureForShapes(std::string temp_name);
         static std::map<std::string,sf::Texture*> textureMap;
@@ -119,6 +126,7 @@ namespace Textures
 		std::shared_ptr<WhiteShader> whiteShader;
 		std::shared_ptr<DamageShader> dmgShader;
 		std::shared_ptr<GlitchShader> glitchShader;
+		std::shared_ptr<DimShader> dimShader;
         std::map<std::string,sf::Shader&> shaders;
 		std::string dir;
         

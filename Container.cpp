@@ -1010,11 +1010,10 @@ void Container::CheckCollisions(){
 
 			}
 
-			// if not; then if player is very close to projectile, player has countere
+			// if not; then if player is very close to projectile, player has counter
 			
 			else if (GetDistance(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getPosition(),
 				World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition()) <= 25
-				&& World::GetInstance()->PlayerPressedButton(controlsC)
 				&& World::GetInstance()->WorldScene.playerPtr->dashing == true) {
 
 				ObjectContainer.at(typeInZone.at(i))->misDestroyed = true;

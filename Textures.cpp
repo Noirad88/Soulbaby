@@ -26,9 +26,9 @@ namespace Textures{
     WaveShader::WaveShader(){
        
 
-		//shader.loadFromStream(TextureContainer::shaderMap.at("sh_sine"), TextureContainer::shaderMap.at("sh_wave"));
+		shader.loadFromStream(TextureContainer::shaderMap.at("sh_sinef"), TextureContainer::shaderMap.at("sh_wave"));
 	
-		//objectTexture = *TextureContainer::textureMap.at("tx_map");
+		objectTexture = *TextureContainer::textureMap.at("tx_map");
 
         objectTexture.setRepeated(true);
         object.setTexture(objectTexture);
@@ -54,6 +54,11 @@ namespace Textures{
     {
 		shader.loadFromStream(TextureContainer::shaderMap.at("sh_redoverlay"), sf::Shader::Fragment);
     }
+
+	DimShader::DimShader()
+	{
+		shader.loadFromStream(TextureContainer::shaderMap.at("sh_dim"), sf::Shader::Fragment);
+	}
 
 	WhiteShader::WhiteShader()
 	{
@@ -88,6 +93,10 @@ namespace Textures{
 
 	}
 
+	DimShader::~DimShader() {
+
+	}
+
 	WhiteShader::~WhiteShader() {
 
 	}
@@ -103,6 +112,10 @@ namespace Textures{
     void Shader::Update(){
         
     }
+
+	void DamageShader::Update() {
+
+	}
     
     void WaveShader::Update(){
         
@@ -115,16 +128,6 @@ namespace Textures{
         shader.setParameter("riseFactor",.0f);
         
     }
-    
-    void RedShader::Update(){
-        
-        shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
-    }
-
-	void WhiteShader::Update() {
-
-		shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
-	}
 
 	void GlitchShader::Update() {
 
@@ -164,10 +167,6 @@ namespace Textures{
 
 	}
     
-    void DamageShader::Update(){
-        
-        shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
-    }
     
     TextureContainer::TextureContainer(){
       
@@ -255,6 +254,8 @@ namespace Textures{
 		whiteShader = std::shared_ptr<WhiteShader>(new WhiteShader);
 		dmgShader = std::shared_ptr<DamageShader>(new DamageShader);
 		glitchShader = std::shared_ptr<GlitchShader>(new GlitchShader);
+		dimShader = std::shared_ptr<DimShader>(new DimShader);
+
 
 
 		shaders.insert(std::pair<std::string, sf::Shader&>("redShader", redShader.get()->shader));
@@ -262,6 +263,8 @@ namespace Textures{
 		shaders.insert(std::pair<std::string, sf::Shader&>("whiteShader", whiteShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("damageShader", dmgShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("glitchShader", glitchShader.get()->shader));
+		shaders.insert(std::pair<std::string, sf::Shader&>("dimShader", dimShader.get()->shader));
+
 
 		GameFont.loadFromStream(Fontdata);
 		GameFontSmall.loadFromStream(FontdataSmall);

@@ -261,6 +261,12 @@ World::World(){
 	*/
 
 	GlobalMembers.weapons[0] = 1;
+	GlobalMembers.weapons[1] = 1;
+	GlobalMembers.weapons[2] = 2;
+	GlobalMembers.weapons[3] = 2;
+	GlobalMembers.weapons[4] = 3;
+	GlobalMembers.weapons[5] = 3;
+	GlobalMembers.weapons[6] = 2;
 
 }
 
@@ -674,6 +680,7 @@ void World::CreateCharacterScripts(){
 void World::DrawObject(sf::Drawable& sprite, std::string shader){
     
 	if(shader == "bypass") windowWorld->draw(sprite);
+	else if (WorldScene.textureContainer.dimWorld == true) windowWorld->draw(sprite, &WorldScene.textureContainer.shaders.at("dimShader"));
     else if(WorldScene.playerPtr->dead) windowWorld->draw(sprite,&WorldScene.textureContainer.shaders.at("redShader"));
 	else if(worldShader == 1) windowWorld->draw(sprite, &WorldScene.textureContainer.shaders.at("glitchShader"));
     else if (shader != "") windowWorld->draw(sprite,&WorldScene.textureContainer.shaders.at(shader));
@@ -734,6 +741,40 @@ bool World::PlayerPressedButton(int button) {
 	return buttonPressed;
 
 }
+
+/*
+bool World::PlayerHoldingButton(int button) {
+
+	bool buttonPressed = false;
+	sf::Joystick::update();
+
+	if (sf::Joystick::isConnected(0)) {
+
+		if (button == controlsUp
+			|| button == controlsDown) {
+
+			if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+
+		}
+
+		else if (button == controlsLeft
+			|| button == controlsRight) {
+
+			if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+
+
+		}
+
+		else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button]);
+		
+	}
+
+	else buttonPressed = sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[button]);
+	
+	return buttonPressed;
+
+}
+*/
 
 int RoundUp(int numToRound, int multiple)
 {
