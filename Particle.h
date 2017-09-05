@@ -220,6 +220,18 @@ namespace Entity
 
 	};
 
+	class ManaMeter : public GUI
+	{
+	public:
+		ManaMeter();
+		void Update();
+		void Draw(sf::RenderTarget& window);
+		~ManaMeter();
+		std::vector<sf::Vector2f> pointPositions;
+		bool got;
+
+	};
+
 
 	class Guide : public GUI
 	{
@@ -323,6 +335,7 @@ namespace Entity
 		Player(sf::Vector2i pos = sf::Vector2i(200, 50));
 		~Player();
 		void Draw(sf::RenderTarget& window);
+		void Bounce();
 		float* posXtemp1 = new float;
 		float* posYtemp2 = new float;
 		int spriteWidth = 0;
@@ -338,29 +351,13 @@ namespace Entity
 		bool isCollided = false;
 		static bool dead;
 		bool menuUp = false;
-		bool chargeFlag = false;
+		int chargeFlag = 0;
 		bool jumpFlag = false;
 		int shield = 41;
 		sf::Sprite sshield;
 		int mana = 0;
 
-
-		//Buddys are the upgrade nodes for soulbaby. all they do is stay in one position,
-		//in orientation to soulbaby. In Battleplayer::Update() the projectiles are fired from THEIR direction
-
-		Object* BuddyA;
-		Object* BuddyAB;
-		Object* BuddyB;
-		Object* BuddyBB;
-		Object* BuddyC;
-		Object* BuddyCB;
-		Object* BuddyD;
-
-		//Object* BuddyB;
-		//Object* BuddyBB;
-		//Object* BuddyC;
-		//Object* BuddyCB;
-		//Object* BuddyD;
+		ManaMeter* PlayerManaMeter;
 
 	};
 
@@ -369,10 +366,12 @@ namespace Entity
 
 	public:
 		BattlePlayer();
+		void DoChargeAttack();
 		void CheckLvlCollision();
 		sf::Vector2f hotSpot;
 		void Update();
 		~BattlePlayer();
+		bool hyperDash = false;
 
 
 	};
@@ -683,6 +682,7 @@ namespace Entity
 		PlayerPoint();
 		void Update();
 		~PlayerPoint();
+		int meterPos = -1;
 
 	};
     
@@ -757,6 +757,13 @@ namespace Entity
 	public:
 		PlayerChargeParticle();
 		~PlayerChargeParticle();
+
+	};
+
+	class PlayerChargeParticleSmall : public Fixed {
+	public:
+		PlayerChargeParticleSmall();
+		~PlayerChargeParticleSmall();
 
 	};
 

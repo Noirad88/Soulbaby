@@ -186,12 +186,14 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <None Include="music\menu.ogg" />
     <None Include="packages.config" />
     <None Include="shaders\blur.frag" />
+    <None Include="shaders\charge.frag" />
     <None Include="shaders\damage.frag" />
     <None Include="shaders\dim.frag" />
     <None Include="shaders\glitch.frag" />
     <None Include="shaders\redoverlay.frag" />
     <None Include="shaders\sine.frag" />
     <None Include="shaders\sine.vert" />
+    <None Include="shaders\test.frag" />
     <None Include="shaders\wave.vert" />
     <None Include="shaders\whiteoverlay.frag" />
     <None Include="wave11.bin" />
@@ -237,6 +239,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
   <ItemGroup>
     <Media Include="sfx\sfx_attk.wav" />
     <Media Include="sfx\sfx_badhit2.wav" />
+    <Media Include="sfx\sfx_bigbang.wav" />
     <Media Include="sfx\sfx_bighit0.wav" />
     <Media Include="sfx\sfx_bighit1.wav" />
     <Media Include="sfx\sfx_bighit2.wav" />
@@ -281,6 +284,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Media Include="sfx\sfx_jump3.wav" />
     <Media Include="sfx\sfx_jump4.wav" />
     <Media Include="sfx\sfx_jump6.wav" />
+    <Media Include="sfx\sfx_knockwave.wav" />
     <Media Include="sfx\sfx_land.wav" />
     <Media Include="sfx\sfx_laser.wav" />
     <Media Include="sfx\sfx_laser3.wav" />
@@ -289,11 +293,16 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Media Include="sfx\sfx_lightdash.wav" />
     <Media Include="sfx\sfx_lighthit.wav" />
     <Media Include="sfx\sfx_lswallow.wav" />
+    <Media Include="sfx\sfx_open.wav" />
+    <Media Include="sfx\sfx_pcharge1.wav" />
+    <Media Include="sfx\sfx_pcharge2.wav" />
+    <Media Include="sfx\sfx_pcharge3.wav" />
     <Media Include="sfx\sfx_playerDeath.wav" />
     <Media Include="sfx\sfx_plrhurt.wav" />
     <Media Include="sfx\sfx_poplaser.wav" />
     <Media Include="sfx\sfx_quake.wav" />
     <Media Include="sfx\sfx_s.wav" />
+    <Media Include="sfx\sfx_select.wav" />
     <Media Include="sfx\sfx_smallexp.wav" />
     <Media Include="sfx\sfx_smallexphard.wav" />
     <Media Include="sfx\sfx_smbomb.wav" />

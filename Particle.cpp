@@ -302,7 +302,7 @@ namespace Entity
 	Guide::Guide() {
 
 		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
-		objectSprite.setTextureRect(sf::IntRect(60, 218, 24, 18));
+		objectSprite.setTextureRect(sf::IntRect(68, 218, 24, 18));
 		SetCharacterOrigin();
 		Entity::GUI::guiCount--;
 		World::GetInstance()->WorldScene.guidePtr = this;
@@ -659,7 +659,6 @@ namespace Entity
 		selectedWeapon.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
 		selectionItems.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
 
-
 		pow1Lable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont("small"));
 		pow2Lable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont("small"));
 
@@ -687,14 +686,20 @@ namespace Entity
 
     }
 
-    
+	ManaMeter::ManaMeter() {
+
+		World::GetInstance()->WorldScene.playerPtr->PlayerManaMeter = this;
+	    objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_particles"));
+		objectSprite.setTextureRect(sf::IntRect(67, 166, 2, 2));
+	}
+
+  
 	void Hud::Update() {
 
 		if (isExpanded == true) {
 
 		
 			expandTween += (40 - expandTween) / 5;
-			std::cout << expandTween << std::endl;
 			//Selection
 
 			if (World::GetInstance()->PlayerPressedButton(controlsLeft) && (World::GetInstance()->Timer(*this, NORMAL, NODELAY) && selectState != 0)) {
@@ -712,38 +717,84 @@ namespace Entity
 
 			}
 
-			if (World::GetInstance()->PlayerPressedButton(controlsC) && (World::GetInstance()->Timer(*this, NORMAL, NODELAY))) {
+			if ((World::GetInstance()->PlayerPressedButton(controlsB) || World::GetInstance()->PlayerPressedButton(controlsC)) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
 
-				World::GetInstance()->GlobalMembers.currentWeapon = itemList.at(selectState);
-				selectedWeapon.setTextureRect(sf::IntRect(224, 240 + (World::GetInstance()->GlobalMembers.currentWeapon * 16), 16, 16));
+				if (itemList.at(selectState) != 7) {
 
-				if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) >= 2) {
+					World::GetInstance()->GlobalMembers.currentWeapon = itemList.at(selectState);
+					selectedWeapon.setTextureRect(sf::IntRect(224, 240 + (World::GetInstance()->GlobalMembers.currentWeapon * 16), 16, 16));
 
-					pow1Lable.setString("MAX");
+					if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) >= 2) {
+
+						pow1Lable.setString("MAX");
+
+					}
+
+					else {
+						pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon + 1)));
+					}
+
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
 
 				}
 
-				else {
-					pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon + 1)));
-				}
 
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
 				isExpanded = false;
+				World::GetInstance()->WorldScene.UIPtr = NULL;
 				World::GetInstance()->WorldScene.textureContainer.dimWorld = false;
 				expandTween = 0;
 			}
 
 		}
 
-		if (World::GetInstance()->CurrentScene->mapType == 1 && World::GetInstance()->PlayerPressedButton(controlsC) && (World::GetInstance()->Timer(*this, NORMAL, NODELAY))) {
+		if (World::GetInstance()->IsPlayerActive()) {
 
-			isExpanded = true;
-			selectState = 0;
-			itemList = { 0,1,2,3,4,5,6 };
-			auto it = itemList.begin();
-			itemList.erase(std::remove(itemList.begin(),itemList.end(), World::GetInstance()->GlobalMembers.currentWeapon), itemList.end());
-			itemList.insert(it,World::GetInstance()->GlobalMembers.currentWeapon);
-			World::GetInstance()->WorldScene.textureContainer.dimWorld = true;
+			if (World::GetInstance()->CurrentScene->mapType == 1 && World::GetInstance()->PlayerPressedButton(controlsC) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
+
+				isExpanded = true;
+				selectState = 0;
+				itemList = { 0,1,2,3,4,5,6 };
+				int slots = 0;
+				for (int i = 0; i != itemList.size(); i++) {
+
+					if (World::GetInstance()->GlobalMembers.weapons.at(i) == 0) {
+
+						itemList.at(i) = 7;
+						slots++;
+
+					}
+
+				}
+
+				itemList.erase(std::remove(itemList.begin(), itemList.end(), 7), itemList.end());
+				itemList.shrink_to_fit();
+
+				for (int i = 0; i != slots; i++) {
+
+					itemList.push_back(7);
+				}
+
+				std::cout << "list size: " << itemList.size() << " " << std::endl;
+
+				for (int i = 0; i != itemList.size(); i++) {
+
+					std::cout << itemList.at(i);
+
+
+
+
+				auto it = itemList.begin();
+				itemList.erase(std::remove(itemList.begin(), itemList.end(), World::GetInstance()->GlobalMembers.currentWeapon), itemList.end());
+				itemList.insert(it, World::GetInstance()->GlobalMembers.currentWeapon);
+
+				World::GetInstance()->WorldScene.UIPtr = this;
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_open");
+				World::GetInstance()->WorldScene.textureContainer.dimWorld = true;
+
+
+				}
+
+			}
 
 		}
 		
@@ -751,7 +802,7 @@ namespace Entity
 		if (World::GetInstance()->WorldScene.playerPtr) {
 
 		pow1Lable.setPosition((World::GetInstance()->viewPos.x) - 220, World::GetInstance()->viewPos.y - 134);
-		pow2Lable.setPosition((World::GetInstance()->viewPos.x) - 222 + 28, World::GetInstance()->viewPos.y - 134);
+		pow2Lable.setPosition(World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x, World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y + 20);
 		pow2Lable.setString("MP:" + std::to_string(World::GetInstance()->WorldScene.playerPtr->mana) + "/ " + std::to_string(World::GetInstance()->GlobalMembers.maxMana));
 		objectSprite.setPosition(World::GetInstance()->viewPos.x - 230, World::GetInstance()->viewPos.y - 125);
 
@@ -792,13 +843,13 @@ namespace Entity
 
 		if (World::GetInstance()->Timer(*this, VERY_SLOW)) {
 
-			if (objectSprite.getTextureRect().left != 108) {
+			if (objectSprite.getTextureRect().left != 116) {
 
 				objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left + 24, 218, 24, 18));
 
 			}
 
-			else objectSprite.setTextureRect(sf::IntRect(60, 218, 24, 18));
+			else objectSprite.setTextureRect(sf::IntRect(68, 218, 24, 18));
 
 		}
 
@@ -868,8 +919,8 @@ namespace Entity
 
 				if ((World::GetInstance()->CameraTarget == World::GetInstance()->WorldScene.playerPtr)) {
 
-					World::GetInstance()->DrawObject(pow2Lable, "bypass");
-					World::GetInstance()->DrawObject(manaBar, "bypass");
+					//World::GetInstance()->DrawObject(pow2Lable, "bypass");
+					//World::GetInstance()->DrawObject(manaBar, "bypass");
 
 
 				}
@@ -884,14 +935,18 @@ namespace Entity
 			objectSprite.setPosition(objectSpritePos);
 
 
-			for (int i = 0; i != 6; i++) {
-
+			for (int i = 0; i != itemList.size()-1; i++) {
+				
 				objectSprite.setPosition(objectSpritePos.x + (expandTween + (i * expandTween)), objectSpritePos.y);
+				if (itemList.at(i+1) == 7) objectSprite.setTextureRect(sf::IntRect(34, 218, 34, 33));
 				World::GetInstance()->DrawObject(objectSprite, "bypass");
-				selectionItems.setPosition(objectSpritePos.x + 49 + (i * expandTween), objectSpritePos.y+8);
-				selectionItems.setTextureRect(sf::IntRect(224, 240 + ((itemList.at(i+1)) * 16), 16, 16));
-				World::GetInstance()->DrawObject(selectionItems,"bypass");
+				objectSprite.setTextureRect(sf::IntRect(0, 218, 34, 33));
 
+				selectionItems.setPosition(objectSpritePos.x + 9 + (expandTween + (i * expandTween)), objectSpritePos.y+8);
+				if (itemList.at(i+1) == 7) selectionItems.setTextureRect(sf::IntRect(224, 224, 16, 16));
+				else selectionItems.setTextureRect(sf::IntRect(224, 240 + ((itemList.at(i+1)) * 16), 16, 16));
+				World::GetInstance()->DrawObject(selectionItems,"bypass");
+				
 			}
 
 			objectSprite.setPosition(objectSpritePos);
@@ -908,6 +963,48 @@ namespace Entity
 
 		
     }
+
+	void ManaMeter::Update() {
+
+
+	}
+
+	void ManaMeter::Draw(sf::RenderTarget& window) {
+
+		if (World::GetInstance()->WorldScene.playerPtr) {
+
+			int currentMana = World::GetInstance()->WorldScene.playerPtr->mana;
+
+
+			objectSprite.setTextureRect(sf::IntRect(73, 166, 2, 2));
+			for (int i = -30; i != World::GetInstance()->GlobalMembers.maxMana - 30; i++) {
+
+				objectSprite.setPosition(int(World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x + (cos((i)*0.05) * 20)),
+					int((World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y - 12) + (sin((i)*0.05) * 20)));
+
+				if (got == true) World::GetInstance()->DrawObject(objectSprite, "whiteShader");
+				else World::GetInstance()->DrawObject(objectSprite);
+
+			}
+
+			objectSprite.setTextureRect(sf::IntRect(67, 166, 2, 2));
+
+			for (int i = -30; i != currentMana - 30; i++) {
+
+				objectSprite.setPosition(int(World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x + (cos((i)*0.05) * 20)),
+					int((World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y - 12) + (sin((i)*0.05) * 20)));
+
+				if (got == true) World::GetInstance()->DrawObject(objectSprite, "whiteShader");
+				else if (World::GetInstance()->WorldScene.playerPtr->chargeFlag > 0) World::GetInstance()->DrawObject(objectSprite,"chargeShader");
+				else World::GetInstance()->DrawObject(objectSprite);
+
+			}
+
+			if (got == true) got = false;
+
+		}
+
+	}
     
     void BattleBackground::Draw(sf::RenderTarget& window){
         
@@ -922,6 +1019,10 @@ namespace Entity
 		World::GetInstance()->WorldScene.hudPtr = NULL;
 
     }
+
+	ManaMeter::~ManaMeter(){
+
+	}
 
 	Guide::~Guide() {
 
@@ -1054,6 +1155,43 @@ namespace Entity
         *posYtemp2 = objectSprite.getPosition().y;
         
     }
+
+	void Player::Bounce() {
+		
+		int currentMovement = movement;
+
+		if ((World::GetInstance()->PlayerPressedButton(controlsDown)
+			&& World::GetInstance()->PlayerPressedButton(controlsLeft))) movement = swest;
+
+		else if ((World::GetInstance()->PlayerPressedButton(controlsLeft)
+			&& World::GetInstance()->PlayerPressedButton(controlsUp))) movement = nwest;
+
+		else if ((World::GetInstance()->PlayerPressedButton(controlsUp)
+			&& World::GetInstance()->PlayerPressedButton(controlsRight))) movement = neast;
+
+		else if ((World::GetInstance()->PlayerPressedButton(controlsRight)
+			&& World::GetInstance()->PlayerPressedButton(controlsDown))) movement = seast;
+
+		else if (World::GetInstance()->PlayerPressedButton(controlsDown)) movement = south;
+
+		else if (World::GetInstance()->PlayerPressedButton(controlsLeft)) movement = west;
+
+		else if (World::GetInstance()->PlayerPressedButton(controlsUp)) movement = north;
+
+		else if (World::GetInstance()->PlayerPressedButton(controlsRight)) movement = east;
+
+
+		if ((!World::GetInstance()->PlayerPressedButton(controlsRight)
+			&& !World::GetInstance()->PlayerPressedButton(controlsUp)
+			&& !World::GetInstance()->PlayerPressedButton(controlsDown)
+			&& !World::GetInstance()->PlayerPressedButton(controlsLeft)) 
+			|| currentMovement == movement
+			|| movement == currentMovement)
+
+			RotateVector(vel, 180);
+
+
+	}
     
     BattlePlayer::BattlePlayer(){
         
@@ -1063,78 +1201,125 @@ namespace Entity
 		sshield.setTextureRect(sf::IntRect(103, 0, 17, 41));
 		sshield.setColor(sf::Color::Color(255, 255, 255, 50));
 
+		itemQueue meter;
+		meter.properties["itemType"] = "ManaMeter";
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(meter);
+
     }
-    
-	void BattlePlayer::Update() {
 
+	void BattlePlayer::DoChargeAttack() {
 
-		//charging/dashing logic
+		if (chargeFlag == 0 && mana >= 10) {
 
-		if (jumpFlag == true && !World::GetInstance()->PlayerPressedButton(controlsC)) {
-
-			//do the appropraite charge move here
-			std::cout << "you've canceled the charge!" << std::endl;
-			jumpFlag = false;
-			chargeFlag = false;
-
-			if (dashing == false && movement != idle && mana >= 5) {
-
-				vel.y = 6;
-				vel.x = 0;
-				dashing = true;
-				RotateVector(vel, 45 * movement);
-				itemQueue dash;
-				dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-				dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-				dash.properties["itemType"] = "ActionSpark";
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_lightdash");
-				mana -= 5;
-			}
+			vel.y = 6;
+			vel.x = 0;
+			dashing = true;
+			RotateVector(vel, 45 * movement);
+			itemQueue dash;
+			dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+			dash.properties["itemType"] = "ActionSpark";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_lightdash");
+			mana -= 10;
 
 		}
 
-		else if (World::GetInstance()->PlayerPressedButton(controlsC) && jumpFlag == false && dashing == false) {
+		else if (chargeFlag == 2 && mana >= 10) {
+
+			vel.y = 10;
+			vel.x = 0;
+			dashing = true;
+			hyperDash = true;
+			RotateVector(vel, 45 * movement);
+			itemQueue dash;
+			dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+			dash.properties["itemType"] = "ActionSpark";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bigbang");
+			World::GetInstance()->ScreenShake(10);
+			mana -= 10;
+
+		}
+
+	}
+    
+	void BattlePlayer::Update() {
+
+		std::cout << chargeFlag << std::endl;
+		//charging/dashing logic
+
+		//if player has let go of dash key, dash
+
+		if (jumpFlag == true && !World::GetInstance()->PlayerPressedButton(controlsC)) {
+
+			std::cout << "you've canceled the charge!" << std::endl;
+			jumpFlag = false;
+
+			//do the appropraite charge move here
+
+			if (dashing == false && movement != idle) {
+
+				DoChargeAttack();
+
+			}
+
+			chargeFlag = 0;
+
+
+		}
+	
+		//if player has pressed dash key, initiate charge sequence
+
+		else if ( mana >= 10 && World::GetInstance()->PlayerPressedButton(controlsC) && jumpFlag == false && dashing == false) {
 
 			jumpFlag = true;
 		}
 
-		if (jumpFlag == true && chargeFlag == false && World::GetInstance()->Timer(*this, VERY_SLOW)) chargeFlag = true;
+		// if after so and so miliseconds, if player is still holding dash key, start charging phases
 
-		if (chargeFlag == true) {
+		if (jumpFlag == true && chargeFlag == 0 && World::GetInstance()->Timer(*this, VERY_SLOW*2)) chargeFlag = 1;
+
+		// otherwise, while player is charging, create particles
+
+		else if (chargeFlag != 0) {
 
 			if (World::GetInstance()->Timer(*this, NORMAL)) {
 
 				itemQueue charge;
-				charge.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-				charge.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-				charge.properties["itemType"] = "PlayerChargeParticle";
+				charge.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
+				charge.properties["PosY"] = std::to_string(objectHitBox.getPosition().y - 6);
+				charge.properties["itemType"] = "PlayerChargeParticleSmall";
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(charge);
-				//World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_enemycharge");
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(charge);
 
 			}
 
 		}
 
+		// if already in charging phase, then every so and so milliseconds, increase charge phase
 
-		
+		if (chargeFlag > 0 && World::GetInstance()->Timer(*this, VERY_SLOW * 8)) {
+
+				chargeFlag++;
+
+				// play charge sound and increase pitch for each phase
+
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_pcharge" + std::to_string(chargeFlag-1));
+				itemQueue charge;
+				charge.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
+				charge.properties["PosY"] = std::to_string(objectHitBox.getPosition().y - 8);
+				charge.properties["itemType"] = "BlockedWave";
+
+		}
+
+		//
 
 
-		/*
 
-		charging psuedo code:
+		// Walking
 
-		while charging
-			if x amount of time has gone by and is not at max level learned
-				increase charge level
-			if x amount of time has gone by
-				create charge particles
-
-		if let button go
-			do attack based off of power and charge level
-		
-		*/
-			
 			if (dashing == false) {
 
 			if (!World::GetInstance()->WorldScene.transition) {
@@ -1196,8 +1381,6 @@ namespace Entity
 				dashing = false;
 
 			}
-
-			//std::cout << vel.x << ", " << vel.y << std::endl;
 
 		}
 
@@ -1306,14 +1489,15 @@ namespace Entity
 
 			// spreader
 
-			else if (World::GetInstance()->GlobalMembers.currentWeapon == 3 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
+			else if (World::GetInstance()->GlobalMembers.currentWeapon == 3 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
 
 				proj.properties["itemType"] = "PlayerRepeater";
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
+				proj.properties["Direction"] = std::to_string((fireDir * 45));
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
-				proj.properties["Direction"] = std::to_string(fireDir + 1);
+				proj.properties["Direction"] = std::to_string((fireDir*45) + 15);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
-				proj.properties["Direction"] = std::to_string(fireDir - 1);
+				proj.properties["Direction"] = std::to_string((fireDir*45) - 15);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
 			}
@@ -1323,7 +1507,6 @@ namespace Entity
 			else if (World::GetInstance()->GlobalMembers.currentWeapon == 4 && World::GetInstance()->Timer(*this, VERY_SLOW*2, NODELAY)) {
 
 				proj.properties["itemType"] = "PlayerBoomerang";
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
 			}
@@ -1390,8 +1573,15 @@ namespace Entity
 
 	void Player::Draw(sf::RenderTarget& window) {
 		
-			World::GetInstance()->DrawObject(objectSprite);
-			if(shield != 0 ) World::GetInstance()->DrawObject(sshield);
+		    if (chargeFlag > 0) {
+
+			   World::GetInstance()->DrawObject(objectSprite,"chargeShader");
+
+			}
+
+			else World::GetInstance()->DrawObject(objectSprite);
+			if(shield != 0 && shield != 41) World::GetInstance()->DrawObject(sshield);
+
 
 
 	}
@@ -1418,21 +1608,6 @@ namespace Entity
         World::GetInstance()->ScreenShake(20);
 		//World::GetInstance()->WorldScene.playerPtr = nullptr;
 
-		BuddyA = NULL;
-		BuddyAB = NULL;
-		BuddyB = NULL;
-		BuddyBB = NULL;
-		BuddyC = NULL;
-		BuddyCB = NULL;
-		BuddyD = NULL;
-
-		delete BuddyA;
-		delete BuddyAB;
-		delete BuddyB;
-		delete BuddyBB;
-		delete BuddyC;
-		delete BuddyCB;
-		delete BuddyD;
 
     }
     
@@ -1600,6 +1775,19 @@ namespace Entity
 
 	}
 
+	PlayerChargeParticleSmall::PlayerChargeParticleSmall() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(64, 128, 9, 9));
+		vel.y = RandomNumber(16,0);
+		SetEffectOrigin();
+		RotateVector(vel, RandomNumber(360));
+		hasParent = true;
+		maxFrame = 6;
+		animSpeed = VERY_FAST;
+		deacceleration = 0.5;
+
+	}
+
 
 	HauzerCharge::HauzerCharge() : Fixed() {
 
@@ -1722,7 +1910,7 @@ namespace Entity
 
 		objectSprite.setTextureRect(sf::IntRect(54, 195, 42, 42));
 		SetEffectOrigin();
-		maxFrame = 6;
+		maxFrame = 8;
 		animSpeed = FAST;
 
 	}
@@ -2028,7 +2216,7 @@ namespace Entity
         objectSprite.setTextureRect(sf::IntRect(0, 32, 20, 20));
         objectSprite.setOrigin(10,10);
         SetEffectOrigin();
-        vel.y = 4;
+        vel.y = 3;
         damage = 4;
         SetHitBox(sf::Vector2f(12,12));
 		destroyOnImpact = false;
@@ -2041,13 +2229,13 @@ namespace Entity
     {
         
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
-        objectSprite.setTextureRect(sf::IntRect(0, 224, 5, 4));
+        objectSprite.setTextureRect(sf::IntRect(0, 224, 5, 14));
         objectSprite.setOrigin(2.5,2);
         SetEffectOrigin();
-        vel.y = 3;
-        damage = 3;
+        vel.y = 4;
+        damage = 2;
         maxFrame = 2;
-        SetHitBox(sf::Vector2f(3,3));
+        SetHitBox(sf::Vector2f(4,4));
     
     }
 
@@ -2353,33 +2541,38 @@ namespace Entity
 
 		Fixed::Update();
 	
-		if (PlayerDistance(60)) {
+		if (World::GetInstance()->WorldScene.playerPtr && World::GetInstance()->WorldScene.playerPtr->mana < 100) {
 
-			float px = objectSprite.getPosition().x;
-			float py = objectSprite.getPosition().y;
+			if (PlayerDistance(60)) {
 
-			int playerPosX = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x;
-			int playerPosY = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y;
+				float px = objectSprite.getPosition().x;
+				float py = objectSprite.getPosition().y;
 
-			px += (playerPosX - objectSprite.getPosition().x) / 5;
-			py += (playerPosY - objectSprite.getPosition().y) / 5;
+				int playerPosX = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x;
+				int playerPosY = World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y;
 
-			objectSprite.setPosition(sf::Vector2f(px, py));
+				px += (playerPosX - objectSprite.getPosition().x) / 5;
+				py += (playerPosY - objectSprite.getPosition().y) / 5;
+
+				objectSprite.setPosition(sf::Vector2f(px, py));
+
+			}
+
+			if (PlayerDistance(15) && World::GetInstance()->WorldScene.playerPtr && World::GetInstance()->WorldScene.playerPtr->PlayerManaMeter) {
+
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_lswallow", false);
+				World::GetInstance()->WorldScene.playerPtr->mana++;
+				misDestroyed = true;
+				World::GetInstance()->WorldScene.playerPtr->PlayerManaMeter->got = true;
+
+
+			}
 
 		}
+
 
 		UpdateShadow();
-
-		if (PlayerDistance(15)) {
-
-			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_lswallow",false);
-			misDestroyed = true;
-
-			World::GetInstance()->WorldScene.playerPtr->mana++;
-
-		}
 	
-
 	}
 
 	void EnemyLaser::Update() {
@@ -2817,9 +3010,9 @@ namespace Entity
 		
 		objectSprite.move(vel.x, vel.y);
         
-        if(World::GetInstance()->Timer(*this,1000000.0)) misDestroyed = true;
+        if(World::GetInstance()->Timer(*this,VERY_SLOW*10)) misDestroyed = true;
         
-        if(World::GetInstance()->Timer(*this,FAST)) CreateClone(objectSprite);
+        //if(World::GetInstance()->Timer(*this,FAST)) CreateClone(objectSprite);
         
     }
 
@@ -3338,6 +3531,10 @@ namespace Entity
 
 	}
 
+	PlayerChargeParticleSmall::~PlayerChargeParticleSmall() {
+
+	}
+
 	BigEnemyLaser::~BigEnemyLaser() {
 
 	}
@@ -3734,7 +3931,7 @@ namespace Entity
     
     bool Object::isDestroyed(){
         
-        if((objectSprite.getPosition().x < 0 || objectSprite.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x || objectSprite.getPosition().y < 0 || objectSprite.getPosition().y > World::GetInstance()->WorldScene.levelContainer->lvlSize.y) && type != "GUI") misDestroyed = true;
+        if((objectHitBox.getPosition().x < 0 || objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x || objectHitBox.getPosition().y < 0 || objectHitBox.getPosition().y > World::GetInstance()->WorldScene.levelContainer->lvlSize.y) && type != "GUI") misDestroyed = true;
         
         return misDestroyed;
         
@@ -3766,18 +3963,23 @@ namespace Entity
             enemyList[0] = "Djinn";
             enemyList[1] = "Squid";
             enemyList[2] = "Slime";
+
             enemyList[3] = "Mask";
             enemyList[4] = "Spore";
             enemyList[5] = "Roach";
+
             enemyList[6] = "";
             enemyList[7] = "";
             enemyList[8] = "";
+
             enemyList[9] = "Mozza";
             enemyList[10] = "Mozza";
             enemyList[11] = "Mozza";
-            enemyList[12] = "Mozza";
-            enemyList[13] = "Mozza";
-            enemyList[14] = "Mozza";
+
+            enemyList[12] = "Squid";
+            enemyList[13] = "Star";
+            enemyList[14] = "Roach";
+
             enemyList[15] = "Mozza";
             enemyList[16] = "Mozza";
             enemyList[17] = "Mozza";
@@ -3883,6 +4085,7 @@ namespace Entity
     void LevelManager::Draw(sf::RenderTarget &window){
         
         World::GetInstance()->DrawObject(bg,"waveShader");
+
     }
     
     LevelManager::~LevelManager(){

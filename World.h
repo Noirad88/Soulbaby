@@ -92,15 +92,15 @@ struct Attributes{
     std::shared_ptr<int> maxVolume;
     std::shared_ptr<int> health;
     std::shared_ptr<int> textSpeed;
-	bool firstTimeInNexus = true;
+	bool firstTimeInNexus = false;
     std::array<int,7> levelsCompleted;
-    std::array<int,7> weapons;
+    std::vector<int> weapons;
 	int currentWeapon = 0;
     std::array<sf::Keyboard::Key,9> keyboardControls;
 	std::array<int, 9> joystickControls;
 	bool joystick = true;
     int currentLevel = 0;
-	int maxMana = 25;
+	int maxMana = 100;
 
     
 };

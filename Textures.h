@@ -77,6 +77,16 @@ namespace Textures
 		float opac;
 
 	};
+
+	class ChargeShader : public Shader
+	{
+
+	public:
+		ChargeShader();
+		~ChargeShader();
+		void Update();
+
+	};
     
     class RedShader : public Shader
     {
@@ -96,6 +106,17 @@ namespace Textures
         void Update();
         
     };
+
+	class TestShader : public Shader
+	{
+
+	public:
+		TestShader();
+		void Update();
+		~TestShader();
+		float tick = 0;
+
+	};
     
     class TextureContainer
     {
@@ -127,6 +148,9 @@ namespace Textures
 		std::shared_ptr<DamageShader> dmgShader;
 		std::shared_ptr<GlitchShader> glitchShader;
 		std::shared_ptr<DimShader> dimShader;
+		std::shared_ptr<ChargeShader> chargeShader;
+		std::shared_ptr<TestShader> testShader;
+
         std::map<std::string,sf::Shader&> shaders;
 		std::string dir;
         

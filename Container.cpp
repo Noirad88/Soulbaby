@@ -75,6 +75,14 @@ void Container::AddObjects()
                 
             }
 
+			else if ((QI)->properties["itemType"] == "ManaMeter")
+			{
+
+				std::unique_ptr<Entity::ManaMeter> ptr(new Entity::ManaMeter);
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "GameScene")
 			{
 
@@ -242,6 +250,17 @@ void Container::AddObjects()
 
 			}
 
+			else if ((QI)->properties["itemType"] == "PlayerChargeParticleSmall")
+			{
+
+				std::unique_ptr<Entity::PlayerChargeParticleSmall> ptr(new Entity::PlayerChargeParticleSmall);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ptr->objectSprite.move(ptr->vel.x * 4, ptr->vel.y * 4);
+				ptr->vel = -ptr->vel;
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "EnemyPart")
 			{
 
@@ -260,24 +279,6 @@ void Container::AddObjects()
 
 			}
 
-			else if ((QI)->properties["itemType"] == "Buddy")
-			{
-
-				std::unique_ptr<Entity::Buddy> ptr(new Entity::Buddy);
-				ptr->buddyPos = stoi((QI)->properties["BuddyPos"]);
-				if (ptr->buddyPos == 0)World::GetInstance()->WorldScene.playerPtr->BuddyA = ptr.get();
-				else if (ptr->buddyPos == 1)World::GetInstance()->WorldScene.playerPtr->BuddyAB = ptr.get();
-				else if (ptr->buddyPos == 2)World::GetInstance()->WorldScene.playerPtr->BuddyB = ptr.get();
-				else if (ptr->buddyPos == 3)World::GetInstance()->WorldScene.playerPtr->BuddyBB = ptr.get();
-				else if (ptr->buddyPos == 4)World::GetInstance()->WorldScene.playerPtr->BuddyC = ptr.get();
-				else if (ptr->buddyPos == 5)World::GetInstance()->WorldScene.playerPtr->BuddyCB = ptr.get();
-				else if (ptr->buddyPos == 6)World::GetInstance()->WorldScene.playerPtr->BuddyD = ptr.get();
-
-				ptr->objectSprite.setPosition(300, 300);
-
-				ObjectContainer.push_back(std::move(ptr));
-
-			}
 
 			else if ((QI)->properties["itemType"] == "ShieldEffect")
 			{
@@ -575,8 +576,8 @@ void Container::AddObjects()
 
 				// multiplying direction by 45 degrees gets us the direction player is shooting
 
-				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
-				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				RotateVector(ptr->vel,(stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation((stoi((QI)->properties["Direction"])));
 				ObjectContainer.push_back(std::move(ptr));
                 
             }

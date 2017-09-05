@@ -260,13 +260,23 @@ World::World(){
 	5 = spreader
 	*/
 
-	GlobalMembers.weapons[0] = 1;
-	GlobalMembers.weapons[1] = 1;
-	GlobalMembers.weapons[2] = 2;
-	GlobalMembers.weapons[3] = 2;
-	GlobalMembers.weapons[4] = 3;
-	GlobalMembers.weapons[5] = 3;
-	GlobalMembers.weapons[6] = 2;
+	GlobalMembers.weapons.reserve(7);
+	GlobalMembers.weapons.push_back(0);
+	GlobalMembers.weapons.push_back(0);
+	GlobalMembers.weapons.push_back(0);
+	GlobalMembers.weapons.push_back(0);
+	GlobalMembers.weapons.push_back(0);
+	GlobalMembers.weapons.push_back(0);
+	GlobalMembers.weapons.push_back(0);
+
+	GlobalMembers.weapons.at(0) = 1;
+	GlobalMembers.weapons.at(1) = 1;
+	GlobalMembers.weapons.at(2) = 0;
+	GlobalMembers.weapons.at(3) = 1;
+	GlobalMembers.weapons.at(4) = 1;
+	GlobalMembers.weapons.at(5) = 0;
+	GlobalMembers.weapons.at(6) = 0;
+
 
 }
 

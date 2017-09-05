@@ -26,7 +26,7 @@ namespace Textures{
     WaveShader::WaveShader(){
        
 
-		shader.loadFromStream(TextureContainer::shaderMap.at("sh_sinef"), TextureContainer::shaderMap.at("sh_wave"));
+		shader.loadFromStream(TextureContainer::shaderMap.at("sh_wave"), TextureContainer::shaderMap.at("sh_sinef"));
 	
 		objectTexture = *TextureContainer::textureMap.at("tx_map");
 
@@ -41,7 +41,7 @@ namespace Textures{
         // Setting smooth to true lets us use small maps even on larger images
         distortionMap.setSmooth(true);
         
-		//distortionMap = *TextureContainer::textureMap.at("tx_map");
+		distortionMap = *TextureContainer::textureMap.at("tx_map");
         
         renderTexture.create(400, 300);
         
@@ -69,6 +69,11 @@ namespace Textures{
 	{
 		shader.loadFromStream(TextureContainer::shaderMap.at("sh_glitch"), sf::Shader::Fragment);
 	}
+
+	ChargeShader::ChargeShader()
+	{
+		shader.loadFromStream(TextureContainer::shaderMap.at("sh_charge"), sf::Shader::Fragment);
+	}
     
     DamageShader::DamageShader()
     {
@@ -76,7 +81,13 @@ namespace Textures{
 
 	}
 
-    
+	TestShader::TestShader()
+	{
+		shader.loadFromStream(TextureContainer::shaderMap.at("sh_test"), sf::Shader::Fragment);
+
+	}
+
+
     Shader::~Shader(){
         
     }
@@ -84,10 +95,18 @@ namespace Textures{
     RedShader::~RedShader(){
         
     }
+
+	TestShader::~TestShader() {
+
+	}
     
     WaveShader::~WaveShader(){
         
     }
+
+	ChargeShader::~ChargeShader() {
+
+	}
 
 	GlitchShader::~GlitchShader() {
 
@@ -128,6 +147,37 @@ namespace Textures{
         shader.setParameter("riseFactor",.0f);
         
     }
+
+	void ChargeShader::Update() {
+
+		float r;
+		float g;
+		float b;
+
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		std::uniform_int_distribution<int> rand(0, 2);
+
+		r = rand(mt);
+		g = rand(mt);
+		b = rand(mt);
+
+		shader.setParameter("r",r);
+		shader.setParameter("g",g);
+		shader.setParameter("b",b);
+
+	}
+
+	void TestShader::Update() {
+
+		float sw = (sf::VideoMode::getDesktopMode().width / 480) * 480;
+		float sh = (sf::VideoMode::getDesktopMode().height / 270) * 270;
+		shader.setParameter("screenHeight", sh);
+		shader.setParameter("tick", tick);
+		tick += 0.001;
+
+	}
+
 
 	void GlitchShader::Update() {
 
@@ -243,6 +293,7 @@ namespace Textures{
         shaders.insert(std::pair<std::string,sf::Shader&>("redShader",redShader.shader));
         shaders.insert(std::pair<std::string,sf::Shader&>("waveShader",waveShader.shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("whiteShader", whiteShader.shader));
+
 		*/
     
     }
@@ -255,8 +306,8 @@ namespace Textures{
 		dmgShader = std::shared_ptr<DamageShader>(new DamageShader);
 		glitchShader = std::shared_ptr<GlitchShader>(new GlitchShader);
 		dimShader = std::shared_ptr<DimShader>(new DimShader);
-
-
+		chargeShader = std::shared_ptr<ChargeShader>(new ChargeShader);
+		testShader = std::shared_ptr<TestShader>(new TestShader);
 
 		shaders.insert(std::pair<std::string, sf::Shader&>("redShader", redShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("waveShader", waveShader.get()->shader));
@@ -264,7 +315,8 @@ namespace Textures{
 		shaders.insert(std::pair<std::string, sf::Shader&>("damageShader", dmgShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("glitchShader", glitchShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("dimShader", dimShader.get()->shader));
-
+		shaders.insert(std::pair<std::string, sf::Shader&>("chargeShader", chargeShader.get()->shader));
+		shaders.insert(std::pair<std::string, sf::Shader&>("testShader", testShader.get()->shader));
 
 		GameFont.loadFromStream(Fontdata);
 		GameFontSmall.loadFromStream(FontdataSmall);
@@ -301,6 +353,8 @@ namespace Textures{
         
         waveShader->Update();
 		glitchShader->Update();
+		chargeShader->Update();
+		testShader->Update();
         tick += 0.005;
         
     }

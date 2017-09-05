@@ -160,6 +160,8 @@
     <None Include="levels\map2_1.tmx" />
     <None Include="shaders\glitch.frag" />
     <None Include="shaders\dim.frag" />
+    <None Include="shaders\charge.frag" />
+    <None Include="shaders\test.frag" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SoulbabyPC1.rc" />
@@ -409,6 +411,27 @@
       <Filter>Assets</Filter>
     </Media>
     <Media Include="sfx\sfx_lightdash.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_open.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_select.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_knockwave.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_pcharge1.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_pcharge2.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_pcharge3.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_bigbang.wav">
       <Filter>Assets</Filter>
     </Media>
   </ItemGroup>
