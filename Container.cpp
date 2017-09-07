@@ -868,7 +868,7 @@ void Container::DrawObjects(sf::RenderTarget& window, class World& world)
         
         for (ObjectIterator it = ObjectContainer.begin(); it !=  ObjectContainer.end(); it++)
         {
-            if (!(*it)->Object::isDestroyed())
+            if ((*it)->Object::misDestroyed == false)
             {
                 (*it)->DrawShadow(*World::GetInstance()->windowWorld);
                 (*it)->Draw(*World::GetInstance()->windowWorld);
@@ -1077,6 +1077,7 @@ void Container::PlayerDamaged() {
 		World::GetInstance()->WorldScene.playerPtr->shield = 0;
 		World::GetInstance()->ScreenShake(10);
 		World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_hurtgood");
+		std::this_thread::sleep_for(std::chrono::milliseconds(150));
 
 
 	}

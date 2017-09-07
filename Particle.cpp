@@ -1157,39 +1157,52 @@ namespace Entity
     }
 
 	void Player::Bounce() {
+
+		objectSprite.move(-vel);
+
+		vel.y = 20;
+		vel.x = 0; 
+
+		//bounce dash in correct direction
+
+		if (movement == north) movement = south;
+		else if (movement == neast) {
+
+			if (objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x) movement = nwest;
+			else movement = seast;
+		}
+		else if (movement == nwest) {
+
+			if (objectHitBox.getPosition().x < 0) movement = neast;
+			else movement = swest;
+		}
+		else if (movement == east) movement = west;
+		else if (movement == south) movement = north;
+		else if (movement == swest) {
+
+			if (objectHitBox.getPosition().x < 0) movement = seast;
+			else movement = nwest;
+		}
+		else if (movement == seast) {
+
+			if (objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x) movement = swest;
+			else movement = neast;
+		}
+		else if (movement == west) movement = east;
+
+		RotateVector(vel, 45 * movement);
+
+		itemQueue dash;
+		dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+		dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
+		dash.properties["itemType"] = "ActionSpark";
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+
+		World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bouncyhit",false);
+
 		
-		int currentMovement = movement;
 
-		if ((World::GetInstance()->PlayerPressedButton(controlsDown)
-			&& World::GetInstance()->PlayerPressedButton(controlsLeft))) movement = swest;
-
-		else if ((World::GetInstance()->PlayerPressedButton(controlsLeft)
-			&& World::GetInstance()->PlayerPressedButton(controlsUp))) movement = nwest;
-
-		else if ((World::GetInstance()->PlayerPressedButton(controlsUp)
-			&& World::GetInstance()->PlayerPressedButton(controlsRight))) movement = neast;
-
-		else if ((World::GetInstance()->PlayerPressedButton(controlsRight)
-			&& World::GetInstance()->PlayerPressedButton(controlsDown))) movement = seast;
-
-		else if (World::GetInstance()->PlayerPressedButton(controlsDown)) movement = south;
-
-		else if (World::GetInstance()->PlayerPressedButton(controlsLeft)) movement = west;
-
-		else if (World::GetInstance()->PlayerPressedButton(controlsUp)) movement = north;
-
-		else if (World::GetInstance()->PlayerPressedButton(controlsRight)) movement = east;
-
-
-		if ((!World::GetInstance()->PlayerPressedButton(controlsRight)
-			&& !World::GetInstance()->PlayerPressedButton(controlsUp)
-			&& !World::GetInstance()->PlayerPressedButton(controlsDown)
-			&& !World::GetInstance()->PlayerPressedButton(controlsLeft)) 
-			|| currentMovement == movement
-			|| movement == currentMovement)
-
-			RotateVector(vel, 180);
-
+		//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	}
     
@@ -1215,19 +1228,20 @@ namespace Entity
 			vel.x = 0;
 			dashing = true;
 			RotateVector(vel, 45 * movement);
+			objectSprite.move(vel);
 			itemQueue dash;
 			dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
 			dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
 			dash.properties["itemType"] = "ActionSpark";
 			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_lightdash");
-			mana -= 10;
+			//mana -= (10 * chargeFlag) + 10;
 
 		}
 
-		else if (chargeFlag == 2 && mana >= 10) {
+		else if (chargeFlag == 2 && mana >= 10 * chargeFlag) {
 
-			vel.y = 10;
+			vel.y = 20;
 			vel.x = 0;
 			dashing = true;
 			hyperDash = true;
@@ -1237,9 +1251,12 @@ namespace Entity
 			dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
 			dash.properties["itemType"] = "ActionSpark";
 			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+			dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+			dash.properties["itemType"] = "DashEffect";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bigbang");
 			World::GetInstance()->ScreenShake(10);
-			mana -= 10;
+			//mana -= (10 * chargeFlag) + 10;
 
 		}
 
@@ -1247,19 +1264,18 @@ namespace Entity
     
 	void BattlePlayer::Update() {
 
-		std::cout << chargeFlag << std::endl;
 		//charging/dashing logic
 
 		//if player has let go of dash key, dash
 
 		if (jumpFlag == true && !World::GetInstance()->PlayerPressedButton(controlsC)) {
 
-			std::cout << "you've canceled the charge!" << std::endl;
+			std::cout << "charge commenced" << std::endl;
 			jumpFlag = false;
 
 			//do the appropraite charge move here
 
-			if (dashing == false && movement != idle) {
+			if ( movement != idle) {
 
 				DoChargeAttack();
 
@@ -1267,19 +1283,24 @@ namespace Entity
 
 			chargeFlag = 0;
 
-
 		}
 	
 		//if player has pressed dash key, initiate charge sequence
 
-		else if ( mana >= 10 && World::GetInstance()->PlayerPressedButton(controlsC) && jumpFlag == false && dashing == false) {
+		else if ( mana >= 10 && World::GetInstance()->PlayerPressedButton(controlsC) && jumpFlag == false) {
 
 			jumpFlag = true;
+
 		}
 
 		// if after so and so miliseconds, if player is still holding dash key, start charging phases
 
-		if (jumpFlag == true && chargeFlag == 0 && World::GetInstance()->Timer(*this, VERY_SLOW*2)) chargeFlag = 1;
+		if (jumpFlag == true && chargeFlag == 0 && World::GetInstance()->Timer(*this, VERY_SLOW * 2)) {
+
+			std::cout << "charge started" << std::endl;
+
+			chargeFlag = 1;
+		}
 
 		// otherwise, while player is charging, create particles
 
@@ -1300,13 +1321,15 @@ namespace Entity
 
 		// if already in charging phase, then every so and so milliseconds, increase charge phase
 
-		if (chargeFlag > 0 && World::GetInstance()->Timer(*this, VERY_SLOW * 8)) {
+		if (chargeFlag > 0 && jumpFlag == true && World::GetInstance()->Timer(*this, VERY_SLOW * 8,NODELAY)) {
 
+			std::cout << "adding to charge flag" << std::endl;
 				chargeFlag++;
 
 				// play charge sound and increase pitch for each phase
 
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_pcharge" + std::to_string(chargeFlag-1));
+
 				itemQueue charge;
 				charge.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
 				charge.properties["PosY"] = std::to_string(objectHitBox.getPosition().y - 8);
@@ -1315,7 +1338,6 @@ namespace Entity
 		}
 
 		//
-
 
 
 		// Walking
@@ -1358,31 +1380,70 @@ namespace Entity
 		// Animation
 
 
-		if (dashing == true) {
+			if (dashing == true) {
 
-			if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) {
+				if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) {
 
-				itemQueue dash;
-				dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-				dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-				dash.properties["itemType"] = "SlideEffect";
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+					if (hyperDash == true) {
+
+						itemQueue dash;
+						dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+						dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+						dash.properties["itemType"] = "SlideEffect";
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+						dash.properties["itemType"] = "Electricity";
+						dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x - 15 + RandomNumber(30, 0));
+						dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 15 + RandomNumber(30, 0));
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+						dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x - 15 + RandomNumber(30, 0));
+						dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 15 + RandomNumber(30, 0));
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+
+					}
+
+					else {
+
+						itemQueue dash;
+						dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+						dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+						dash.properties["itemType"] = "SlideEffect";
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+					}
+				}
+
+				if (World::GetInstance()->Timer(*this, 140000.0)) {
+
+					vel.x *= 0.3;
+					vel.y *= 0.3;
+
+
+				}
+
+				if (hyperDash == true) {
+
+					if (World::GetInstance()->Timer(*this, 710000.0)) {
+
+						dashing = false;
+						hyperDash = false;
+						jumpFlag = false;
+
+					}
+
+				}
+
+				else {
+
+					if (World::GetInstance()->Timer(*this, 610000.0)) {
+
+						dashing = false;
+						hyperDash = false;
+						jumpFlag = false;
+
+					}
+
+				}
 			}
-
-			if (World::GetInstance()->Timer(*this, 140000.0)) {
-
-				vel.x *= 0.3;
-				vel.y *= 0.3;
-
-			}
-
-			if (World::GetInstance()->Timer(*this, 510000.0)) {
-
-				dashing = false;
-
-			}
-
-		}
+		
 
 
 		else if (movement != idle) {
@@ -1423,13 +1484,23 @@ namespace Entity
 
 		// rotates speed in the correct direction
 
-		if (dashing == false) RotateVector(vel, 45 * movement);
+		if (dashing == false) {
+
+			if (movement == idle) {
+
+				vel.x = 0;
+				vel.y = 0;
+
+			}
+
+			RotateVector(vel, 45 * movement);
+
+		}
 
 		/*
 
 		Firing:
 		Here we check the currentweapon and fire the correct projectile 
-
 
 		weapons[0] = pulse (default)
 
@@ -1561,7 +1632,7 @@ namespace Entity
 				
 		objectSprite.move(vel.x, vel.y);
 		hotSpot.x = objectSprite.getPosition().x;
-		hotSpot.y = objectSprite.getPosition().y - objectSprite.getTextureRect().height / 3;
+		hotSpot.y = objectSprite.getPosition().y - objectSprite.getTextureRect().height / 2;
 		UpdateShadow();
 
 		*posXtemp1 = objectSprite.getPosition().x;
@@ -1606,7 +1677,6 @@ namespace Entity
         World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_death");
         
         World::GetInstance()->ScreenShake(20);
-		//World::GetInstance()->WorldScene.playerPtr = nullptr;
 
 
     }
@@ -1888,6 +1958,7 @@ namespace Entity
 		objectSprite.setTextureRect(sf::IntRect(25, 143, 17, 41));
 		SetEffectOrigin();
 		maxFrame = 7;
+		hasParent = true;
 		animSpeed = VERY_FAST;
 
 	}
@@ -3931,7 +4002,23 @@ namespace Entity
     
     bool Object::isDestroyed(){
         
-        if((objectHitBox.getPosition().x < 0 || objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x || objectHitBox.getPosition().y < 0 || objectHitBox.getPosition().y > World::GetInstance()->WorldScene.levelContainer->lvlSize.y) && type != "GUI") misDestroyed = true;
+
+		if (World::GetInstance()->WorldScene.playerPtr) {
+
+			if (this == World::GetInstance()->WorldScene.playerPtr) {
+
+				if ((objectHitBox.getPosition().x < 0 || objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x || objectHitBox.getPosition().y < 0 || objectHitBox.getPosition().y > World::GetInstance()->WorldScene.levelContainer->lvlSize.y)) {
+					
+					Entity::Object* obj = this;
+					Entity::BattlePlayer* pobj = dynamic_cast<Entity::BattlePlayer*>(obj);
+					if (pobj->hyperDash == true)pobj->Bounce();
+				}
+
+			}
+
+		}
+
+		else  if ((objectHitBox.getPosition().x < 0 || objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x || objectHitBox.getPosition().y < 0 || objectHitBox.getPosition().y > World::GetInstance()->WorldScene.levelContainer->lvlSize.y) && type != "GUI") misDestroyed = true;
         
         return misDestroyed;
         
@@ -3976,9 +4063,9 @@ namespace Entity
             enemyList[10] = "Mozza";
             enemyList[11] = "Mozza";
 
-            enemyList[12] = "Squid";
-            enemyList[13] = "Star";
-            enemyList[14] = "Roach";
+            enemyList[12] = "";
+            enemyList[13] = "";
+            enemyList[14] = "";
 
             enemyList[15] = "Mozza";
             enemyList[16] = "Mozza";
