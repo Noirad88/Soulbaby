@@ -279,6 +279,25 @@ void Container::AddObjects()
 
 			}
 
+			else if ((QI)->properties["itemType"] == "ChargeWaveAttack")
+			{
+
+				std::unique_ptr<Entity::ChargeWaveAttack> ptr(new Entity::ChargeWaveAttack);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "ElectricNode")
+			{
+
+				std::unique_ptr<Entity::ElectricNode> ptr(new Entity::ElectricNode);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				*(QI)->ptrparent = ptr.get();
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 
 			else if ((QI)->properties["itemType"] == "ShieldEffect")
 			{
@@ -513,6 +532,16 @@ void Container::AddObjects()
                 
             }
 
+			else if ((QI)->properties["itemType"] == "PlayerDashBall")
+			{
+
+				std::unique_ptr<Entity::PlayerDashBall> ptr(new Entity::PlayerDashBall);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+
 			else if ((QI)->properties["itemType"] == "PlayerLaser2")
 			{
 
@@ -559,11 +588,14 @@ void Container::AddObjects()
             {
                 
                 std::unique_ptr<Entity::SpriteClone> ptr(new Entity::SpriteClone);
-                ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]),stoi((QI)->properties["PosY"]));
-                ptr->objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture((QI)->properties["Sprite"]));
-                ptr->objectSprite.setTextureRect(sf::IntRect(stoi((QI)->properties["RectX"]),stoi((QI)->properties["RectY"]),stoi((QI)->properties["RectWidth"]),stoi((QI)->properties["RectHeight"])));
-                ptr->objectSprite.setOrigin(stoi((QI)->properties["SpriteOriginX"]),stoi((QI)->properties["SpriteOriginY"]));
-				if (((QI)->properties["Color"]) == "Red") ptr->objectSprite.setColor(sf::Color::Red);
+				ptr->objectSprite = (QI)->parent->objectSprite;
+
+				if (((QI)->properties.count("Color"))) {
+
+					if (((QI)->properties["Color"]) == "Red") ptr->objectSprite.setColor(sf::Color::Red);
+				}
+
+				else ptr->objectSprite.setColor(sf::Color(28, 203, 158));
                 ObjectContainer.push_back(std::move(ptr));
                 
             }

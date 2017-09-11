@@ -75,6 +75,8 @@ namespace Entity
 
 		std::map<std::string, std::string> properties;
 		Entity::Object* parent = nullptr;
+		Entity::Object** ptrparent = nullptr;
+
 
 	};
 
@@ -352,10 +354,13 @@ namespace Entity
 		static bool dead;
 		bool menuUp = false;
 		int chargeFlag = 0;
+		int chargeCounter = 0;
 		bool jumpFlag = false;
+		bool dashSave = true;
 		int shield = 41;
 		sf::Sprite sshield;
 		int mana = 0;
+
 
 		ManaMeter* PlayerManaMeter;
 
@@ -406,6 +411,9 @@ namespace Entity
 		float emitTime = 0;
 		bool emitScatter = false;
 		int emitCount = 1;
+
+		Object* parent = nullptr;
+
 
 	};
 
@@ -524,6 +532,23 @@ namespace Entity
 
 	};
 
+	class ElectricNode : public Projectile {
+
+	public:
+		ElectricNode();
+		~ElectricNode();
+	};
+
+	class PlayerDashBall : public Projectile {
+
+	public:
+		PlayerDashBall();
+		void Update();
+		void isCollided(int var = 0);
+		~PlayerDashBall();
+
+	};
+
 	class PlayerLaser2 : public PlayerLaser {
 
 	public:
@@ -598,7 +623,7 @@ namespace Entity
 		int frame = 0;
 		float gravity = 0.4f;
 		bool isAnimated = true;
-		bool hasParent = false;
+		Object* parent;
 
 	};
 
@@ -645,6 +670,7 @@ namespace Entity
 		float deacceleration = 0;
 		float acceleration = 0;
 		bool rotation = false;
+
 
 	};
 
@@ -764,6 +790,18 @@ namespace Entity
 	public:
 		PlayerChargeParticleSmall();
 		~PlayerChargeParticleSmall();
+
+	};
+
+	class ChargeWaveAttack : public Fixed {
+	public:
+		ChargeWaveAttack();
+		void Update();
+		~ChargeWaveAttack();
+		Object* projectileNode;
+		Object* projectileNode2;
+		Object* projectileNode3;
+
 
 	};
 
