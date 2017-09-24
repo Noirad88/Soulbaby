@@ -277,6 +277,8 @@ World::World(){
 	GlobalMembers.weapons.at(5) = 0;
 	GlobalMembers.weapons.at(6) = 0;
 
+	GlobalMembers.levelsCompleted.at(0) = 2;
+
 
 }
 
@@ -296,6 +298,10 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     
     CreateCharacterScripts();
     GlobalMembers.levelsCompleted.fill(0);
+	GlobalMembers.levelsCompleted.at(3) = 2;
+	GlobalMembers.levelsCompleted.at(5) = 2;
+
+
 
 	WorldScene.textureContainer.CreateShaderInstances();
 	WorldScene.textureContainer.gameView = &Screen;
@@ -533,7 +539,7 @@ void World::UpdateCamera(){
 
 				viewPos.x += (playerPosX - Screen.getCenter().x) / vel;
 				viewPos.y += (playerPosY - Screen.getCenter().y) / vel;
-				Screen.setCenter(viewPos.x, viewPos.y);
+				Screen.setCenter(double(viewPos.x), double(viewPos.y));
 
 			}
 

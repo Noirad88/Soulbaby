@@ -274,7 +274,7 @@ void Container::AddObjects()
 			{
 
 				std::unique_ptr<Entity::EnemySpark> ptr(new Entity::EnemySpark);
-				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				//ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
@@ -719,6 +719,24 @@ void Container::AddObjects()
 
 			}
 
+			else if ((QI)->properties["itemType"] == "Family")
+			{
+
+				std::unique_ptr<Entity::Family> ptr(new Entity::Family);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "Tower")
+			{
+
+				std::unique_ptr<Entity::Tower> ptr(new Entity::Tower);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "Mask")
 			{
 
@@ -745,6 +763,15 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "Bricky")
+			{
+
+				std::unique_ptr<Entity::Bricky> ptr(new Entity::Bricky);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "Mozza")
             {
@@ -768,6 +795,15 @@ void Container::AddObjects()
 			{
 
 				std::unique_ptr<Entity::Squid> ptr(new Entity::Squid);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "Raider")
+			{
+
+				std::unique_ptr<Entity::Raider> ptr(new Entity::Raider);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
 				ObjectContainer.push_back(std::move(ptr));
 

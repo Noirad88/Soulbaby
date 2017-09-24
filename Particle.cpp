@@ -612,7 +612,7 @@ namespace Entity
 
 		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
 		objectSprite.setTextureRect(sf::IntRect(0, 42 + (32 * 0), 16, 32));
-		SetHitBox(sf::Vector2f(objectSprite.getTextureRect().width, objectSprite.getTextureRect().height), 2);
+		SetHitBox(sf::Vector2f(objectSprite.getTextureRect().width, objectSprite.getTextureRect().height+2), 2);
 		Object::type = "Prop";
 
 	}
@@ -1158,10 +1158,14 @@ namespace Entity
 
 	void Player::Bounce() {
 
-		objectSprite.move(-vel);
+		// Need to bounce the player back inside of arena; could be far outside and will get stuck
 
-		vel.y = 20;
-		vel.x = 0; 
+		if (objectSprite.getPosition().x <= 0) objectSprite.setPosition(1, objectSprite.getPosition().y);
+		else if (objectSprite.getPosition().x >= World::GetInstance()->WorldScene.levelContainer->lvlSize.x) objectSprite.setPosition(World::GetInstance()->WorldScene.levelContainer->lvlSize.x-1, objectSprite.getPosition().y);
+		if (objectSprite.getPosition().y <= 0) objectSprite.setPosition(objectSprite.getPosition().x, 1);
+		else if (objectSprite.getPosition().y >= World::GetInstance()->WorldScene.levelContainer->lvlSize.y) objectSprite.setPosition(objectSprite.getPosition().x, World::GetInstance()->WorldScene.levelContainer->lvlSize.y-1);
+
+		sf::Vector2f tempPos = objectSprite.getPosition();
 
 		//bounce dash in correct direction
 
@@ -1190,14 +1194,21 @@ namespace Entity
 		}
 		else if (movement == west) movement = east;
 
+		//accelerate and rotate angle to correct direction
+
+		vel.y = 350;
+		vel.x = 0;
 		RotateVector(vel, 45 * movement);
+		tempPos += vel;
+		vel = tempPos;
+
+		//effects and sxf
 
 		itemQueue dash;
 		dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
 		dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
 		dash.properties["itemType"] = "ActionSpark";
 		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
-
 		World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bouncyhit");
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(75));
@@ -1224,6 +1235,9 @@ namespace Entity
 		std::cout << "charge commenced" << std::endl;
 		jumpFlag = false;
 
+		sf::Vector2f tempPos = objectSprite.getPosition();
+
+
 		if (chargeFlag == 0 && mana >= 10) {
 
 			if ((World::GetInstance()->PlayerPressedButton(controlsDown)
@@ -1246,11 +1260,13 @@ namespace Entity
 
 			else if (World::GetInstance()->PlayerPressedButton(controlsRight)) movement = east;
 
-			vel.y = 6;
+
+			vel.y = 100;
 			vel.x = 0;
-			dashing = true;
 			RotateVector(vel, 45 * movement);
-			objectSprite.move(vel);
+			tempPos += vel;
+			vel = tempPos;
+			dashing = true;
 			itemQueue dash;
 			dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
 			dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
@@ -1264,11 +1280,34 @@ namespace Entity
 
 		else if (chargeFlag == 1 && mana >= 10 * chargeFlag) {
 
-			vel.y = 12;
+			if ((World::GetInstance()->PlayerPressedButton(controlsDown)
+				&& World::GetInstance()->PlayerPressedButton(controlsLeft))) movement = swest;
+
+
+			else if ((World::GetInstance()->PlayerPressedButton(controlsLeft)
+				&& World::GetInstance()->PlayerPressedButton(controlsUp))) movement = nwest;
+
+			else if ((World::GetInstance()->PlayerPressedButton(controlsUp)
+				&& World::GetInstance()->PlayerPressedButton(controlsRight))) movement = neast;
+
+			else if ((World::GetInstance()->PlayerPressedButton(controlsRight)
+				&& World::GetInstance()->PlayerPressedButton(controlsDown))) movement = seast;
+
+			else if (World::GetInstance()->PlayerPressedButton(controlsDown)) movement = south;
+
+			else if (World::GetInstance()->PlayerPressedButton(controlsLeft)) movement = west;
+
+			else if (World::GetInstance()->PlayerPressedButton(controlsUp)) movement = north;
+
+			else if (World::GetInstance()->PlayerPressedButton(controlsRight)) movement = east;
+
+			vel.y = 350;
 			vel.x = 0;
+			RotateVector(vel, 45 * movement);
+			tempPos += vel;
+			vel = tempPos;
 			dashing = true;
 			hyperDash = true;
-			RotateVector(vel, 45 * movement);
 			itemQueue dash;
 			dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
 			dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
@@ -1293,7 +1332,6 @@ namespace Entity
 			wave.properties["itemType"] = "ChargeWaveAttack";
 			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(wave);
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bigbang");
-			 
 
 			//mana -= (10 * chargeFlag) + 10;
 
@@ -1306,13 +1344,14 @@ namespace Entity
     
 	void BattlePlayer::Update() {
 
+
      //charging/dashing logic
 
 		//if player has let go of dash key, dash
 
 		if (jumpFlag == true && !World::GetInstance()->PlayerPressedButton(controlsC)) {
 
-
+			std::cout << "DASH START" << std::endl;
 			//do the appropraite charge move here
 			DoChargeAttack();
 			dashSave = true;
@@ -1378,7 +1417,6 @@ namespace Entity
 
 
 
-
 		// Walking
 
 		if (dashing == false) {
@@ -1417,23 +1455,21 @@ namespace Entity
 		}
 		
 
-		// Animation
 
+		// Dashing/Hyper dashing logic
 
-			if (dashing == true) {
+		if (World::GetInstance()->PlayerPressedButton(controlsC) && dashing == true && dashSave == true) {
 
-				if (World::GetInstance()->PlayerPressedButton(controlsC)) {
+			dashing = false;
+			dashSave = false;
+			std::cout << "DASH BREAK" << std::endl;
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_knockwave");
+			vel.x = 0;
+			vel.y = 0;
 
-					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_knockwave");
-					dashSave = false;
-					vel.x = 0;
-					vel.y = 0;\
-					chargeFlag = 0;
-					chargeCounter = 0;
-					dashing = false;
-					hyperDash = false;
-					jumpFlag = false;
-				}
+		}
+
+			else if (dashing == true) {
 
 				if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) {
 
@@ -1460,53 +1496,59 @@ namespace Entity
 					}
 				}
 
-				if (World::GetInstance()->Timer(*this, 140000.0)) {
+				
+					//decrease speed of amount dependent on if hyper or regular dash
 
 					if (hyperDash == true) {
-					
-						vel.x *= 0.6;
-						vel.y *= 0.6;
+
+						sf::Vector2f tempPos = objectSprite.getPosition();
+						tempPos.x += (vel.x - objectSprite.getPosition().x) / 20;
+						tempPos.y += (vel.y - objectSprite.getPosition().y) / 20;
+						objectSprite.setPosition(double(tempPos.x), double(tempPos.y));
+
+						if (abs((vel.x - objectSprite.getPosition().x) / 5) <= 0.5 && abs((vel.y - objectSprite.getPosition().y) / 5) <= 0.5) {
+
+							std::cout << "DASH ENDS" << std::endl;
+							dashing = false;
+							hyperDash = false;
+							jumpFlag = false;
+							vel.x = 0;
+							vel.y = 0;
+
+						}
 
 				    }
 
-					else {
+					else if(hyperDash == false){
 
-						vel.x *= 0.3;
-						vel.y *= 0.3;
+						sf::Vector2f tempPos = objectSprite.getPosition();
+						tempPos.x += (vel.x - objectSprite.getPosition().x) / 10;
+						tempPos.y += (vel.y - objectSprite.getPosition().y) / 10;
+						objectSprite.setPosition(double(tempPos.x),double(tempPos.y));
+
+						if ( abs((vel.x - objectSprite.getPosition().x) / 5) <= 0.5 && abs((vel.y - objectSprite.getPosition().y) / 5) <= 0.5) {
+
+							std::cout << "DASH ENDS" << std::endl;
+							dashing = false;
+							hyperDash = false;
+							jumpFlag = false;
+							vel.x = 0;
+							vel.y = 0;
+
+						}
 
 					}
-				}
 
+			
+				objectSprite.setTextureRect(sf::IntRect(0, 192 + (movement * FRAME), 16, spriteHeight));
 				
-				if (hyperDash == true) {
 
-					if (World::GetInstance()->Timer(*this, 2000000.0)) {
 
-						dashing = false;
-						hyperDash = false;
-						jumpFlag = false;
-
-					}
-
-				}
-
-				else {
-
-					if (World::GetInstance()->Timer(*this, 610000.0)) {
-
-						dashing = false;
-						hyperDash = false;
-						jumpFlag = false;
-
-					}
-
-				}
-				
 			}
 		
 
 
-		else if (movement != idle) {
+		else if (movement != idle && dashing == false) {
 
 			vel.y = 2;
 			vel.x = 0;
@@ -1529,13 +1571,15 @@ namespace Entity
 
 		}
 
+		//
+
 		else if (movement == idle) {
 
 			objectSprite.setTextureRect(sf::IntRect(0, objectSprite.getTextureRect().top, spriteWidth, spriteHeight));
 
 		}
 
-		if (World::GetInstance()->Timer(*this, 140000.0, NODELAY) && dashing == false) {
+		if (World::GetInstance()->Timer(*this, 140000.0, NODELAY) && dashing == false && hyperDash == false) {
 
 			vel.x *= 0.25;
 			vel.y *= 0.25;
@@ -1556,6 +1600,8 @@ namespace Entity
 			RotateVector(vel, 45 * movement);
 
 		}
+
+
 
 		/*
 
@@ -1690,7 +1736,11 @@ namespace Entity
 
 		}
 				
-		objectSprite.move(vel.x, vel.y);
+		if (dashing == true || hyperDash == true) {
+
+		}
+		else objectSprite.move(double(vel.x), double(vel.y));
+
 		hotSpot.x = objectSprite.getPosition().x;
 		hotSpot.y = objectSprite.getPosition().y - objectSprite.getTextureRect().height / 2;
 		UpdateShadow();
@@ -1699,6 +1749,7 @@ namespace Entity
 		*posYtemp2 = objectSprite.getPosition().y;
 
 		sshield.setPosition(objectSprite.getPosition().x - 8, (objectSprite.getPosition().y - 32)+41-shield);
+
 
 	}
 
@@ -1714,6 +1765,18 @@ namespace Entity
 			if(shield != 0 && shield != 41) World::GetInstance()->DrawObject(sshield);
 
 
+
+	}
+
+	void DeathPoof::Draw(sf::RenderTarget& window) {
+
+		World::GetInstance()->DrawObject(objectSprite, "chargeShader");
+
+	}
+
+	void EnemyPart::Draw(sf::RenderTarget& window) {
+
+		World::GetInstance()->DrawObject(objectSprite, "chargeShader");
 
 	}
     
@@ -1929,6 +1992,10 @@ namespace Entity
 		dash.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
 		dash.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
 		dash.ptrparent = &projectileNode;
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+		dash.ptrparent = &projectileNode2;
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
+		dash.ptrparent = &projectileNode3;
 		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
 
 	}
@@ -2230,12 +2297,13 @@ namespace Entity
 		SetEffectOrigin();
 		SetHitBox(sf::Vector2f(3, 6));
 		active = true;
-		acceleration = 0.15;
+		acceleration = 0.05;
 		emitter = "EnemySpark";
 		emitTime = SLOW;
 		emitScatter = true;
 		emitCount = 3;
 		maxFrame = 1;
+		rotation = true;
 
 	}
     
@@ -2337,15 +2405,14 @@ namespace Entity
         objectSprite.setOrigin(5,5);
         SetEffectOrigin();
         vel.y = 5;
-		damage = 7;
+		damage = 9;
 		maxFrame = 2;
-        SetHitBox(sf::Vector2f(4,4));
+        SetHitBox(sf::Vector2f(16,16));
         
     }
 
 	ElectricNode::ElectricNode() : Projectile()
 	{
-
 		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
 		objectSprite.setTextureRect(sf::IntRect(0, 32, 20, 20));
 		objectSprite.setOrigin(5, 5);
@@ -2354,6 +2421,7 @@ namespace Entity
 		damage = 14;
 		maxFrame = 4;
 		SetHitBox(sf::Vector2f(16, 16));
+		destroyOnImpact = false;
 
 	}
 
@@ -2403,15 +2471,14 @@ namespace Entity
     
     PlayerRepeater::PlayerRepeater() : Projectile()
     {
-        
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
         objectSprite.setTextureRect(sf::IntRect(0, 224, 5, 14));
         objectSprite.setOrigin(2.5,2);
         SetEffectOrigin();
         vel.y = 4;
-        damage = 2;
+        damage = 4;
         maxFrame = 2;
-        SetHitBox(sf::Vector2f(4,4));
+        SetHitBox(sf::Vector2f(16,16));
     
     }
 
@@ -2827,18 +2894,29 @@ namespace Entity
 
 	void ChargeWaveAttack::Update() {
 
-		Fixed::Update();
+		count+=0.1;
 
+		Fixed::Update();
 
 		if (projectileNode) {
 
-			int nPosX = objectSprite.getPosition().x + (cos(World::GetInstance()->clock2.getElapsedTime().asSeconds() * 100) + 50);
-			int nPosY = objectSprite.getPosition().y + (sin(World::GetInstance()->clock2.getElapsedTime().asSeconds() * 100) + 50);
+			std::cout << time << std::endl;
+
+			float nPosX = objectSprite.getPosition().x + (cos(count) * (count*10));
+			float nPosY = objectSprite.getPosition().y + (sin(count) * (count*10));
+			float nPosX2 = objectSprite.getPosition().x + (cos(count+8) * (count*10));
+			float nPosY2 = objectSprite.getPosition().y + (sin(count+8) * (count*10));
+			float nPosX3 = objectSprite.getPosition().x + (cos(count +17) * (count * 10));
+			float nPosY3 = objectSprite.getPosition().y + (sin(count +17) * (count * 10));
 			
 			projectileNode->objectSprite.setPosition(nPosX, nPosY);
+			projectileNode2->objectSprite.setPosition(nPosX2, nPosY2);
+			projectileNode3->objectSprite.setPosition(nPosX3, nPosY3);
+
 		
 		
 		}
+
 	}
     
     void PlayerBeam::Update(){
@@ -3294,6 +3372,7 @@ namespace Entity
 
 	void PlayerDashBall::isCollided(int var) {
 
+
 	}
     
     void PlayerRepeater::isCollided(int var){
@@ -3493,7 +3572,6 @@ namespace Entity
 
 		if (pobj->active == true) {
 
-			if (a->velZ >= -3) {
 
 				if (World::GetInstance()->Timer(this, NORMAL, NODELAY)) {
 
@@ -3537,8 +3615,6 @@ namespace Entity
 
 					}
 
-
-				}
 
 			}
 		}
@@ -3675,7 +3751,7 @@ namespace Entity
     
     void Object::DrawShadow(sf::RenderTarget& window)
     {
-        
+		//World::GetInstance()->DrawObject(objectHitBox);
         World::GetInstance()->DrawObject(objectShadow);
         
     }
@@ -4194,6 +4270,7 @@ namespace Entity
     
     int Enemy::totalEnemies = 0;
     std::array<std::string,26> LevelManager::enemyList;
+	int Enemy::spriteSheetHeight = 424;
     
     LevelManager::LevelManager() : Object(){
         
@@ -4215,6 +4292,10 @@ namespace Entity
             enemyList[4] = "Spore";
             enemyList[5] = "Roach";
 
+			enemyList[3] = "";
+			enemyList[4] = "";
+			enemyList[5] = "";
+
             enemyList[6] = "";
             enemyList[7] = "";
             enemyList[8] = "";
@@ -4223,9 +4304,9 @@ namespace Entity
             enemyList[10] = "Mozza";
             enemyList[11] = "Mozza";
 
-            enemyList[12] = "";
-            enemyList[13] = "";
-            enemyList[14] = "";
+            enemyList[12] = "Tower";
+            enemyList[13] = "Family";
+            enemyList[14] = "Bricky";
 
             enemyList[15] = "Mozza";
             enemyList[16] = "Mozza";
@@ -4348,7 +4429,7 @@ namespace Entity
         SetCharacterOrigin();
         SetShadow();
         type = "Actor";
-        SetHitBox(sf::Vector2f(100,100),0);
+        SetHitBox(sf::Vector2f(50,50),0);
         
     }
     
@@ -4402,13 +4483,24 @@ namespace Entity
         objectSprite.setColor(sf::Color(255,255,255,0));
         hurtPos.x = 0;
         hurtPos.y = 0;
-        SetHitBox(sf::Vector2f(16,16),1);
+        SetHitBox(sf::Vector2f(24,24),1);
 		hotSpot.x = 0;
 		hotSpot.y = 0;
 		AssignedAttack = 0;
 
 
     }
+
+	void Enemy::SetSpriteRedForHealth() {
+
+		float percent = 0;
+
+		if(health <= 0) percent = maxHealth / 1;
+		else percent = maxHealth / health;
+		float red = 255 / percent;
+		objectSprite.setColor(sf::Color(255, red, red, 255));
+
+	}
     
     EnemyNode::EnemyNode() : Enemy()
     {
@@ -4426,9 +4518,39 @@ namespace Entity
 		enemyMode = 1;
 		AssignedBehavior = &Enemy::FollowPlayer;
 		AssignedMovement = &Enemy::MoveJump;
-		maxhealth = health;
+		maxHealth = health;
 
     }
+
+	Bricky::Bricky() : Enemy()
+	{
+		objectSprite.setTextureRect(sf::IntRect(87, 212, 21, 28));
+		SetCharacterOrigin();
+		SetShadow();
+		health = 5;
+		enemyMode = 1;
+		AssignedBehavior = &Enemy::FollowPlayer;
+		AssignedMovement = &Enemy::MoveWalk;
+		maxHealth = health;
+		speed = 1;
+
+	}
+
+	Raider::Raider() : Enemy()
+	{
+		objectSprite.setTextureRect(sf::IntRect(0, 144, 76, 67));
+		SetCharacterOrigin();
+		SetShadow();
+		health = 30;
+		enemyMode = 1;
+		animationSpeed = VERY_FAST;
+		AssignedBehavior = &Enemy::FollowPlayer;
+		AssignedMovement = &Enemy::MoveWalk;
+		maxHealth = health;
+		speed = 2;
+		shakey = 1;
+
+	}
 
 	Spore::Spore() : Enemy()
 	{
@@ -4441,7 +4563,7 @@ namespace Entity
 		AssignedMovement = &Enemy::MoveWalk;
 		flatAnimation = true;
 		speed = 1.5;
-		maxhealth = health;
+		maxHealth = health;
 
 	}
 
@@ -4460,18 +4582,38 @@ namespace Entity
 	Roach::Roach() : Enemy()
 	{
 		objectSprite.setTextureRect(sf::IntRect(0, 117, 37, 16));
+		SetHitBox(sf::Vector2f(38, 17), 1);
 		SetCharacterOrigin();
 		SetShadow();
 		health = 10;
 		AssignedBehavior = &Enemy::FollowPlayer;
 		AssignedMovement = &Enemy::MoveSlide;
 		animationSpeed = VERY_FAST;
-		maxhealth = health;
+		maxHealth = health;
 
 
 		// For roaches, speed is the DISTANCE the enemy will move
 
 		speed = 15;
+
+	}
+
+	Tower::Tower() : Enemy() {
+
+		objectSprite.setTextureRect(sf::IntRect(211, 144, 48, 122));
+		SetCharacterOrigin();
+		SetShadow();
+		health = 280;
+		flatAnimation = true;
+		animationSpeed = VERY_SLOW;
+		if(RandomNumber(1,0) == 0) AssignedBehavior = &Enemy::RandomPosition;
+		else AssignedBehavior = &Enemy::FollowPlayer;
+		AssignedMovement = &Enemy::MoveWalk;
+		AssignedAttack = &Enemy::CircleShoot;
+		SetHitBox(sf::Vector2f(20, 110),0);
+		maxHealth = health;
+		speed = 0.5;
+		bigDaddy = true;
 
 	}
 
@@ -4487,9 +4629,9 @@ namespace Entity
 		AssignedBehavior = &Enemy::RandomPosition;
 		AssignedMovement = &Enemy::MoveWalk;
 		AssignedAttack = &Enemy::DoubleCast;
-		SetHitBox(sf::Vector2f(45, 70), 1);
-		maxhealth = health;
-
+		SetHitBox(sf::Vector2f(70, 70), 0);
+		maxHealth = health;
+		bigDaddy = true;
 
 		//Set child sprite(wings)
 		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_enemies"));
@@ -4513,7 +4655,7 @@ namespace Entity
 		AssignedMovement = &Enemy::MoveWalk;
 		animationSpeed = 1000.0;
 		transition = false;
-		maxhealth = health;
+		maxHealth = health;
 
 
         
@@ -4531,8 +4673,24 @@ namespace Entity
 		AssignedMovement = &Enemy::MoveWalk;
 		animationSpeed = 2000.0;
 		transition = false;
-		maxhealth = health;
+		maxHealth = health;
 
+
+	}
+
+	Family::Family() : Enemy()
+	{
+		objectSprite.setTextureRect(sf::IntRect(46, 337, 21, 16));
+		SetCharacterOrigin();
+		SetShadow();
+		speed = 1;
+		health = 7;
+		animationSpeed = FAST;
+		AssignedBehavior = &Enemy::FollowPlayer;
+		AssignedMovement = &Enemy::MoveWalk;
+		AssignedAttack = &Enemy::SelfDestruct;
+		SetHitBox(sf::Vector2f(16, 16), 1);
+		maxHealth = health;
 
 	}
 
@@ -4548,10 +4706,8 @@ namespace Entity
 		AssignedBehavior = &Enemy::FollowPlayer;
 		AssignedMovement = &Enemy::MoveWalk;
 		AssignedAttack = &Enemy::Laser;
-		SetHitBox(sf::Vector2f(25, 35), 1);
-		maxhealth = health;
-
-
+		SetHitBox(sf::Vector2f(32, 42), 1);
+		maxHealth = health;
 
 	}
     
@@ -4570,7 +4726,7 @@ namespace Entity
 		flatAnimation = false;
 		enemyMode = 1;
 		hotSpot.x = 20;
-		maxhealth = health;
+		maxHealth = health;
 
 		hotSpot.y = 30;
     
@@ -4586,7 +4742,7 @@ namespace Entity
 		health = 70;
 		SetHitBox(sf::Vector2f(30, 40), 1);
 		transition = false;
-		maxhealth = health;
+		maxHealth = health;
 
 
 
@@ -4687,10 +4843,22 @@ namespace Entity
 		vel.x = 0;
 		vel.y = -speed;
 
-		if (World::GetInstance()->Timer(*this, 800000.0, NODELAY) && velZ == 0) {
+		if (shakey == 0) {
+			if (World::GetInstance()->Timer(*this, 800000.0, NODELAY) && velZ == 0) {
 
-			targetPosition.x = RandomNumber(600);
-			targetPosition.y = RandomNumber(600);
+				targetPosition.x = RandomNumber(600);
+				targetPosition.y = RandomNumber(600);
+			}
+		}
+
+		else {
+
+			if (World::GetInstance()->Timer(*this, VERY_SLOW*5, NODELAY) && velZ == 0) {
+
+				targetPosition.x = RandomNumber(600);
+				targetPosition.y = RandomNumber(600);
+			}
+
 		}
 
 		RotateVector(vel, -(GetAngle(objectSprite.getPosition(), targetPosition)));
@@ -4816,6 +4984,80 @@ namespace Entity
 
 	}
 
+	void Enemy::CircleShoot() {
+		
+		//World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_enemycharge");
+
+
+		if (attacking == false) {
+
+				// shoot, but wait for charge particles first
+			if (World::GetInstance()->Timer(*this, FAST)) {
+
+				Entity::itemQueue part;
+				part.properties["itemType"] = "EnemyChargeParticle";
+				part.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
+				part.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(part);
+
+			}
+
+				if (World::GetInstance()->Timer(*this, VERY_SLOW*6)) {
+
+					itemQueue bullet;
+					bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+					bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y-16);
+					bullet.properties["itemType"] = "HauzerSpear";
+					bullet.properties["Speed"] = std::to_string(2);
+					bullet.properties["Direction"] = std::to_string(0);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+					bullet.properties["Direction"] = std::to_string(45);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+					bullet.properties["Direction"] = std::to_string(90);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+					bullet.properties["Direction"] = std::to_string(135);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+					bullet.properties["Direction"] = std::to_string(180);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+					bullet.properties["Direction"] = std::to_string(225);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+					bullet.properties["Direction"] = std::to_string(270);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+					bullet.properties["Direction"] = std::to_string(315);
+					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_enemy_shot");
+
+					attacking = true;
+
+				//if not yet ready to shoot, create charge particles
+
+			
+			}
+
+		}
+
+		else if (attacking == true) {
+
+			// pauses enemy a bit to prevent them from immediately attacking again
+
+			if (World::GetInstance()->Timer(*this, VERY_SLOW*5)) {
+
+				attacking = false;
+
+			}
+
+
+		}
+
+	}
+
 	void Enemy::CastShoot() {
 
 		if (attacking == false) {
@@ -4848,9 +5090,15 @@ namespace Entity
 
 		}
 
+	}
 
+	void Enemy::SelfDestruct() {
 
+		if (PlayerDistance(CLOSE)) {
 
+			// create charge object (charge object casts bullets)
+			Die();
+		}
 
 	}
 
@@ -4920,6 +5168,7 @@ namespace Entity
 
 	}
 
+
 	void Enemy::Animate() {
 
 		if (flatAnimation == true) {
@@ -4932,7 +5181,7 @@ namespace Entity
 
 			}
 
-			objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left, (174 * frame) + spriteTop, objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
+			objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left, (spriteSheetHeight * frame) + spriteTop, objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
 
 		}
 
@@ -4970,7 +5219,7 @@ namespace Entity
 
 			}
 
-			objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left, (((spriteDirection * 4 + frame) * 174) + spriteTop), objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
+			objectSprite.setTextureRect(sf::IntRect(objectSprite.getTextureRect().left, (((spriteDirection * 4 + frame) * spriteSheetHeight) + spriteTop), objectSprite.getTextureRect().width, objectSprite.getTextureRect().height));
 
 		}
 
@@ -5136,7 +5385,7 @@ namespace Entity
 
 			if (wings.getTextureRect().top >= 348) wings.setTextureRect(sf::IntRect(243, 0, 134, 44));
 
-			else wings.setTextureRect(sf::IntRect(243, wings.getTextureRect().top + 174, 134, 44));
+			else wings.setTextureRect(sf::IntRect(243, wings.getTextureRect().top + spriteSheetHeight, 134, 44));
 
 		}
 
@@ -5147,6 +5396,8 @@ namespace Entity
 
     void Enemy::Draw(sf::RenderTarget& window){
         
+		if(active) SetSpriteRedForHealth();
+
 		DrawChild();
 
 		if (showHurt == true) {
@@ -5154,7 +5405,10 @@ namespace Entity
 			showHurt = false;
 		}
 
+		else if(bigDaddy == true && PlayerDistance(MID)) World::GetInstance()->DrawObject(objectSprite,"chargeShader");
+
 		else World::GetInstance()->DrawObject(objectSprite);
+
 
     }
 
@@ -5719,7 +5973,7 @@ namespace Entity
 
 		itemQueue pt;
 		pt.properties["itemType"] = "PlayerPoint";
-		int maxPoints = int(ceil(maxhealth * 0.2));
+		int maxPoints = int(ceil(maxHealth * 0.2));
 
 		for (int i = 0; i < maxPoints; i++) {
 
@@ -5732,8 +5986,6 @@ namespace Entity
     
     Boss::~Boss(){
 
-		//MovementList.clear();
-		//AttackList.clear();
 		World::GetInstance()->WorldScene.audioContainer.music.stop();
     
     }
@@ -5743,7 +5995,7 @@ namespace Entity
 		
 		// if this is a large enemy, do appropriate death animation; otherwise do the small one
 
-		if (objectShadow.getTextureRect().left != 0) {
+		if (bigDaddy == true) {
 
 			if (World::GetInstance()->Timer(*this, NORMAL)) {
 
@@ -5822,6 +6074,40 @@ namespace Entity
 
 	}
 
+	Family::~Family() {
+
+		itemQueue bullet;
+		bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+		bullet.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 16);
+		bullet.properties["itemType"] = "EnemyBlip";
+		bullet.properties["Speed"] = std::to_string(2);
+		bullet.properties["Direction"] = std::to_string(0);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+		bullet.properties["Direction"] = std::to_string(45);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+		bullet.properties["Direction"] = std::to_string(90);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+		bullet.properties["Direction"] = std::to_string(135);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+		bullet.properties["Direction"] = std::to_string(180);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+		bullet.properties["Direction"] = std::to_string(225);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+		bullet.properties["Direction"] = std::to_string(270);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+		bullet.properties["Direction"] = std::to_string(315);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bullet);
+
+
+	}
+
 	Buddy::~Buddy() {
 		std::cout << "buddy destroyed" << std::endl;
 	}
@@ -5834,10 +6120,22 @@ namespace Entity
         
         
     }
+
+	Raider::~Raider() {
+
+	}
     
     Slime::~Slime(){
         
     }
+
+	Tower::~Tower() {
+
+	}
+
+	Bricky::~Bricky() {
+
+	}
 
 	Roach::~Roach() {
 
@@ -5871,7 +6169,7 @@ namespace Entity
         
         zone.clear();
         
-        int zoneSize = 70;
+        int zoneSize = 150;
         
         sf::RectangleShape tempshape (sf::Vector2f (zoneSize,zoneSize));
         
@@ -6076,12 +6374,21 @@ namespace Entity
         if(originPos == center) objectHitBox.setOrigin(size.x/2,size.y/2);
         else if (originPos == bottomCenter) objectHitBox.setOrigin(size.x/2,size.y);
         else if (originPos == topLeft) objectHitBox.setOrigin(0,0);
+
+		hitBoxType = originPos;
         
     }
     
     void Object::UpdateHitBox(){
         
-        objectHitBox.setPosition(objectSprite.getPosition());
+		//character origin - hitbox lives at bottom of sprite
+        if (hitBoxType == 1) objectHitBox.setPosition(objectSprite.getPosition());
+
+		//particle origin - hitbox lives at center of sprite
+		else if (hitBoxType == 0) objectHitBox.setPosition((objectSprite.getPosition().x - objectSprite.getOrigin().x) + (objectSprite.getTextureRect().width/2), (objectSprite.getPosition().y - objectSprite.getOrigin().y) + (objectSprite.getTextureRect().height / 2));
+		
+		//default - hitbox lives in left/top corner of sprit
+		else if (hitBoxType == 2) objectHitBox.setPosition(objectSprite.getPosition().x-objectSprite.getOrigin().x, objectSprite.getPosition().y - objectSprite.getOrigin().y);
     }
     
     void Object::isCollided(int var){

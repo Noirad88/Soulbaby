@@ -117,6 +117,7 @@ namespace Entity
 		void SetCharacterOrigin(sf::Sprite** object = NULL, bool center = false);
 		void SetEffectOrigin();
 		void SetHitBox(sf::Vector2f size, int originPos = 0);
+		int hitBoxType = 0;
 		void UpdateHitBox();
 
 	private:
@@ -355,6 +356,7 @@ namespace Entity
 		bool menuUp = false;
 		int chargeFlag = 0;
 		int chargeCounter = 0;
+		int dashCount = 0;
 		bool jumpFlag = false;
 		bool dashSave = true;
 		int shield = 41;
@@ -762,6 +764,7 @@ namespace Entity
 
 	public:
 		EnemyPart();
+		void Draw(sf::RenderTarget& window);
 		~EnemyPart();
 	};
     
@@ -769,6 +772,7 @@ namespace Entity
     public:
         DeathPoof();
         ~DeathPoof();
+		void Draw(sf::RenderTarget& window);
         
     };
 
@@ -801,6 +805,7 @@ namespace Entity
 		Object* projectileNode;
 		Object* projectileNode2;
 		Object* projectileNode3;
+		double count = 0;
 
 
 	};
@@ -1047,10 +1052,12 @@ namespace Entity
 		virtual void DrawChild();
         virtual void Attack();
 		void TargetPlayer();
+		void SetSpriteRedForHealth();
         void Damaged();
+		static int spriteSheetHeight;
         int hasAttack = 0;
         float health = 3;
-        float maxhealth = 3;
+        float maxHealth = 3;
 		bool defending = false;
         int frame = 0;
         bool enemyDir = true;
@@ -1066,10 +1073,12 @@ namespace Entity
         sf::Vector2f scaleTemp;
         int moveType = NORMAL;
         int enemyID = 0;
+		int shakey = 0;
 		bool attacking = false;
 		int flatAnimation = false;
 		int spriteDirection = 0;
 		int currentDirection = 0;
+		int bigDaddy = false;
         bool hurt = false;
 		bool showHurt = false;
 		bool moveOnAttack = false;
@@ -1102,8 +1111,11 @@ namespace Entity
 		//Attacks
 		void Shoot();
 		void CastShoot();
+		void SelfDestruct();
 		void Laser();
 		void DoubleCast();
+		void CircleShoot();
+
 
     };
     
@@ -1130,6 +1142,14 @@ namespace Entity
 
 	};
 
+	class Family : public Enemy
+	{
+	public:
+		Family();
+		~Family();
+
+	};
+
 	class Mask : public Enemy
 	{
 	public:
@@ -1145,6 +1165,15 @@ namespace Entity
         ~Slime();
         
     };
+
+	class Bricky : public Enemy
+	{
+	public:
+		Bricky();
+		~Bricky();
+
+	};
+
 
 	class Spore : public Enemy
 	{
@@ -1162,6 +1191,14 @@ namespace Entity
 
 	};
 
+	class Raider : public Enemy
+	{
+	public:
+		Raider();
+		~Raider();
+
+	};
+
 	class Djinn : public Enemy
 	{
 	public:
@@ -1169,6 +1206,13 @@ namespace Entity
 		void DrawChild();
 		sf::Sprite wings;
 		~Djinn();
+	};
+
+	class Tower : public Enemy
+	{
+	public:
+		Tower();
+		~Tower();
 	};
     
     class Squid : public Enemy

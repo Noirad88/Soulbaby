@@ -132,7 +132,7 @@ namespace Textures{
         
     }
 
-	void DamageShader::Update() {
+	void DamageShader::Update(int health, int maxHealth) {
 
 	}
     

@@ -11,8 +11,12 @@
 
 #define SCREEN_X sf::VideoMode::getDesktopMode().width
 #define SCREEN_Y sf::VideoMode::getDesktopMode().height
-#define WINDOW_X (SCREEN_X/480)*480
-#define WINDOW_Y (SCREEN_Y/270)*270
+#define WINDOW_X int((SCREEN_X/480)*480)
+#define WINDOW_Y int((SCREEN_Y/270)*270)
+
+// Use below for gifs
+//#define WINDOW_X 1012
+//#define WINDOW_Y 569.25
 #define PROJ_DIR "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC"
 
 #include "resource.h"
@@ -212,7 +216,7 @@ int main()
         }
         
         window.clear(sf::Color::Color(0,23,0));
-        World::GetInstance()->Run(event,timestamp,clock);
+        World::GetInstance()->Run(event,double(timestamp),clock);
         window.setView(*World::GetInstance()->GetView());
         window.display();
         

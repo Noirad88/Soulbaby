@@ -103,7 +103,7 @@ namespace Textures
     public:
         DamageShader();
         ~DamageShader();
-        void Update();
+        void Update(int health, int maxHealth);
         
     };
 
