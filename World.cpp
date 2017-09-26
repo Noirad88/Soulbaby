@@ -19,16 +19,6 @@ void Transition::Update() {
 	if (!hasLoadedScene) {
 		FadeOut();
 
-		// fades music volume
-
-		if (World::GetInstance()->WorldScene.audioContainer.music.getVolume() != 0) {
-
-			if (World::GetInstance()->Timer(*this, VERY_FAST, NODELAY)) {
-
-				World::GetInstance()->WorldScene.audioContainer.music.setVolume(World::GetInstance()->WorldScene.audioContainer.music.getVolume() - 2);
-			}
-		}
-
 	}
 
 	else FadeIn();
@@ -270,11 +260,11 @@ World::World(){
 	GlobalMembers.weapons.push_back(0);
 
 	GlobalMembers.weapons.at(0) = 1;
-	GlobalMembers.weapons.at(1) = 1;
+	GlobalMembers.weapons.at(1) = 0;
 	GlobalMembers.weapons.at(2) = 0;
 	GlobalMembers.weapons.at(3) = 1;
 	GlobalMembers.weapons.at(4) = 1;
-	GlobalMembers.weapons.at(5) = 0;
+	GlobalMembers.weapons.at(5) = 1;
 	GlobalMembers.weapons.at(6) = 0;
 
 	GlobalMembers.levelsCompleted.at(0) = 2;
@@ -298,8 +288,7 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     
     CreateCharacterScripts();
     GlobalMembers.levelsCompleted.fill(0);
-	GlobalMembers.levelsCompleted.at(3) = 2;
-	GlobalMembers.levelsCompleted.at(5) = 2;
+	GlobalMembers.levelsCompleted.at(0) = 2;
 
 
 
@@ -337,6 +326,9 @@ void World::ReadyScene(std::string mapName){
    WorldScene.isLoaded = false;
    if(mapName == "menu" || mapName == "gameScene0" ) WorldScene.transition = std::unique_ptr<Transition>(new Fade(mapName, TRANOUT));
    else WorldScene.transition = std::unique_ptr<Transition>(new BlockFade(mapName, TRANOUT));
+   World::GetInstance()->WorldScene.audioContainer.ToggleMusic();
+
+
 }
 
 void World::LoadScene(std::string sceneName){
@@ -349,6 +341,9 @@ void World::LoadScene(std::string sceneName){
         WorldScene.levelContainer->CreateScene();
         WorldScene.isLoaded = true;
         std::cout << "Done Loading" << CurrentScene->name << std::endl;
+		World::GetInstance()->WorldScene.audioContainer.ToggleMusic();
+
+
 
 
 }
@@ -434,11 +429,9 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 	WorldScene.objectContainer->AddObjects();
 	WorldScene.objectContainer->RemoveObjects();
 	WorldScene.objectContainer->UpdateObjects();
-
-
+	WorldScene.audioContainer.Update();
 	WorldScene.levelContainer->Update();
 	WorldScene.textureContainer.Update();
-
 	WorldScene.objectContainer->CheckCollisions();
 	WorldScene.levelContainer->CheckCollisions();
 
@@ -680,7 +673,14 @@ void World::CreateCharacterScripts(){
 	std::string gurian0 = "Hmmm. Who do I have to fuck for that job?";
     std::string lima0 = "FUCK ... OFF";
 	std::string mother0 = "...>Ahh!>So, you're here ... I'm sure you have questions. There is a lot going on.>My journey has come to an unexpected end. I will tell you my story.";
-	std::string getability = ">So, how can I help you?";
+	std::string note0 = "Learned Weapon2!";
+	std::string note1 = "Learned Weapon3!";
+	std::string note2 = "Learned Weapon4!";
+	std::string note3 = "Learned Weapon5!";
+	std::string note4 = "Learned Weapon6!";
+	std::string note5 = "Learned Weapon7!";
+
+
 
     CharacterScripts.insert(std::pair<std::string,std::string>("HAWZER0",hawzer0));
     CharacterScripts.insert(std::pair<std::string,std::string>("JIRA0",jira0));
@@ -688,7 +688,13 @@ void World::CreateCharacterScripts(){
     CharacterScripts.insert(std::pair<std::string,std::string>("GURIAN0",gurian0));
     CharacterScripts.insert(std::pair<std::string,std::string>("LIMA0",lima0));
 	CharacterScripts.insert(std::pair<std::string, std::string>("MOTHER0", mother0));
-	CharacterScripts.insert(std::pair<std::string, std::string>("GETABILITY0", getability));
+	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE0", note0));
+	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE1", note1));
+	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE2", note2));
+	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE3", note3));
+	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE4", note4));
+	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE5", note5));
+
 
     
 }

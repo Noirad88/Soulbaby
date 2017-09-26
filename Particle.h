@@ -203,6 +203,7 @@ namespace Entity
 		Hud();
 		void Update();
 		void Expand();
+		void Close();
 		void Draw(sf::RenderTarget& window);
 		bool isExpanded = false;
 
@@ -214,12 +215,13 @@ namespace Entity
 		sf::Text pow2Lable;
 		sf::Sprite hand;
 		sf::Sprite selectionItems;
+		sf::Sprite newAbilityOverlay;
 		std::vector<int> itemList;
 		int selectState = 0;
 		float expandTween = 0;
 		sf::RectangleShape manaBar;
 		float manaFillBar = 0;
-
+		int newAbility = 0;
 
 	};
 
@@ -277,6 +279,7 @@ namespace Entity
 		sf::Sprite boxArrow;
 		static std::string characters[11];
 		std::string characterName = "";
+		int characterNamePos = 0;
 
 	};
 
@@ -714,6 +717,15 @@ namespace Entity
 
 	};
     
+	class LearnedAbility : public Fixed {
+	public:
+		LearnedAbility();
+		void Update();
+		~LearnedAbility();
+		int ability = 0;
+
+	};
+
     class DoorDestroy: public Fixed{
     public:
         DoorDestroy();

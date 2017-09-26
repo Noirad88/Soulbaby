@@ -71,6 +71,22 @@ void Audio::PlaySFX(std::string soundName, bool multipleInstances){
 
 }
 
+void Audio::ToggleMusic() {
+
+	if (mute == false) {
+
+		music.setVolume(100);
+	}
+
+	else if (mute == true) {
+
+		music.setVolume(0);
+	}
+
+	mute = !mute;
+
+}
+
 void Audio::PlayMusic(std::string musicName){
     
     music.stop();
@@ -94,6 +110,25 @@ Audio::~Audio(){
     music.stop();
     
     
+}
+
+void Audio::Update() {
+
+	if (mute == false && music.getVolume() != 100) {
+
+		music.setVolume(music.getVolume() + 1);
+
+	}
+
+	if (mute == true && music.getVolume() != 0) {
+
+		std::cout << "going down:" << music.getVolume() << std::endl;
+		music.setVolume(music.getVolume() - 1);
+
+	}
+
+	std::cout << mute << std::endl;
+
 }
 
 

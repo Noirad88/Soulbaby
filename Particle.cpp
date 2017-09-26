@@ -40,7 +40,7 @@ namespace Entity
 	int Textbox::scriptLength = 0;
 	int Textbox::progressSpeed = 0;
 	int Textbox::textboxCount = 0;
-	std::string Textbox::characters[11] = { "HAWZER","JIRA","DORAN","GURIAN","LIMA", "MOTHER" };
+	std::string Textbox::characters[11] = { "HAWZER","JIRA","DORAN","GURIAN","LIMA", "MOTHER", "NOTE",};
 
 	bool PlayerMenu::menuUp = false;
 
@@ -377,8 +377,9 @@ namespace Entity
 		World::GetInstance()->WorldScene.UIPtr = this;
 
         textboxCount = 1;
-            
-        characterName = characters[name];
+
+		characterNamePos = name;
+		characterName = characters[name];
         
         script = World::GetInstance()->CharacterScripts.at(characterName + std::to_string(0));
         
@@ -473,7 +474,7 @@ namespace Entity
         
         // objectsprite is portrait sprite
         
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_portraits"));
+        if(name <= 5) objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_portraits"));
         
         portraitSize = sf::Vector2i(80,100);
         
@@ -500,8 +501,14 @@ namespace Entity
         
         World::GetInstance()->DrawObject(backDrop);
         World::GetInstance()->DrawObject(boxText);
-        World::GetInstance()->DrawObject(boxNameBG);
-        World::GetInstance()->DrawObject(boxName);
+
+		if (characterName != "NOTE") {
+
+			World::GetInstance()->DrawObject(boxNameBG);
+			World::GetInstance()->DrawObject(boxName);
+
+		}
+
         World::GetInstance()->DrawObject(objectSprite);
         if(script.length() != 0 && !strncmp(&script.at(0),">",1))World::GetInstance()->DrawObject(boxArrow);
         
@@ -512,7 +519,7 @@ namespace Entity
 		World::GetInstance()->WorldScene.UIPtr = nullptr;
         scriptLength = 0;
         textboxCount = 0;
-        World::GetInstance()->ResetCamera();
+        //World::GetInstance()->ResetCamera();
     }
     
     void Textbox::Update(){
@@ -584,12 +591,39 @@ namespace Entity
 
 		}
 
+		// Kill the text box if the script is empty and the last line has been written
+
 		else {
 
 			if (World::GetInstance()->Timer(*this, 25200.0)) {
 
-				if (World::GetInstance()->PlayerPressedButton(controlsB)) misDestroyed = true;
+
+				if (World::GetInstance()->PlayerPressedButton(controlsB)) {
+
+					if (World::GetInstance()->WorldScene.guidePtr) World::GetInstance()->WorldScene.guidePtr->ready = false;
+
+					//If this is the first time the player has talking to this NPC for this NPC's level, give upgrade
+
+					if (World::GetInstance()->GlobalMembers.levelsCompleted[characterNamePos] != 0 && World::GetInstance()->GlobalMembers.weapons[characterNamePos+1] == 0) {
+						
+						std::cout << "ABILLTY LEARNED" << std::endl;
+						itemQueue learn;
+						learn.properties["PosX"] = std::to_string(World::GetInstance()->CameraTarget->objectSprite.getPosition().x);
+						learn.properties["PosY"] = std::to_string(World::GetInstance()->CameraTarget->objectSprite.getPosition().y - (World::GetInstance()->CameraTarget->objectSprite.getTextureRect().height / 2));
+						learn.properties["itemType"] = "LearnedAbility";
+						learn.properties["AbilityLearned"] = std::to_string(characterNamePos);
+						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(learn);
+						World::GetInstance()->WorldScene.audioContainer.ToggleMusic();
+
+					}
+
+					misDestroyed = true;
+
+				}
+
 				if (World::GetInstance()->WorldScene.guidePtr) World::GetInstance()->WorldScene.guidePtr->ready = false;
+
+				//if this is the first time the player has talked to an npc, get ability
 
 			}
 
@@ -684,6 +718,9 @@ namespace Entity
 		manaBar.setFillColor(sf::Color(28, 203, 158));
 		manaBar.setSize(sf::Vector2f(100, 8));
 
+		newAbilityOverlay.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
+		newAbilityOverlay.setTextureRect(sf::IntRect(34, 218, 34, 33));
+
     }
 
 	ManaMeter::ManaMeter() {
@@ -698,7 +735,7 @@ namespace Entity
 
 		if (isExpanded == true) {
 
-		
+
 			expandTween += (40 - expandTween) / 5;
 			//Selection
 
@@ -718,86 +755,55 @@ namespace Entity
 			}
 
 			if ((World::GetInstance()->PlayerPressedButton(controlsB) || World::GetInstance()->PlayerPressedButton(controlsC)) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
-
-				if (itemList.at(selectState) != 7) {
-
-					World::GetInstance()->GlobalMembers.currentWeapon = itemList.at(selectState);
-					selectedWeapon.setTextureRect(sf::IntRect(224, 240 + (World::GetInstance()->GlobalMembers.currentWeapon * 16), 16, 16));
-
-					if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) >= 2) {
-
-						pow1Lable.setString("MAX");
-
-					}
-
-					else {
-						pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon + 1)));
-					}
-
-					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
-
-				}
-
-
-				isExpanded = false;
-				World::GetInstance()->WorldScene.UIPtr = NULL;
-				World::GetInstance()->WorldScene.textureContainer.dimWorld = false;
-				expandTween = 0;
+				
+				Close();
 			}
-
 		}
+
 
 		if (World::GetInstance()->IsPlayerActive()) {
 
 			if (World::GetInstance()->CurrentScene->mapType == 1 && World::GetInstance()->PlayerPressedButton(controlsC) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
 
-				isExpanded = true;
-				selectState = 0;
-				itemList = { 0,1,2,3,4,5,6 };
-				int slots = 0;
-				for (int i = 0; i != itemList.size(); i++) {
-
-					if (World::GetInstance()->GlobalMembers.weapons.at(i) == 0) {
-
-						itemList.at(i) = 7;
-						slots++;
-
-					}
-
-				}
-
-				itemList.erase(std::remove(itemList.begin(), itemList.end(), 7), itemList.end());
-				itemList.shrink_to_fit();
-
-				for (int i = 0; i != slots; i++) {
-
-					itemList.push_back(7);
-				}
-
-				std::cout << "list size: " << itemList.size() << " " << std::endl;
-
-				for (int i = 0; i != itemList.size(); i++) {
-
-					std::cout << itemList.at(i);
-
-
-
-
-				auto it = itemList.begin();
-				itemList.erase(std::remove(itemList.begin(), itemList.end(), World::GetInstance()->GlobalMembers.currentWeapon), itemList.end());
-				itemList.insert(it, World::GetInstance()->GlobalMembers.currentWeapon);
-
-				World::GetInstance()->WorldScene.UIPtr = this;
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_open");
-				World::GetInstance()->WorldScene.textureContainer.dimWorld = true;
-
-
-				}
+				Expand();
 
 			}
 
+	
 		}
-		
+
+		//If a new ability has been got ...
+
+		if (newAbility != 0) {
+
+			//Begin to remove overlay after x seconds
+			if (World::GetInstance()->Timer(*this, VERY_SLOW * 2) && newAbilityOverlay.getColor().a == 255) {
+
+				newAbilityOverlay.setColor(sf::Color(255, 255, 255, 254));
+			}
+
+			if (newAbilityOverlay.getColor().a != 255 && newAbilityOverlay.getColor().a != 0) {
+
+				newAbilityOverlay.setColor(sf::Color(255, 255, 255, newAbilityOverlay.getColor().a - 1));
+
+			}
+
+			if (World::GetInstance()->Timer(*this, VERY_SLOW * 8) && newAbilityOverlay.getColor().a == 0) {
+
+				Close();
+				newAbility = 0;
+				itemQueue textbox;
+				textbox.properties["itemType"] = "Textbox";
+				textbox.properties["ActorName"] = std::to_string(6);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(textbox);
+				World::GetInstance()->SetCameraTarget(*World::GetInstance()->WorldScene.playerPtr);
+				World::GetInstance()->WorldScene.audioContainer.ToggleMusic();
+			}
+
+		}
+
+
+
 		
 		if (World::GetInstance()->WorldScene.playerPtr) {
 
@@ -817,10 +823,80 @@ namespace Entity
 
     }
 
+	void Hud::Close() {
+
+
+		if (itemList.at(selectState) != 7) {
+
+			World::GetInstance()->GlobalMembers.currentWeapon = itemList.at(selectState);
+			selectedWeapon.setTextureRect(sf::IntRect(224, 240 + (World::GetInstance()->GlobalMembers.currentWeapon * 16), 16, 16));
+
+			if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) >= 2) {
+
+				pow1Lable.setString("MAX");
+
+			}
+
+			else {
+				pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon + 1)));
+			}
+
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
+
+		}
+
+
+		isExpanded = false;
+		World::GetInstance()->WorldScene.UIPtr = NULL;
+		World::GetInstance()->WorldScene.textureContainer.dimWorld = false;
+		expandTween = 0;
+
+
+	}
+
 	void Hud::Expand() {
 
+		isExpanded = true;
+		selectState = 0;
+		itemList = { 0,1,2,3,4,5,6 };
+		int slots = 0;
+		for (int i = 0; i != itemList.size(); i++) {
+
+			if (World::GetInstance()->GlobalMembers.weapons.at(i) == 0) {
+
+				itemList.at(i) = 7;
+				slots++;
+
+			}
+
+		}
+
+		itemList.erase(std::remove(itemList.begin(), itemList.end(), 7), itemList.end());
+		itemList.shrink_to_fit();
+
+		for (int i = 0; i != slots; i++) {
+
+			itemList.push_back(7);
+		}
+
+		std::cout << "list size: " << itemList.size() << " " << std::endl;
+
+		for (int i = 0; i != itemList.size(); i++) {
+
+			std::cout << itemList.at(i);
 
 
+
+
+			auto it = itemList.begin();
+			itemList.erase(std::remove(itemList.begin(), itemList.end(), World::GetInstance()->GlobalMembers.currentWeapon), itemList.end());
+			itemList.insert(it, World::GetInstance()->GlobalMembers.currentWeapon);
+
+		}
+
+			World::GetInstance()->WorldScene.UIPtr = this;
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_open");
+			World::GetInstance()->WorldScene.textureContainer.dimWorld = true;
 
 	}
 
@@ -876,7 +952,7 @@ namespace Entity
     
 	void Guide::Draw(sf::RenderTarget& window) {
 
-		if (hidden == false && World::GetInstance()->IsPlayerCameraTarget()) {
+		if (hidden == false && World::GetInstance()->IsPlayerCameraTarget() && (World::GetInstance()->WorldScene.hudPtr->isExpanded == false)) {
 
 			World::GetInstance()->DrawObject(objectSprite);
 
@@ -946,6 +1022,13 @@ namespace Entity
 				if (itemList.at(i+1) == 7) selectionItems.setTextureRect(sf::IntRect(224, 224, 16, 16));
 				else selectionItems.setTextureRect(sf::IntRect(224, 240 + ((itemList.at(i+1)) * 16), 16, 16));
 				World::GetInstance()->DrawObject(selectionItems,"bypass");
+
+				if (newAbility != 0 && itemList.at(i) == newAbility) {
+
+					newAbilityOverlay.setPosition(objectSpritePos.x + (expandTween + ((i-1) * expandTween)), objectSpritePos.y);
+					World::GetInstance()->DrawObject(newAbilityOverlay, "bypass");
+
+				}
 				
 			}
 
@@ -959,7 +1042,8 @@ namespace Entity
 		World::GetInstance()->DrawObject(selectedWeapon, "bypass");
 		World::GetInstance()->DrawObject(pow1Lable,"bypass");
 
-		if (isExpanded == true) World::GetInstance()->DrawObject(hand, "bypass");
+
+		if (isExpanded == true && newAbility == 0) World::GetInstance()->DrawObject(hand, "bypass");
 
 		
     }
@@ -1919,6 +2003,21 @@ namespace Entity
 
 	}
 
+	LearnedAbility::LearnedAbility() : Fixed() {
+
+		std::cout << "created ability" << std::endl;
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_particles"));
+		objectSprite.setTextureRect(sf::IntRect(64,288, 11, 11));
+		maxFrame = 3;
+		animSpeed = VERY_FAST;
+		maxTime = VERY_SLOW*16;
+		World::GetInstance()->SetCameraTarget(*this);
+		World::GetInstance()->WorldScene.textureContainer.glitchShader->mode = 1.0;
+		World::GetInstance()->worldShader = 1;
+
+
+
+	}
     
     DoorDestroy::DoorDestroy() : Fixed(){
         
@@ -2891,6 +2990,17 @@ namespace Entity
         }
         
     }
+
+	void LearnedAbility::Update() {
+
+		Fixed::Update();
+
+		sf::Vector2f tempPos = objectSprite.getPosition();
+		tempPos.x += double(World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x - tempPos.x) / 100;
+		tempPos.y += double((World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y-12) - tempPos.y) / 100;
+		objectSprite.setPosition(tempPos);
+
+	}
 
 	void ChargeWaveAttack::Update() {
 
@@ -4074,6 +4184,18 @@ namespace Entity
         World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_exp");
         
     }
+
+	LearnedAbility::~LearnedAbility() {
+
+		World::GetInstance()->CameraTarget = World::GetInstance()->WorldScene.playerPtr;
+		World::GetInstance()->GlobalMembers.weapons[2] = 1;
+		World::GetInstance()->WorldScene.hudPtr->Expand();
+		World::GetInstance()->WorldScene.hudPtr->newAbility = 2;
+		World::GetInstance()->worldShader = 0;
+
+
+
+	}
     
     Fixed::~Fixed(){
         

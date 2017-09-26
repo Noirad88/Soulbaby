@@ -389,6 +389,16 @@ void Container::AddObjects()
                 
             }
 
+			else if ((QI)->properties["itemType"] == "LearnedAbility")
+			{
+
+				std::unique_ptr<Entity::LearnedAbility> ptr(new Entity::LearnedAbility);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ptr->ability = stoi((QI)->properties["AbilityLearned"]);
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "PlayerBirth")
 			{
 
@@ -1120,7 +1130,14 @@ void Container::CheckCollisions(){
 
 				World::GetInstance()->WorldScene.guidePtr->SetTarget(newvec);
                 
-                if(World::GetInstance()->PlayerPressedButton(controlsB) && World::GetInstance()->WorldScene.guidePtr->ready == true)ObjectContainer.at(typeInZone.at(i))->isCollided();
+				if (World::GetInstance()->PlayerPressedButton(controlsB)
+					&& (World::GetInstance()->WorldScene.guidePtr->ready == true)
+					&& (World::GetInstance()->WorldScene.hudPtr->isExpanded == false)
+					&& (World::GetInstance()->CameraTarget == World::GetInstance()->WorldScene.playerPtr)) {
+
+					ObjectContainer.at(typeInZone.at(i))->isCollided();
+
+				}
                 
             }
             

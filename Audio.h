@@ -30,6 +30,7 @@ class Audio
         ~Audio();
         void PlaySFX(std::string soundName, bool multipleInstances = 1);
         void PlayMusic(std::string musicName = "map1");
+		void ToggleMusic();
 		void playLoopedMusic(float length, std::string musicName = "map1");
         void Update();
         sf::Music music;
@@ -37,6 +38,7 @@ class Audio
 		std::map<std::string, sf::MemoryInputStream> MusicContainer;
 
         bool limiter;
+		bool mute = false;
     
 };
 
