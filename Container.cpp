@@ -69,8 +69,8 @@ void Container::AddObjects()
             
             else if((QI)->properties["itemType"] == "Textbox")
             {
-   
-                std::unique_ptr<Entity::Textbox> ptr(new Entity::Textbox(stoi((QI)->properties["ActorName"])));
+
+                std::unique_ptr<Entity::Textbox> ptr(new Entity::Textbox(((QI)->properties["ActorName&Script"])));
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
@@ -845,6 +845,15 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "SoulOrb")
+			{
+
+				std::unique_ptr<Entity::SoulOrb> ptr(new Entity::SoulOrb(5,6));
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "BattlePlayer")
             {

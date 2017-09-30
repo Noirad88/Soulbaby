@@ -122,12 +122,10 @@ void Audio::Update() {
 
 	if (mute == true && music.getVolume() != 0) {
 
-		std::cout << "going down:" << music.getVolume() << std::endl;
 		music.setVolume(music.getVolume() - 1);
 
 	}
 
-	std::cout << mute << std::endl;
 
 }
 

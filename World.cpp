@@ -267,9 +267,6 @@ World::World(){
 	GlobalMembers.weapons.at(5) = 1;
 	GlobalMembers.weapons.at(6) = 0;
 
-	GlobalMembers.levelsCompleted.at(0) = 2;
-
-
 }
 
 void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events){
@@ -288,8 +285,9 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     
     CreateCharacterScripts();
     GlobalMembers.levelsCompleted.fill(0);
-	GlobalMembers.levelsCompleted.at(0) = 2;
 
+
+	GlobalMembers.currentCharacterScripts.fill(0);
 
 
 	WorldScene.textureContainer.CreateShaderInstances();
@@ -679,6 +677,8 @@ void World::CreateCharacterScripts(){
 	std::string note3 = "Learned Weapon5!";
 	std::string note4 = "Learned Weapon6!";
 	std::string note5 = "Learned Weapon7!";
+	std::string note6 = "A soul seed was dropped ...>You can use this to increse your strength or bring back the gate keeper.>What do you want to do?";
+
 
 
 
@@ -694,6 +694,7 @@ void World::CreateCharacterScripts(){
 	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE3", note3));
 	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE4", note4));
 	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE5", note5));
+	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE6", note6));
 
 
     
@@ -737,66 +738,70 @@ bool World::PlayerPressedButton(int button) {
 	bool buttonPressed = false;
 	sf::Joystick::update();
 
-	if (sf::Joystick::isConnected(0)) {
+	if ((WorldScene.playerPtr != nullptr && IsPlayerActive())) {
 
-		if (button == controlsUp
-			|| button == controlsDown) {
+		if (sf::Joystick::isConnected(0)) {
 
-		    if (sf::Joystick::getAxisPosition(0,sf::Joystick::Axis::Y) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+			if (button == controlsUp
+				|| button == controlsDown) {
 
-		} 
+				if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
 
-		else if (button == controlsLeft
-			|| button == controlsRight) {
+			}
 
-			if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+			else if (button == controlsLeft
+				|| button == controlsRight) {
 
+				if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+
+
+			}
+
+			else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button]);
 
 		}
 
-		else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button]);
+		else buttonPressed = sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[button]);
 
 	}
-
-	else buttonPressed = sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[button]);
 	
 	return buttonPressed;
 
 }
 
-/*
-bool World::PlayerHoldingButton(int button) {
+bool World::PressedButtonforUI(int button) {
 
 	bool buttonPressed = false;
 	sf::Joystick::update();
 
-	if (sf::Joystick::isConnected(0)) {
 
-		if (button == controlsUp
-			|| button == controlsDown) {
+		if (sf::Joystick::isConnected(0)) {
 
-			if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+			if (button == controlsUp
+				|| button == controlsDown) {
+
+				if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+
+			}
+
+			else if (button == controlsLeft
+				|| button == controlsRight) {
+
+				if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+
+
+			}
+
+			else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button]);
 
 		}
 
-		else if (button == controlsLeft
-			|| button == controlsRight) {
-
-			if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+		else buttonPressed = sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[button]);
 
 
-		}
-
-		else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button]);
-		
-	}
-
-	else buttonPressed = sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[button]);
-	
 	return buttonPressed;
 
 }
-*/
 
 int RoundUp(int numToRound, int multiple)
 {

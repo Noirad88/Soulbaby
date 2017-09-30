@@ -372,16 +372,21 @@ namespace Entity
         
     }
     
-    Textbox::Textbox(int name) : GUI()
+    Textbox::Textbox(std::string nameAndScript) : GUI()
     {
 		World::GetInstance()->WorldScene.UIPtr = this;
 
+		scriptNumber = nameAndScript[1] - '0';
+
         textboxCount = 1;
 
-		characterNamePos = name;
-		characterName = characters[name];
+		characterNamePos = nameAndScript[0] - '0';
+
+		std::cout << scriptNumber << " \ " << characterNamePos;
+
+		characterName = characters[characterNamePos];
         
-        script = World::GetInstance()->CharacterScripts.at(characterName + std::to_string(0));
+        script = World::GetInstance()->CharacterScripts.at(characterName + std::to_string(scriptNumber));
         
         int lineCount = 0;
         
@@ -474,11 +479,11 @@ namespace Entity
         
         // objectsprite is portrait sprite
         
-        if(name <= 5) objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_portraits"));
+        if(characterNamePos <= 5) objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_portraits"));
         
         portraitSize = sf::Vector2i(80,100);
         
-        objectSprite.setTextureRect(sf::IntRect(0,portraitSize.y * name,portraitSize.x,portraitSize.y));
+        objectSprite.setTextureRect(sf::IntRect(0,portraitSize.y * characterNamePos,portraitSize.x,portraitSize.y));
         
         boxText.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
         boxText.setCharacterSize(16);
@@ -488,6 +493,17 @@ namespace Entity
         boxNameBG.setSize(sf::Vector2f(8 * characterName.length()+2,16));
         boxNameBG.setFillColor((sf::Color::Black));
         boxName.setCharacterSize(16);
+
+		textAbsorb.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
+		textAbsorb.setString("Absorb");
+		textAbsorb.setCharacterSize(16);
+
+		textRevive.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
+		textRevive.setString("Revive " + characterName);
+		textRevive.setCharacterSize(16);
+
+		hand.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
+		hand.setTextureRect(sf::IntRect(154, 15, 13, 8));
         
         boxArrow.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
         boxArrow.setTextureRect(sf::IntRect(15,0,5,5));
@@ -512,6 +528,13 @@ namespace Entity
         World::GetInstance()->DrawObject(objectSprite);
         if(script.length() != 0 && !strncmp(&script.at(0),">",1))World::GetInstance()->DrawObject(boxArrow);
         
+		if (characterNamePos == 6 && scriptNumber == 6 && isDone == true) {
+
+			World::GetInstance()->DrawObject(textAbsorb);
+			World::GetInstance()->DrawObject(textRevive);
+			World::GetInstance()->DrawObject(hand);
+
+		}
     }
     
     Textbox::~Textbox(){
@@ -530,7 +553,11 @@ namespace Entity
         boxNameBG.setPosition(boxName.getPosition().x-3,boxName.getPosition().y+6);
         boxText.setPosition(backDrop.getPosition().x + 18,backDrop.getPosition().y + 11);
         boxArrow.setPosition(backDrop.getPosition().x + backDrop.getTextureRect().width - 25, backDrop.getPosition().y + backDrop.getTextureRect().height -26);
-        
+		
+		textAbsorb.setPosition(backDrop.getPosition().x + backDrop.getTextureRect().width - 150, backDrop.getPosition().y + backDrop.getTextureRect().height - 26);
+		textRevive.setPosition(backDrop.getPosition().x + backDrop.getTextureRect().width - 150 + (100), backDrop.getPosition().y + backDrop.getTextureRect().height - 26);
+		hand.setPosition(backDrop.getPosition().x + backDrop.getTextureRect().width - 150 + (selectState * 100), backDrop.getPosition().y + backDrop.getTextureRect().height - 26);
+
         if(newScript.length() != scriptLength && script.length() != 0){
             
             if(World::GetInstance()->Timer(*this,FAST, NODELAY)){
@@ -556,7 +583,7 @@ namespace Entity
                         
                         if(World::GetInstance()->Timer(*this,25100.0)){
                         
-                            if(World::GetInstance()->PlayerPressedButton(controlsB)){
+                            if(World::GetInstance()->PressedButtonforUI(controlsB)){
                             
                                 newScript.erase(0);
                                 script.erase(0,1);
@@ -595,10 +622,39 @@ namespace Entity
 
 		else {
 
+			isDone = true;
+
 			if (World::GetInstance()->Timer(*this, 25200.0)) {
 
+				//Also, if this is the Got Seed script, then show the two choices and enable hand/selecting
 
-				if (World::GetInstance()->PlayerPressedButton(controlsB)) {
+
+				if (characterNamePos == 6 && scriptNumber == 6) {
+
+					if (World::GetInstance()->Timer(*this, 25400.0)) {
+
+						if (World::GetInstance()->PressedButtonforUI(controlsLeft) && selectState == 1) {
+
+							selectState = 0;
+							World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
+
+
+						}
+
+						if (World::GetInstance()->PressedButtonforUI(controlsRight) && selectState == 0) {
+
+							selectState = 1;
+							World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
+
+
+						}
+					}
+
+
+				}
+
+
+				if (World::GetInstance()->PressedButtonforUI(controlsB)) {
 
 					if (World::GetInstance()->WorldScene.guidePtr) World::GetInstance()->WorldScene.guidePtr->ready = false;
 
@@ -623,7 +679,6 @@ namespace Entity
 
 				if (World::GetInstance()->WorldScene.guidePtr) World::GetInstance()->WorldScene.guidePtr->ready = false;
 
-				//if this is the first time the player has talked to an npc, get ability
 
 			}
 
@@ -794,7 +849,7 @@ namespace Entity
 				newAbility = 0;
 				itemQueue textbox;
 				textbox.properties["itemType"] = "Textbox";
-				textbox.properties["ActorName"] = std::to_string(6);
+				textbox.properties["ActorName&Script"] = std::to_string(60);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(textbox);
 				World::GetInstance()->SetCameraTarget(*World::GetInstance()->WorldScene.playerPtr);
 				World::GetInstance()->WorldScene.audioContainer.ToggleMusic();
@@ -951,6 +1006,7 @@ namespace Entity
     }
     
 	void Guide::Draw(sf::RenderTarget& window) {
+
 
 		if (hidden == false && World::GetInstance()->IsPlayerCameraTarget() && (World::GetInstance()->WorldScene.hudPtr->isExpanded == false)) {
 
@@ -1506,7 +1562,7 @@ namespace Entity
 		if (dashing == false) {
 
 			if (!World::GetInstance()->WorldScene.transition) {
-			
+
 
 				if ((World::GetInstance()->PlayerPressedButton(controlsDown)
 					&& World::GetInstance()->PlayerPressedButton(controlsLeft))) movement = swest;
@@ -1535,6 +1591,8 @@ namespace Entity
 				&& !World::GetInstance()->PlayerPressedButton(controlsDown)
 				&& !World::GetInstance()->PlayerPressedButton(controlsLeft))
 				movement = idle;
+
+		     
 
 		}
 		
@@ -4414,10 +4472,6 @@ namespace Entity
             enemyList[4] = "Spore";
             enemyList[5] = "Roach";
 
-			enemyList[3] = "";
-			enemyList[4] = "";
-			enemyList[5] = "";
-
             enemyList[6] = "";
             enemyList[7] = "";
             enemyList[8] = "";
@@ -4449,13 +4503,13 @@ namespace Entity
         
         type = "BG";
 
-		//lvlEnemyBank[0] = 4; 
-		//lvlEnemyBank[1] = 4;
-		//lvlEnemyBank[2] = 32;
+		//lvlEnemyBank[0] = 4;
+		//lvlEnemyBank[1] = 16;
+		//lvlEnemyBank[2] = 100;
 
-		lvlEnemyBank[0] = 4;
-		lvlEnemyBank[1] = 16;
-		lvlEnemyBank[2] = 100;
+		lvlEnemyBank[0] = 0;
+		lvlEnemyBank[1] = 0;
+		lvlEnemyBank[2] = 0;
 
     }
 
@@ -4542,43 +4596,74 @@ namespace Entity
         
     }
     
-    Actor::Actor(int actor) : character(actor), Object()
+    Actor::Actor(int actor,int script) : characterName(actor), Object()
     {
         
         objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_actors"));
         objectSprite.setTextureRect(sf::IntRect ((1 + actor) * 16,0 * 24,16,24));
-        name = actor;
+		characterName = actor;
+
+		//if we have not forced specific dialogue, choose the script set for this character
+
+		if (script == 99) {  
+
+			scriptNumber = World::GetInstance()->GlobalMembers.currentCharacterScripts[characterName]; 
+
+		}
+
+		else scriptNumber = script;
+
         SetCharacterOrigin();
         SetShadow();
         type = "Actor";
         SetHitBox(sf::Vector2f(50,50),0);
         
     }
+
+	SoulOrb::SoulOrb(int actor,int script) : Actor(characterName,script)
+	{
+
+		objectSprite.setTextureRect(sf::IntRect(16, 24, 96, 0));
+		characterName = 5;
+
+	}
     
     void Actor::Update(){
         
         Move();
         UpdateShadow();
     }
+
+	void SoulOrb::Update() {
+
+		Actor::Update();
+		if (World::GetInstance()->Timer(*this, VERY_SLOW *4, DELAY)) {
+
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_lswallow");
+
+		}
+
+	}
     
     void Actor::Move()
     {
         if(PlayerDistance(CLOSE)){
             actorMovement = RoundUp((GetAngle(objectShadow.getPosition(),World::GetInstance()->WorldScene.playerPtr->objectShadow.getPosition())),45);
-        objectSprite.setTextureRect(sf::IntRect((1+name) * 16, abs(((180 - actorMovement) / 45) * 24),16, 24));
+        objectSprite.setTextureRect(sf::IntRect((1+characterName) * 16, abs(((180 - actorMovement) / 45) * 24),16, 24));
         }
         
-        else if(idleBehavior == none) objectSprite.setTextureRect(sf::IntRect((1+name) * 16, south,16, 24));
+        else if(idleBehavior == none) objectSprite.setTextureRect(sf::IntRect((1+ characterName) * 16, south,16, 24));
         
         else if(idleBehavior == looking){
             
-            if(World::GetInstance()->Timer(*this,VERY_SLOW*10,DELAY)) objectSprite.setTextureRect(sf::IntRect((1+name) * 16, RandomNumber(7)*24,16, 24));
+            if(World::GetInstance()->Timer(*this,VERY_SLOW*10,DELAY)) objectSprite.setTextureRect(sf::IntRect((1+ characterName) * 16, RandomNumber(7)*24,16, 24));
         
             }
         
     }
     
-    void Actor::isCollided(int var){
+    void Actor::isCollided(int var)
+	{
 
             if(Textbox::textboxCount == 0){
                 
@@ -4586,7 +4671,7 @@ namespace Entity
 
                     itemQueue textbox;
                     textbox.properties["itemType"] = "Textbox";
-                    textbox.properties["ActorName"] = std::to_string(character);
+                    textbox.properties["ActorName&Script"] = std::to_string(characterName) + std::to_string(scriptNumber);
                     World::GetInstance()->WorldScene.objectContainer->Queue.push_back(textbox);
                     World::GetInstance()->SetCameraTarget(*this);
                     
@@ -4594,6 +4679,26 @@ namespace Entity
             }
            
     }
+
+	void SoulOrb::isCollided(int var) 
+	{
+
+		if (Textbox::textboxCount == 0) {
+
+			if (World::GetInstance()->Timer(*this, NORMAL)) {
+
+				itemQueue textbox;
+				textbox.properties["itemType"] = "Textbox";
+				textbox.properties["ActorName&Script"] = std::to_string(66);
+
+
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(textbox);
+				World::GetInstance()->SetCameraTarget(*this);
+
+			}
+		}
+
+	}
     
     Enemy::Enemy() : Object()
     {
@@ -4609,7 +4714,6 @@ namespace Entity
 		hotSpot.x = 0;
 		hotSpot.y = 0;
 		AssignedAttack = 0;
-
 
     }
 
@@ -4649,7 +4753,7 @@ namespace Entity
 		objectSprite.setTextureRect(sf::IntRect(87, 212, 21, 28));
 		SetCharacterOrigin();
 		SetShadow();
-		health = 5;
+		health = 10;
 		enemyMode = 1;
 		AssignedBehavior = &Enemy::FollowPlayer;
 		AssignedMovement = &Enemy::MoveWalk;
@@ -4904,7 +5008,8 @@ namespace Entity
 		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses"));
 		wings.setTextureRect(sf::IntRect(0,0, 175, 44));
         speed = 2;
-        maxhealth = 1200;
+		maxhealth = 1200;
+        maxhealth = 12;
         health = maxhealth;
         moveType = NORMAL;
 		sf::Sprite *mysprite = &wings;
@@ -6012,7 +6117,7 @@ namespace Entity
 		
 		if (health <= 0) {
 
-			misDestroyed = true;
+			Die();
 			int currentLevel = World::GetInstance()->GlobalMembers.currentLevel;
 			World::GetInstance()->GlobalMembers.levelsCompleted.at(currentLevel) = 1;
 
@@ -6109,7 +6214,15 @@ namespace Entity
     Boss::~Boss(){
 
 		World::GetInstance()->WorldScene.audioContainer.music.stop();
+
+		itemQueue orb;
+		orb.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+		orb.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+		orb.properties["itemType"] = "SoulOrb";
+
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(orb);
     
+
     }
 
 	void Enemy::Die() {
@@ -6242,6 +6355,10 @@ namespace Entity
         
         
     }
+
+	SoulOrb::~SoulOrb() {
+
+	}
 
 	Raider::~Raider() {
 

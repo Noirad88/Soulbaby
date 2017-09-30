@@ -98,6 +98,8 @@ struct Attributes{
 	int currentWeapon = 0;
     std::array<sf::Keyboard::Key,9> keyboardControls;
 	std::array<int, 9> joystickControls;
+	std::array<int, 9> currentCharacterScripts;
+
 	bool joystick = true;
     int currentLevel = 0;
 	int maxMana = 100;
@@ -243,6 +245,8 @@ class World{
     void CreateCharacterScripts();
     void DrawObject(sf::Drawable& sprite, std::string shader = "");
 	bool PlayerPressedButton(int button);
+	bool PressedButtonforUI(int button);
+
 	sf::RectangleShape testShape;
     static World *GetInstance(){
         

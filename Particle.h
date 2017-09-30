@@ -260,11 +260,12 @@ namespace Entity
 	{
 
 	public:
-		Textbox(int name);
+		Textbox(std::string nameAndScript);
 		~Textbox();
 		void Update();
 		void Draw(sf::RenderTarget& window);
 		sf::Sprite backDrop;
+		int scriptNumber = 0;
 		std::string script = "";
 		std::string newScript = "";
 		static int lineLength;
@@ -275,11 +276,16 @@ namespace Entity
 		sf::Vector2i portraitSize;
 		sf::Text boxText;
 		sf::Text boxName;
+		sf::Text textRevive;
+		sf::Text textAbsorb;
+		sf::Sprite hand;
 		sf::RectangleShape boxNameBG;
 		sf::Sprite boxArrow;
 		static std::string characters[11];
 		std::string characterName = "";
 		int characterNamePos = 0;
+		int selectState = 0;
+		bool isDone = false;
 
 	};
 
@@ -1009,21 +1015,31 @@ namespace Entity
     {
         
     public:
-        Actor(int actor);
-        ~Actor();
+        Actor(int actor,int script = 99);
+        virtual ~Actor();
         void Update();
         void Move();
         int framePos = 0;
         void isCollided(int var = 0);
-        int name = 0;
-        int character = 0;
-        int moveType = IDLE;
+        int characterName = 0;
+		int scriptNumber = 0;
         enum movement {south,swest, west, nwest, north, neast, east, seast, idle};
         int actorMovement = south;
         enum behavior {none,looking};
         int idleBehavior = looking;
         
     };
+
+	class SoulOrb : public Actor
+	{
+
+	public:
+		SoulOrb(int actor,int script = 99);
+		void Update();
+		void isCollided(int var = 0);
+		~SoulOrb();
+
+	};
     
     class LevelManager : public Object
     {

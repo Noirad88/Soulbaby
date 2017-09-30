@@ -195,6 +195,13 @@ namespace Level
             LevelBG[0].setTextureRect(sf::IntRect(0,0,0,0));
 			CreateHud();
 
+
+			Entity::itemQueue guide;
+			guide.properties["itemType"] = "Guide";
+			guide.properties["PosX"] = std::to_string(1);
+			guide.properties["PosY"] = std::to_string(1);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(guide);
+
         }
 
 		if (sceneType == GAMESCENE) {
