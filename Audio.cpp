@@ -71,19 +71,17 @@ void Audio::PlaySFX(std::string soundName, bool multipleInstances){
 
 }
 
-void Audio::ToggleMusic() {
+void Audio::MusicFadeIn() {
 
-	if (mute == false) {
+	if (mute == true) music.setVolume(0);
+	mute = false;
 
-		music.setVolume(100);
-	}
+}
 
-	else if (mute == true) {
+void Audio::MusicFadeOut() {
 
-		music.setVolume(0);
-	}
-
-	mute = !mute;
+	if(mute == false) music.setVolume(100);
+	mute = true;
 
 }
 

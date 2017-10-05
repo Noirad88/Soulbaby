@@ -94,6 +94,7 @@ struct Attributes{
     std::shared_ptr<int> textSpeed;
 	bool firstTimeInNexus = false;
     std::array<int,7> levelsCompleted;
+	std::array<int, 7> gateKeepersSaved;
     std::vector<int> weapons;
 	int currentWeapon = 0;
     std::array<sf::Keyboard::Key,9> keyboardControls;

@@ -292,6 +292,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Media Include="sfx\sfx_laser_b.wav" />
     <Media Include="sfx\sfx_lightdash.wav" />
     <Media Include="sfx\sfx_lighthit.wav" />
+    <Media Include="sfx\sfx_longring.wav" />
     <Media Include="sfx\sfx_lswallow.wav" />
     <Media Include="sfx\sfx_open.wav" />
     <Media Include="sfx\sfx_pcharge1.wav" />

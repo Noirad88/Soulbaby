@@ -261,6 +261,17 @@ void Container::AddObjects()
 
 			}
 
+			else if ((QI)->properties["itemType"] == "ChargeParticleTiny")
+			{
+
+				std::unique_ptr<Entity::ChargeParticleTiny> ptr(new Entity::ChargeParticleTiny);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ptr->objectSprite.move(-10,-10);
+				ptr->objectSprite.move(RandomNumber(20, 0), RandomNumber(20, 0));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "EnemyPart")
 			{
 
@@ -1161,8 +1172,12 @@ void Container::PlayerDamaged() {
 	if (World::GetInstance()->WorldScene.playerPtr->shield > 0 && World::GetInstance()->WorldScene.playerPtr->shield < 41 ) {
 
 		World::GetInstance()->WorldScene.playerPtr->misDestroyed = true;
-		World::GetInstance()->WorldScene.audioContainer.music.stop();
-		World::GetInstance()->ReadyScene("map2_1");
+		World::GetInstance()->WorldScene.audioContainer.MusicFadeOut();
+
+		Entity::itemQueue textbox;
+		textbox.properties["itemType"] = "Textbox";
+		textbox.properties["ActorName&Script"] = std::to_string(67);
+		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(textbox);
 
 	}
 

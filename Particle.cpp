@@ -494,20 +494,31 @@ namespace Entity
         boxNameBG.setFillColor((sf::Color::Black));
         boxName.setCharacterSize(16);
 
-		textAbsorb.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
-		textAbsorb.setString("Absorb");
-		textAbsorb.setCharacterSize(16);
+		textChoice2.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
+		textChoice2.setString("Absorb");
+		if (characterNamePos == 6 && scriptNumber == 7) textChoice2.setString("Leave");
+		textChoice2.setCharacterSize(16);
+		textChoice2.setColor(sf::Color(28, 203, 158));
 
-		textRevive.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
-		textRevive.setString("Revive " + characterName);
-		textRevive.setCharacterSize(16);
+		textChoice1.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
+		textChoice1.setString("Revive");
+		if (characterNamePos == 6 && scriptNumber == 7) textChoice1.setString("Restart");
+
+		textChoice1.setCharacterSize(16);
+		textChoice1.setColor(sf::Color(28, 203, 158));
 
 		hand.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
 		hand.setTextureRect(sf::IntRect(154, 15, 13, 8));
         
         boxArrow.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
         boxArrow.setTextureRect(sf::IntRect(15,0,5,5));
-        
+
+		choice1bg.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
+		choice1bg.setTextureRect(sf::IntRect(144, 218, 66, 30));
+
+		choice2bg.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
+		choice2bg.setTextureRect(sf::IntRect(144, 218, 66, 30));
+
         progressSpeed = *World::GetInstance()->GlobalMembers.textSpeed.get();
         
         
@@ -515,24 +526,26 @@ namespace Entity
     
     void Textbox::Draw(sf::RenderTarget &window){
         
-        World::GetInstance()->DrawObject(backDrop);
-        World::GetInstance()->DrawObject(boxText);
+        World::GetInstance()->DrawObject(backDrop, "bypass");
+        World::GetInstance()->DrawObject(boxText, "bypass");
 
 		if (characterName != "NOTE") {
 
-			World::GetInstance()->DrawObject(boxNameBG);
-			World::GetInstance()->DrawObject(boxName);
+			World::GetInstance()->DrawObject(boxNameBG, "bypass");
+			World::GetInstance()->DrawObject(boxName, "bypass");
 
 		}
 
         World::GetInstance()->DrawObject(objectSprite);
-        if(script.length() != 0 && !strncmp(&script.at(0),">",1))World::GetInstance()->DrawObject(boxArrow);
+        if(script.length() != 0 && !strncmp(&script.at(0),">",1))World::GetInstance()->DrawObject(boxArrow, "bypass");
         
-		if (characterNamePos == 6 && scriptNumber == 6 && isDone == true) {
+		if (((characterNamePos == 6 && scriptNumber == 6) || (characterNamePos == 6 && scriptNumber == 7)) && isDone == true) {
 
-			World::GetInstance()->DrawObject(textAbsorb);
-			World::GetInstance()->DrawObject(textRevive);
-			World::GetInstance()->DrawObject(hand);
+			World::GetInstance()->DrawObject(choice1bg,"bypass");
+			World::GetInstance()->DrawObject(choice2bg,"bypass");
+			World::GetInstance()->DrawObject(textChoice2,"bypass");
+			World::GetInstance()->DrawObject(textChoice1,"bypass");
+			World::GetInstance()->DrawObject(hand,"bypass");
 
 		}
     }
@@ -554,9 +567,13 @@ namespace Entity
         boxText.setPosition(backDrop.getPosition().x + 18,backDrop.getPosition().y + 11);
         boxArrow.setPosition(backDrop.getPosition().x + backDrop.getTextureRect().width - 25, backDrop.getPosition().y + backDrop.getTextureRect().height -26);
 		
-		textAbsorb.setPosition(backDrop.getPosition().x + backDrop.getTextureRect().width - 150, backDrop.getPosition().y + backDrop.getTextureRect().height - 26);
-		textRevive.setPosition(backDrop.getPosition().x + backDrop.getTextureRect().width - 150 + (100), backDrop.getPosition().y + backDrop.getTextureRect().height - 26);
-		hand.setPosition(backDrop.getPosition().x + backDrop.getTextureRect().width - 150 + (selectState * 100), backDrop.getPosition().y + backDrop.getTextureRect().height - 26);
+		choice1bg.setPosition(backDrop.getPosition().x + 16, backDrop.getPosition().y + 34);
+		choice2bg.setPosition(choice1bg.getPosition().x + 71, choice1bg.getPosition().y);
+
+		textChoice1.setPosition(choice1bg.getPosition().x + 12, choice1bg.getPosition().y + 2);
+		textChoice2.setPosition(choice2bg.getPosition().x + 12, textChoice1.getPosition().y);
+
+		hand.setPosition(choice1bg.getPosition().x -4 + (selectState * 71) ,choice1bg.getPosition().y + 12);
 
         if(newScript.length() != scriptLength && script.length() != 0){
             
@@ -629,7 +646,7 @@ namespace Entity
 				//Also, if this is the Got Seed script, then show the two choices and enable hand/selecting
 
 
-				if (characterNamePos == 6 && scriptNumber == 6) {
+				if ((characterNamePos == 6 && scriptNumber == 6) || (characterNamePos == 6 && scriptNumber == 7)) {
 
 					if (World::GetInstance()->Timer(*this, 25400.0)) {
 
@@ -650,7 +667,6 @@ namespace Entity
 						}
 					}
 
-
 				}
 
 
@@ -669,9 +685,67 @@ namespace Entity
 						learn.properties["itemType"] = "LearnedAbility";
 						learn.properties["AbilityLearned"] = std::to_string(characterNamePos);
 						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(learn);
-						World::GetInstance()->WorldScene.audioContainer.ToggleMusic();
+						World::GetInstance()->WorldScene.audioContainer.MusicFadeOut();
 
 					}
+
+					//If this is the Got Seed script ...
+
+					else if (characterNamePos == 6 && scriptNumber == 6) {
+
+						// If player chose to revive gate keeper, mark that gate keeper as revived to be created in nexus
+
+						if (selectState == 0) {
+
+							int thisGateKeeper = World::GetInstance()->GlobalMembers.currentLevel;
+							std::cout << "npc " << thisGateKeeper << std::endl;
+							World::GetInstance()->GlobalMembers.gateKeepersSaved[thisGateKeeper] = 1;
+							World::GetInstance()->ReadyScene("map2_1");
+
+						}
+
+						// If player chose to absorb, increase level of current ability
+
+
+						if (selectState == 1) {
+
+							World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon)++;
+							std::cout << "weapon is not " << World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon);
+							World::GetInstance()->ReadyScene("map2_1");
+
+						}
+
+
+
+					}
+
+					//If this is the Death script ...
+
+					else if (characterNamePos == 6 && scriptNumber == 7) {
+
+						
+						// If player chose to revive gate keeper, mark that gate keeper as revived to be created in nexus
+
+						if (selectState == 0) {
+
+							int thisGateKeeper = World::GetInstance()->GlobalMembers.currentLevel;
+							World::GetInstance()->ReadyScene("battle");
+
+						}
+
+						// If player chose to absorb, increase level of current ability
+
+
+						if (selectState == 1) {
+
+							World::GetInstance()->ReadyScene("map2_1");
+
+						}
+
+
+
+					}
+
 
 					misDestroyed = true;
 
@@ -751,14 +825,14 @@ namespace Entity
 		pow1Lable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont("small"));
 		pow2Lable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont("small"));
 
-		if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) >= 2){
+		if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) >= 3){
 		
 			pow1Lable.setString("MAX");
 
         }
 
 		else {
-			pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon + 1)));
+			pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon)+1));
 		}
 		
 		pow2Lable.setString("MP:");
@@ -852,7 +926,7 @@ namespace Entity
 				textbox.properties["ActorName&Script"] = std::to_string(60);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(textbox);
 				World::GetInstance()->SetCameraTarget(*World::GetInstance()->WorldScene.playerPtr);
-				World::GetInstance()->WorldScene.audioContainer.ToggleMusic();
+				World::GetInstance()->WorldScene.audioContainer.MusicFadeIn();
 			}
 
 		}
@@ -876,6 +950,7 @@ namespace Entity
 
 		}
 
+
     }
 
 	void Hud::Close() {
@@ -886,14 +961,15 @@ namespace Entity
 			World::GetInstance()->GlobalMembers.currentWeapon = itemList.at(selectState);
 			selectedWeapon.setTextureRect(sf::IntRect(224, 240 + (World::GetInstance()->GlobalMembers.currentWeapon * 16), 16, 16));
 
-			if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) >= 2) {
+			if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) >= 3) {
 
 				pow1Lable.setString("MAX");
+
 
 			}
 
 			else {
-				pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon + 1)));
+				pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) + 1));
 			}
 
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
@@ -1481,6 +1557,7 @@ namespace Entity
 		chargeCounter = 0;
 
 	}
+
     
 	void BattlePlayer::Update() {
 
@@ -1764,8 +1841,11 @@ namespace Entity
 
 		*/
 
-		if (World::GetInstance()->PlayerPressedButton(controlsB)) {
 
+		if (World::GetInstance()
+			
+			->PlayerPressedButton(controlsB)) {
+			
 			itemQueue proj;
 			proj.properties["PosX"] = std::to_string(hotSpot.x);
 			proj.properties["PosY"] = std::to_string(hotSpot.y);
@@ -2134,6 +2214,16 @@ namespace Entity
 		maxFrame = 6;
 		animSpeed = VERY_FAST;
 		deacceleration = 0.5;
+
+	}
+
+	ChargeParticleTiny::ChargeParticleTiny() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(64, 137, 1, 1));
+		vel.y = -RandomNumber(2, 1);
+		SetEffectOrigin();
+		maxFrame = 6;
+		animSpeed = VERY_FAST;
 
 	}
 
@@ -3058,6 +3148,23 @@ namespace Entity
 		tempPos.y += double((World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y-12) - tempPos.y) / 100;
 		objectSprite.setPosition(tempPos);
 
+		if (World::GetInstance()->Timer(*this, FAST, NODELAY)) {
+
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_longring", false);
+
+		}
+
+
+		if (World::GetInstance()->Timer(*this, NORMAL)) {
+
+			itemQueue effect;
+			effect.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
+			effect.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
+			effect.properties["itemType"] = "ChargeParticleTiny";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(effect);
+
+		}
+
 	}
 
 	void ChargeWaveAttack::Update() {
@@ -3766,7 +3873,6 @@ namespace Entity
 						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 						World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 
-						World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_badhit2");
 
 					}
 
@@ -3989,6 +4095,10 @@ namespace Entity
 	}
 
 	PlayerChargeParticleSmall::~PlayerChargeParticleSmall() {
+
+	}
+
+	ChargeParticleTiny::~ChargeParticleTiny() {
 
 	}
 
@@ -4503,13 +4613,13 @@ namespace Entity
         
         type = "BG";
 
-		//lvlEnemyBank[0] = 4;
-		//lvlEnemyBank[1] = 16;
-		//lvlEnemyBank[2] = 100;
+		lvlEnemyBank[0] = 4;
+		lvlEnemyBank[1] = 16;
+		lvlEnemyBank[2] = 100;
 
-		lvlEnemyBank[0] = 0;
-		lvlEnemyBank[1] = 0;
-		lvlEnemyBank[2] = 0;
+		//lvlEnemyBank[0] = 0;
+	    //lvlEnemyBank[1] = 0;
+		//lvlEnemyBank[2] = 0;
 
     }
 
@@ -4637,13 +4747,31 @@ namespace Entity
 	void SoulOrb::Update() {
 
 		Actor::Update();
-		if (World::GetInstance()->Timer(*this, VERY_SLOW *4, DELAY)) {
 
-			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_lswallow");
+		if (World::GetInstance()->Timer(*this, NORMAL)) {
+
+			itemQueue effect;
+			effect.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			effect.properties["PosY"] = std::to_string(objectSprite.getPosition().y-4);
+			effect.properties["itemType"] = "ChargeParticleTiny";
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(effect);
+
+		}
+
+		if (World::GetInstance()->Timer(*this, FAST,NODELAY)) {
+
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_longring",false);
 
 		}
 
 	}
+
+	void SoulOrb::Draw(sf::RenderTarget& window) {
+
+		World::GetInstance()->DrawObject(objectSprite,"chargeShader");
+
+	}
+
     
     void Actor::Move()
     {
@@ -4982,6 +5110,7 @@ namespace Entity
         healthBar.setFillColor(sf::Color::Yellow);
         bossName.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
         bossName.setCharacterSize(16);
+		bigDaddy = true;
 
 		// Create movesets
 
@@ -5009,7 +5138,7 @@ namespace Entity
 		wings.setTextureRect(sf::IntRect(0,0, 175, 44));
         speed = 2;
 		maxhealth = 1200;
-        maxhealth = 12;
+		maxhealth = 30;
         health = maxhealth;
         moveType = NORMAL;
 		sf::Sprite *mysprite = &wings;
@@ -6161,6 +6290,8 @@ namespace Entity
     
 	void Mozza::Draw(sf::RenderTarget& window) {
 
+		if (active) SetSpriteRedForHealth();
+
 		if (showHurt == true) {
 			World::GetInstance()->DrawObject(objectSprite, "whiteShader");
 			showHurt = false;
@@ -6176,7 +6307,9 @@ namespace Entity
 	}
     
     void Boss::Draw(sf::RenderTarget& window){
-        
+
+		if (active) SetSpriteRedForHealth();
+
 
 		if (showHurt == true) {
 			World::GetInstance()->DrawObject(objectSprite, "whiteShader");

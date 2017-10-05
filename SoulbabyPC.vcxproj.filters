@@ -434,5 +434,8 @@
     <Media Include="sfx\sfx_bigbang.wav">
       <Filter>Assets</Filter>
     </Media>
+    <Media Include="sfx\sfx_longring.wav">
+      <Filter>Assets</Filter>
+    </Media>
   </ItemGroup>
 </Project>

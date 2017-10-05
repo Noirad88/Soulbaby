@@ -276,11 +276,13 @@ namespace Entity
 		sf::Vector2i portraitSize;
 		sf::Text boxText;
 		sf::Text boxName;
-		sf::Text textRevive;
-		sf::Text textAbsorb;
+		sf::Text textChoice1;
+		sf::Text textChoice2;
 		sf::Sprite hand;
 		sf::RectangleShape boxNameBG;
 		sf::Sprite boxArrow;
+		sf::Sprite choice1bg;
+		sf::Sprite choice2bg;
 		static std::string characters[11];
 		std::string characterName = "";
 		int characterNamePos = 0;
@@ -350,6 +352,8 @@ namespace Entity
 		void Bounce();
 		float* posXtemp1 = new float;
 		float* posYtemp2 = new float;
+		//bool IsShooting();
+		//void SetShootDirection();
 		int spriteWidth = 0;
 		int spriteHeight = 0;
 		int playerHealth = 0;
@@ -815,6 +819,13 @@ namespace Entity
 
 	};
 
+	class ChargeParticleTiny : public Fixed {
+	public:
+		ChargeParticleTiny();
+		~ChargeParticleTiny();
+
+	};
+
 	class ChargeWaveAttack : public Fixed {
 	public:
 		ChargeWaveAttack();
@@ -1036,6 +1047,7 @@ namespace Entity
 	public:
 		SoulOrb(int actor,int script = 99);
 		void Update();
+		void Draw(sf::RenderTarget& window);
 		void isCollided(int var = 0);
 		~SoulOrb();
 

@@ -119,7 +119,7 @@ namespace Level
 
                 
                 
-                else if(it->getType() == "Actor" && World::GetInstance()->GlobalMembers.levelsCompleted.at(stoi(it->getProperty("Name"))) >= 1){
+                else if(it->getType() == "Actor" && World::GetInstance()->GlobalMembers.gateKeepersSaved.at(stoi(it->getProperty("Name"))) >= 1){
                     
                     item.properties["PosX"] = to_string(it->getXposition());
                     item.properties["PosY"] = to_string(it->getYposition());

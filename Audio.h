@@ -30,7 +30,9 @@ class Audio
         ~Audio();
         void PlaySFX(std::string soundName, bool multipleInstances = 1);
         void PlayMusic(std::string musicName = "map1");
-		void ToggleMusic();
+		void MusicFadeOut();
+		void MusicFadeIn();
+
 		void playLoopedMusic(float length, std::string musicName = "map1");
         void Update();
         sf::Music music;

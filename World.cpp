@@ -259,12 +259,12 @@ World::World(){
 	GlobalMembers.weapons.push_back(0);
 	GlobalMembers.weapons.push_back(0);
 
-	GlobalMembers.weapons.at(0) = 1;
+	GlobalMembers.weapons.at(0) = 0;
 	GlobalMembers.weapons.at(1) = 0;
 	GlobalMembers.weapons.at(2) = 0;
-	GlobalMembers.weapons.at(3) = 1;
-	GlobalMembers.weapons.at(4) = 1;
-	GlobalMembers.weapons.at(5) = 1;
+	GlobalMembers.weapons.at(3) = 0;
+	GlobalMembers.weapons.at(4) = 0;
+	GlobalMembers.weapons.at(5) = 0;
 	GlobalMembers.weapons.at(6) = 0;
 
 }
@@ -285,8 +285,10 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     
     CreateCharacterScripts();
     GlobalMembers.levelsCompleted.fill(0);
+	GlobalMembers.levelsCompleted.at(0) = 1;
 
-
+	GlobalMembers.gateKeepersSaved.fill(0);
+	GlobalMembers.gateKeepersSaved.at(0) = 1;
 	GlobalMembers.currentCharacterScripts.fill(0);
 
 
@@ -324,7 +326,8 @@ void World::ReadyScene(std::string mapName){
    WorldScene.isLoaded = false;
    if(mapName == "menu" || mapName == "gameScene0" ) WorldScene.transition = std::unique_ptr<Transition>(new Fade(mapName, TRANOUT));
    else WorldScene.transition = std::unique_ptr<Transition>(new BlockFade(mapName, TRANOUT));
-   World::GetInstance()->WorldScene.audioContainer.ToggleMusic();
+   //turn music down
+   World::GetInstance()->WorldScene.audioContainer.MusicFadeOut();
 
 
 }
@@ -339,7 +342,8 @@ void World::LoadScene(std::string sceneName){
         WorldScene.levelContainer->CreateScene();
         WorldScene.isLoaded = true;
         std::cout << "Done Loading" << CurrentScene->name << std::endl;
-		World::GetInstance()->WorldScene.audioContainer.ToggleMusic();
+		// turn music back up
+		World::GetInstance()->WorldScene.audioContainer.MusicFadeIn();
 
 
 
@@ -677,7 +681,8 @@ void World::CreateCharacterScripts(){
 	std::string note3 = "Learned Weapon5!";
 	std::string note4 = "Learned Weapon6!";
 	std::string note5 = "Learned Weapon7!";
-	std::string note6 = "A soul seed was dropped ...>You can use this to increse your strength or bring back the gate keeper.>What do you want to do?";
+	std::string note6 = "A soul seed was dropped ...>You can use this to increse your strength or revive the gate keeper to their true form.>What do you want to do?";
+	std::string note7 = "Restart or return to the Nexus?";
 
 
 
@@ -695,6 +700,8 @@ void World::CreateCharacterScripts(){
 	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE4", note4));
 	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE5", note5));
 	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE6", note6));
+	CharacterScripts.insert(std::pair<std::string, std::string>("NOTE7", note7));
+
 
 
     
