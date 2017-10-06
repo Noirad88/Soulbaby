@@ -183,7 +183,7 @@ namespace Entity
 
 		if (World::GetInstance()->Timer(*this, FAST)) {
 
-			if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsUp])) {
+			if ((World::GetInstance()->PressedButtonforUI(controlsUp))) {
 
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
 				if (menuContainer.at(currentScreen).currentPos != 0) {
@@ -204,7 +204,7 @@ namespace Entity
 
 			}
 
-			if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsDown])) {
+			if ((World::GetInstance()->PressedButtonforUI(controlsDown))) {
 
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
 				if (menuContainer.at(currentScreen).currentPos != menuContainer.at(currentScreen).menuList.size() - 1) {
@@ -225,7 +225,7 @@ namespace Entity
 			}
 
 
-			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsLeft]) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
+			else if ((World::GetInstance()->PressedButtonforUI(controlsLeft)) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
 
 				--*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
 				// switch visul changes need to go here
@@ -234,7 +234,7 @@ namespace Entity
 
 			}
 
-			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsRight]) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
+			else if ((World::GetInstance()->PressedButtonforUI(controlsRight)) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
 
 				++*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
 				// switch visul changes need to go here
@@ -243,14 +243,14 @@ namespace Entity
 
 			}
 
-			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsA])) {
+			else if ((World::GetInstance()->PressedButtonforUI(controlsShootLeft))) {
 
 				DoMenuAction(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos));
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
 
 			}
 
-			else if ((sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsB]) && menuContainer.size() != 1)) menuContainer.pop_back();
+			else if ((World::GetInstance()->PressedButtonforUI(controlsShootLeft) && menuContainer.size() != 1)) menuContainer.pop_back();
 
 		}
 	}
@@ -600,7 +600,7 @@ namespace Entity
                         
                         if(World::GetInstance()->Timer(*this,25100.0)){
                         
-                            if(World::GetInstance()->PressedButtonforUI(controlsB)){
+                            if(World::GetInstance()->PressedButtonforUI(controlsShootLeft)){
                             
                                 newScript.erase(0);
                                 script.erase(0,1);
@@ -670,7 +670,7 @@ namespace Entity
 				}
 
 
-				if (World::GetInstance()->PressedButtonforUI(controlsB)) {
+				if (World::GetInstance()->PressedButtonforUI(controlsShootLeft)) {
 
 					if (World::GetInstance()->WorldScene.guidePtr) World::GetInstance()->WorldScene.guidePtr->ready = false;
 
@@ -883,7 +883,7 @@ namespace Entity
 
 			}
 
-			if ((World::GetInstance()->PlayerPressedButton(controlsB) || World::GetInstance()->PlayerPressedButton(controlsC)) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
+			if ((World::GetInstance()->PlayerPressedActionButton() || World::GetInstance()->PlayerPressedButton(controlsDash)) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
 				
 				Close();
 			}
@@ -892,7 +892,7 @@ namespace Entity
 
 		if (World::GetInstance()->IsPlayerActive()) {
 
-			if (World::GetInstance()->CurrentScene->mapType == 1 && World::GetInstance()->PlayerPressedButton(controlsC) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
+			if (World::GetInstance()->CurrentScene->mapType == 1 && World::GetInstance()->PlayerPressedButton(controlsDash) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
 
 				Expand();
 
@@ -1566,7 +1566,7 @@ namespace Entity
 
 		//if player has let go of dash key, dash
 
-		if (jumpFlag == true && !World::GetInstance()->PlayerPressedButton(controlsC)) {
+		if (jumpFlag == true && !World::GetInstance()->PlayerPressedButton(controlsDash)) {
 
 			std::cout << "DASH START" << std::endl;
 			//do the appropraite charge move here
@@ -1579,7 +1579,7 @@ namespace Entity
 
 		else if (jumpFlag == false) {
 
-			if (mana >= 10 && World::GetInstance()->PlayerPressedButton(controlsC)) jumpFlag = true;
+			if (mana >= 10 && World::GetInstance()->PlayerPressedButton(controlsDash)) jumpFlag = true;
 
 		}
 
@@ -1641,6 +1641,8 @@ namespace Entity
 			if (!World::GetInstance()->WorldScene.transition) {
 
 
+				//set movement direction
+
 				if ((World::GetInstance()->PlayerPressedButton(controlsDown)
 					&& World::GetInstance()->PlayerPressedButton(controlsLeft))) movement = swest;
 
@@ -1661,6 +1663,30 @@ namespace Entity
 
 				else if (World::GetInstance()->PlayerPressedButton(controlsRight)) movement = east;
 
+				//set fire direction
+
+				if ((World::GetInstance()->PlayerPressedButton(controlsShootDown)
+					&& World::GetInstance()->PlayerPressedButton(controlsShootLeft))) fireDir = swest;
+
+				else if ((World::GetInstance()->PlayerPressedButton(controlsShootLeft)
+					&& World::GetInstance()->PlayerPressedButton(controlsShootUp))) fireDir = nwest;
+
+				else if ((World::GetInstance()->PlayerPressedButton(controlsShootUp)
+					&& World::GetInstance()->PlayerPressedButton(controlsShootRight))) fireDir = neast;
+
+				else if ((World::GetInstance()->PlayerPressedButton(controlsShootRight)
+					&& World::GetInstance()->PlayerPressedButton(controlsShootDown))) fireDir = seast;
+
+				else if (World::GetInstance()->PlayerPressedButton(controlsShootDown)) fireDir = south;
+
+				else if (World::GetInstance()->PlayerPressedButton(controlsShootLeft)) fireDir = west;
+
+				else if (World::GetInstance()->PlayerPressedButton(controlsShootUp)) fireDir = north;
+
+				else if (World::GetInstance()->PlayerPressedButton(controlsShootRight)) fireDir = east;
+
+
+
 			}
 
 			if (!World::GetInstance()->PlayerPressedButton(controlsRight)
@@ -1668,6 +1694,12 @@ namespace Entity
 				&& !World::GetInstance()->PlayerPressedButton(controlsDown)
 				&& !World::GetInstance()->PlayerPressedButton(controlsLeft))
 				movement = idle;
+
+			if (!World::GetInstance()->PlayerPressedButton(controlsShootRight)
+				&& !World::GetInstance()->PlayerPressedButton(controlsShootUp)
+				&& !World::GetInstance()->PlayerPressedButton(controlsShootDown)
+				&& !World::GetInstance()->PlayerPressedButton(controlsShootLeft))
+				fireDir = movement;
 
 		     
 
@@ -1677,7 +1709,7 @@ namespace Entity
 
 		// Dashing/Hyper dashing logic
 
-		if (World::GetInstance()->PlayerPressedButton(controlsC) && dashing == true && dashSave == true) {
+		if (World::GetInstance()->PlayerPressedButton(controlsDash) && dashing == true && dashSave == true) {
 
 			dashing = false;
 			dashSave = false;
@@ -1776,14 +1808,17 @@ namespace Entity
 
 				frame_pos = (frame_pos >= 5) ? 0 : frame_pos + 1;
 
-				if (!World::GetInstance()->PlayerPressedButton(controlsB)) {
+				if (!World::GetInstance()->PlayerPressedButton(controlsShootLeft)&&
+					!World::GetInstance()->PlayerPressedButton(controlsShootUp)&&
+					!World::GetInstance()->PlayerPressedButton(controlsShootRight)&&
+					!World::GetInstance()->PlayerPressedButton(controlsShootDown)) {
 
 					objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, movement * FRAME, spriteWidth, spriteHeight));
 					fireDir = movement;
 
 				}
 
-				else objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, objectSprite.getTextureRect().top, spriteWidth, spriteHeight));
+				else objectSprite.setTextureRect(sf::IntRect(frame_pos * spriteWidth, fireDir * FRAME, spriteWidth, spriteHeight));
 
 			}
 
@@ -1842,9 +1877,10 @@ namespace Entity
 		*/
 
 
-		if (World::GetInstance()
-			
-			->PlayerPressedButton(controlsB)) {
+		if (World::GetInstance()->PlayerPressedButton(controlsShootLeft)||
+			World::GetInstance()->PlayerPressedButton(controlsShootRight)||
+			World::GetInstance()->PlayerPressedButton(controlsShootUp)||
+			World::GetInstance()->PlayerPressedButton(controlsShootDown)) {
 			
 			itemQueue proj;
 			proj.properties["PosX"] = std::to_string(hotSpot.x);

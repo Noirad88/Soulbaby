@@ -217,31 +217,37 @@ World::World(){
     1 = up
     2 = right
     3 = down
-    4 = A
-    5 = B
-    6 = Pause
+    4 = shoot left
+    5 = shoot up
+    6 = shoot right
+	7 = shoot down
+	8 = dash
+	9 = pause;
      
     */
     
-    GlobalMembers.keyboardControls[0] = sf::Keyboard::Left;
-    GlobalMembers.keyboardControls[1] = sf::Keyboard::Up;
-    GlobalMembers.keyboardControls[2] = sf::Keyboard::Right;
-    GlobalMembers.keyboardControls[3] = sf::Keyboard::Down;
-    GlobalMembers.keyboardControls[4] = sf::Keyboard::Z;
-    GlobalMembers.keyboardControls[5] = sf::Keyboard::X;
-    GlobalMembers.keyboardControls[6] = sf::Keyboard::C;
-	GlobalMembers.keyboardControls[7] = sf::Keyboard::P;
-	GlobalMembers.keyboardControls[8] = sf::Keyboard::V;
+    GlobalMembers.keyboardControls[0] = sf::Keyboard::A;
+    GlobalMembers.keyboardControls[1] = sf::Keyboard::W;
+    GlobalMembers.keyboardControls[2] = sf::Keyboard::D;
+    GlobalMembers.keyboardControls[3] = sf::Keyboard::S;
+    GlobalMembers.keyboardControls[4] = sf::Keyboard::Left;
+    GlobalMembers.keyboardControls[5] = sf::Keyboard::Up;
+    GlobalMembers.keyboardControls[6] = sf::Keyboard::Right;
+	GlobalMembers.keyboardControls[7] = sf::Keyboard::Down;
+	GlobalMembers.keyboardControls[8] = sf::Keyboard::RShift;
+	GlobalMembers.keyboardControls[9] = sf::Keyboard::P;
 
 	GlobalMembers.joystickControls[0] = -100;
 	GlobalMembers.joystickControls[1] = -100;
 	GlobalMembers.joystickControls[2] = 100;
 	GlobalMembers.joystickControls[3] = 100;
-	GlobalMembers.joystickControls[4] = 4;
-	GlobalMembers.joystickControls[5] = 3;
-	GlobalMembers.joystickControls[6] = 0;
-	GlobalMembers.joystickControls[7] = 0;
-	GlobalMembers.joystickControls[8] = 1;
+	GlobalMembers.joystickControls[4] = 3;
+	GlobalMembers.joystickControls[5] = 0;
+	GlobalMembers.joystickControls[6] = 1;
+	GlobalMembers.joystickControls[7] = 2;
+	GlobalMembers.joystickControls[8] = 5;
+	GlobalMembers.joystickControls[9] = 9;
+
 
 	dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC";
 
@@ -285,10 +291,10 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     
     CreateCharacterScripts();
     GlobalMembers.levelsCompleted.fill(0);
-	GlobalMembers.levelsCompleted.at(0) = 1;
+	//GlobalMembers.levelsCompleted.at(0) = 1;
 
 	GlobalMembers.gateKeepersSaved.fill(0);
-	GlobalMembers.gateKeepersSaved.at(0) = 1;
+	//GlobalMembers.gateKeepersSaved.at(0) = 1;
 	GlobalMembers.currentCharacterScripts.fill(0);
 
 
@@ -772,6 +778,27 @@ bool World::PlayerPressedButton(int button) {
 
 	}
 	
+	return buttonPressed;
+
+}
+
+bool World::PlayerPressedActionButton() {
+
+	bool buttonPressed = false;
+	sf::Joystick::update();
+
+	if ((WorldScene.playerPtr != nullptr && IsPlayerActive())) {
+
+		if (sf::Joystick::isConnected(0)) {
+
+			if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsShootLeft]) == true) buttonPressed = true;
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsShootUp]) == true) buttonPressed = true;
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsShootRight]) == true) buttonPressed = true;
+			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsShootDown]) == true) buttonPressed = true;
+
+		}
+	}
+
 	return buttonPressed;
 
 }

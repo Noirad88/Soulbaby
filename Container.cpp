@@ -1150,7 +1150,7 @@ void Container::CheckCollisions(){
 
 				World::GetInstance()->WorldScene.guidePtr->SetTarget(newvec);
                 
-				if (World::GetInstance()->PlayerPressedButton(controlsB)
+				if (World::GetInstance()->PlayerPressedButton(controlsShootLeft)
 					&& (World::GetInstance()->WorldScene.guidePtr->ready == true)
 					&& (World::GetInstance()->WorldScene.hudPtr->isExpanded == false)
 					&& (World::GetInstance()->CameraTarget == World::GetInstance()->WorldScene.playerPtr)) {

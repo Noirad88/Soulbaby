@@ -76,11 +76,13 @@ namespace Level{
 #define controlsUp 1
 #define controlsRight 2
 #define controlsDown 3
-#define controlsA 4
-#define controlsB 5
-#define controlsC 6
-#define controlsPause 7
-#define controlsSwitch 8
+#define controlsShootLeft 4
+#define controlsShootUp 5
+#define controlsShootRight 6
+#define controlsShootDown 7
+#define controlsDash 8
+#define controlsStart 9
+
 
 #define TRANIN 0
 #define TRANOUT 1
@@ -97,8 +99,8 @@ struct Attributes{
 	std::array<int, 7> gateKeepersSaved;
     std::vector<int> weapons;
 	int currentWeapon = 0;
-    std::array<sf::Keyboard::Key,9> keyboardControls;
-	std::array<int, 9> joystickControls;
+    std::array<sf::Keyboard::Key,10> keyboardControls;
+	std::array<int, 10> joystickControls;
 	std::array<int, 9> currentCharacterScripts;
 
 	bool joystick = true;
@@ -246,6 +248,8 @@ class World{
     void CreateCharacterScripts();
     void DrawObject(sf::Drawable& sprite, std::string shader = "");
 	bool PlayerPressedButton(int button);
+	bool PlayerPressedActionButton();
+
 	bool PressedButtonforUI(int button);
 
 	sf::RectangleShape testShape;

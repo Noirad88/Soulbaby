@@ -11,12 +11,36 @@
   C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\sfml-window-2.dll
   C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\sfml-window-d-2.dll
   11 File(s) copied
-  Audio.cpp
-Audio.cpp(155): warning C4244: 'initializing': conversion from 'sf::Uint64' to 'std::size_t', possible loss of data
+  World.cpp
+  Unknown compiler version - please run the configure tests and report the results
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(36): warning C4005: 'NORMAL': macro redefinition
+  c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(38): note: see previous definition of 'NORMAL'
+C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\SoulbabyPC\Particle.h(43): warning C4005: 'FAR': macro redefinition
+  C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h(150): note: see previous definition of 'FAR'
+World.cpp(54): warning C4244: 'argument': conversion from 'float' to 'sf::Uint8', possible loss of data
+World.cpp(55): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+World.cpp(85): warning C4244: 'argument': conversion from 'float' to 'sf::Uint8', possible loss of data
+World.cpp(543): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+World.cpp(613): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+World.cpp(614): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+World.cpp(616): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+World.cpp(617): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+World.cpp(875): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+World.cpp(876): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+World.cpp(891): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+World.cpp(929): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\darion\documents\visual studio 2015\projects\soulbabypc\soulbabypc\World.h(325): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  World.cpp(106): note: see reference to function template instantiation 'bool World::Timer<BlockFade,int,int>(T &,I,O)' being compiled
+          with
+          [
+              T=BlockFade,
+              I=int,
+              O=int
+          ]
   Generating code
-  16 of 7523 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+  2 of 7525 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    4 functions had inline decision re-evaluated but remain unchanged
+    60 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   SoulbabyPC.vcxproj -> C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\Release\Soulbaby.exe
   SoulbabyPC.vcxproj -> C:\Users\Darion\documents\visual studio 2015\Projects\SoulbabyPC\Release\Soulbaby.pdb (Full PDB)
