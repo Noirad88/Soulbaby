@@ -184,9 +184,8 @@ namespace Level
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(enemyManager);
             
             lvlSize.x = 480;
-            lvlSize.y = 480;
+            lvlSize.y = 270;
             
-
             Entity::itemQueue player;
             player.properties["itemType"] = "BattlePlayer";
             player.properties["PosX"] = std::to_string(lvlSize.x/2);

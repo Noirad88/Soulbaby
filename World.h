@@ -100,7 +100,7 @@ struct Attributes{
     std::vector<int> weapons;
 	int currentWeapon = 0;
     std::array<sf::Keyboard::Key,10> keyboardControls;
-	std::array<int, 10> joystickControls;
+	std::array<std::pair<int, sf::Joystick::Axis>, 10> joystickControls;
 	std::array<int, 9> currentCharacterScripts;
 
 	bool joystick = true;
@@ -247,11 +247,76 @@ class World{
     void LoadSceneBank();
     void CreateCharacterScripts();
     void DrawObject(sf::Drawable& sprite, std::string shader = "");
-	bool PlayerPressedButton(int button);
+	bool PlayerPressedButton(int button,bool menuAction = false);
 	bool PlayerPressedActionButton();
+	void MapController(int id, int vendor);
 
-	bool PressedButtonforUI(int button);
+	// For contoller setup
+	// Controller presets
 
+
+	/*
+
+	Setting controls
+
+	----
+
+	0 = left
+	1 = up
+	2 = right
+	3 = down
+	4 = shoot left
+	5 = shoot up
+	6 = shoot right
+	7 = shoot down
+	8 = dash
+	9 = pause;
+
+	*/
+
+	std::array<sf::Keyboard::Key, 10> DefaultKeyboardMaps = { 
+		sf::Keyboard::A,
+		sf::Keyboard::W,
+		sf::Keyboard::D,
+		sf::Keyboard::S,
+		sf::Keyboard::Left,
+		sf::Keyboard::Up,
+		sf::Keyboard::Right,
+		sf::Keyboard::Down,
+		sf::Keyboard::RShift,
+		sf::Keyboard::P
+	};
+	
+	std::array<std::pair<int,sf::Joystick::Axis>, 10> DefaultControllerMaps = {
+
+		std::make_pair(-100,sf::Joystick::Axis::X),
+		std::make_pair(-100,sf::Joystick::Axis::Y),
+		std::make_pair(100,sf::Joystick::Axis::X),
+		std::make_pair(100,sf::Joystick::Axis::Y),
+		std::make_pair(3,sf::Joystick::Axis::X),
+		std::make_pair(0,sf::Joystick::Axis::X),
+		std::make_pair(1,sf::Joystick::Axis::X),
+		std::make_pair(2,sf::Joystick::Axis::X),
+		std::make_pair(5,sf::Joystick::Axis::X),
+		std::make_pair(9,sf::Joystick::Axis::X),
+	};
+
+	std::array<std::pair<int, sf::Joystick::Axis>, 10> XboxKeyMaps = {
+
+		std::make_pair(-100,sf::Joystick::Axis::PovX),
+		std::make_pair(100,sf::Joystick::Axis::PovY),
+		std::make_pair(100,sf::Joystick::Axis::PovX),
+		std::make_pair(-100,sf::Joystick::Axis::PovY),
+		std::make_pair(2,sf::Joystick::Axis::X),
+		std::make_pair(3,sf::Joystick::Axis::X),
+		std::make_pair(1,sf::Joystick::Axis::X),
+		std::make_pair(0,sf::Joystick::Axis::X),
+		std::make_pair(-100,sf::Joystick::Axis::Z),
+		std::make_pair(7,sf::Joystick::Axis::X),
+	};
+
+
+	bool usingController = false;
 	sf::RectangleShape testShape;
     static World *GetInstance(){
         

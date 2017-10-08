@@ -183,7 +183,7 @@ namespace Entity
 
 		if (World::GetInstance()->Timer(*this, FAST)) {
 
-			if ((World::GetInstance()->PressedButtonforUI(controlsUp))) {
+			if ((World::GetInstance()->PlayerPressedButton(controlsUp,true))) {
 
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
 				if (menuContainer.at(currentScreen).currentPos != 0) {
@@ -204,7 +204,7 @@ namespace Entity
 
 			}
 
-			if ((World::GetInstance()->PressedButtonforUI(controlsDown))) {
+			if ((World::GetInstance()->PlayerPressedButton(controlsDown,true))) {
 
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
 				if (menuContainer.at(currentScreen).currentPos != menuContainer.at(currentScreen).menuList.size() - 1) {
@@ -225,7 +225,7 @@ namespace Entity
 			}
 
 
-			else if ((World::GetInstance()->PressedButtonforUI(controlsLeft)) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
+			else if ((World::GetInstance()->PlayerPressedButton(controlsLeft,true)) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
 
 				--*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
 				// switch visul changes need to go here
@@ -234,7 +234,7 @@ namespace Entity
 
 			}
 
-			else if ((World::GetInstance()->PressedButtonforUI(controlsRight)) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
+			else if ((World::GetInstance()->PlayerPressedButton(controlsRight,true)) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
 
 				++*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
 				// switch visul changes need to go here
@@ -243,14 +243,14 @@ namespace Entity
 
 			}
 
-			else if ((World::GetInstance()->PressedButtonforUI(controlsShootLeft))) {
+			else if ((World::GetInstance()->PlayerPressedButton(controlsShootLeft,true))) {
 
 				DoMenuAction(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos));
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
 
 			}
 
-			else if ((World::GetInstance()->PressedButtonforUI(controlsShootLeft) && menuContainer.size() != 1)) menuContainer.pop_back();
+			else if ((World::GetInstance()->PlayerPressedButton(controlsShootLeft,true) && menuContainer.size() != 1)) menuContainer.pop_back();
 
 		}
 	}
@@ -600,7 +600,7 @@ namespace Entity
                         
                         if(World::GetInstance()->Timer(*this,25100.0)){
                         
-                            if(World::GetInstance()->PressedButtonforUI(controlsShootLeft)){
+                            if(World::GetInstance()->PlayerPressedButton(controlsShootLeft,true)){
                             
                                 newScript.erase(0);
                                 script.erase(0,1);
@@ -650,7 +650,7 @@ namespace Entity
 
 					if (World::GetInstance()->Timer(*this, 25400.0)) {
 
-						if (World::GetInstance()->PressedButtonforUI(controlsLeft) && selectState == 1) {
+						if (World::GetInstance()->PlayerPressedButton(controlsLeft,true) && selectState == 1) {
 
 							selectState = 0;
 							World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
@@ -658,7 +658,7 @@ namespace Entity
 
 						}
 
-						if (World::GetInstance()->PressedButtonforUI(controlsRight) && selectState == 0) {
+						if (World::GetInstance()->PlayerPressedButton(controlsRight,true) && selectState == 0) {
 
 							selectState = 1;
 							World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
@@ -670,7 +670,7 @@ namespace Entity
 				}
 
 
-				if (World::GetInstance()->PressedButtonforUI(controlsShootLeft)) {
+				if (World::GetInstance()->PlayerPressedButton(controlsShootLeft,true)) {
 
 					if (World::GetInstance()->WorldScene.guidePtr) World::GetInstance()->WorldScene.guidePtr->ready = false;
 
@@ -832,7 +832,7 @@ namespace Entity
         }
 
 		else {
-			pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon)+1));
+			pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon)));
 		}
 		
 		pow2Lable.setString("MP:");
@@ -868,14 +868,14 @@ namespace Entity
 			expandTween += (40 - expandTween) / 5;
 			//Selection
 
-			if (World::GetInstance()->PlayerPressedButton(controlsLeft) && (World::GetInstance()->Timer(*this, NORMAL, NODELAY) && selectState != 0)) {
+			if (World::GetInstance()->PlayerPressedButton(controlsLeft,true) && (World::GetInstance()->Timer(*this, NORMAL, NODELAY) && selectState != 0)) {
 
 				selectState--;
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
 
 			}
 
-			else if (World::GetInstance()->PlayerPressedButton(controlsRight) && (World::GetInstance()->Timer(*this, NORMAL, NODELAY) && selectState != 6)) {
+			else if (World::GetInstance()->PlayerPressedButton(controlsRight,true) && (World::GetInstance()->Timer(*this, NORMAL, NODELAY) && selectState != 6)) {
 
 				selectState++;
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
@@ -883,7 +883,7 @@ namespace Entity
 
 			}
 
-			if ((World::GetInstance()->PlayerPressedActionButton() || World::GetInstance()->PlayerPressedButton(controlsDash)) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
+			if (World::GetInstance()->PlayerPressedActionButton() && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
 				
 				Close();
 			}
@@ -892,7 +892,7 @@ namespace Entity
 
 		if (World::GetInstance()->IsPlayerActive()) {
 
-			if (World::GetInstance()->CurrentScene->mapType == 1 && World::GetInstance()->PlayerPressedButton(controlsDash) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
+			if (World::GetInstance()->CurrentScene->mapType == 1 && World::GetInstance()->PlayerPressedButton(controlsDash,true) && (World::GetInstance()->Timer(*this, SLOW, NODELAY))) {
 
 				Expand();
 
@@ -969,7 +969,7 @@ namespace Entity
 			}
 
 			else {
-				pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) + 1));
+				pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon)));
 			}
 
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
@@ -1899,20 +1899,24 @@ namespace Entity
 
 			}
 
-			// cannon
+			// spreader
 
-			else if (World::GetInstance()->GlobalMembers.currentWeapon == 1 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
+			else if (World::GetInstance()->GlobalMembers.currentWeapon == 1 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
 
-				proj.properties["itemType"] = "PlayerBomb";
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
+				proj.properties["itemType"] = "PlayerRepeater";
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
+				proj.properties["Direction"] = std::to_string((fireDir * 45));
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+				proj.properties["Direction"] = std::to_string((fireDir * 45) + 15);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+				proj.properties["Direction"] = std::to_string((fireDir * 45) - 15);
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
 			}
 
-			// laser
+			// Laser 
 
-
-			else if (World::GetInstance()->GlobalMembers.currentWeapon == 2 && World::GetInstance()->Timer(*this, VERY_SLOW*16, NODELAY)) {
+			else if (World::GetInstance()->GlobalMembers.currentWeapon == 2 && World::GetInstance()->Timer(*this, VERY_SLOW * 16, NODELAY)) {
 
 				proj.properties["itemType"] = "PlayerBeam";
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
@@ -1921,25 +1925,19 @@ namespace Entity
 			}
 
 
+			// cannon
 
-			// spreader
+			else if (World::GetInstance()->GlobalMembers.currentWeapon == 4 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
 
-			else if (World::GetInstance()->GlobalMembers.currentWeapon == 3 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
-
-				proj.properties["itemType"] = "PlayerRepeater";
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
-				proj.properties["Direction"] = std::to_string((fireDir * 45));
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
-				proj.properties["Direction"] = std::to_string((fireDir*45) + 15);
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
-				proj.properties["Direction"] = std::to_string((fireDir*45) - 15);
+				proj.properties["itemType"] = "PlayerBomb";
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bomb_shoot");
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
 			}
 
 			// boomerang
 
-			else if (World::GetInstance()->GlobalMembers.currentWeapon == 4 && World::GetInstance()->Timer(*this, VERY_SLOW*2, NODELAY)) {
+			else if (World::GetInstance()->GlobalMembers.currentWeapon == 5 && World::GetInstance()->Timer(*this, VERY_SLOW*2, NODELAY)) {
 
 				proj.properties["itemType"] = "PlayerBoomerang";
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
@@ -4391,10 +4389,12 @@ namespace Entity
 
 	LearnedAbility::~LearnedAbility() {
 
+		int thisWeapon = 1;
+
 		World::GetInstance()->CameraTarget = World::GetInstance()->WorldScene.playerPtr;
-		World::GetInstance()->GlobalMembers.weapons[2] = 1;
+		World::GetInstance()->GlobalMembers.weapons[thisWeapon] = 1;
 		World::GetInstance()->WorldScene.hudPtr->Expand();
-		World::GetInstance()->WorldScene.hudPtr->newAbility = 2;
+		World::GetInstance()->WorldScene.hudPtr->newAbility = thisWeapon;
 		World::GetInstance()->worldShader = 0;
 
 
@@ -5912,6 +5912,7 @@ namespace Entity
 
 		objectSprite.setPosition(oldx, oldy);
 		if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) {
+
 
 			itemQueue bullet;
 			bullet.properties["PosX"] = std::to_string(objectSprite.getPosition().x);

@@ -207,54 +207,8 @@ void World::UpdateTransition(){
 
 World::World(){
     
-    /*
-     
-    Setting controls
-     
-    ----
-     
-    0 = left
-    1 = up
-    2 = right
-    3 = down
-    4 = shoot left
-    5 = shoot up
-    6 = shoot right
-	7 = shoot down
-	8 = dash
-	9 = pause;
-     
-    */
-    
-    GlobalMembers.keyboardControls[0] = sf::Keyboard::A;
-    GlobalMembers.keyboardControls[1] = sf::Keyboard::W;
-    GlobalMembers.keyboardControls[2] = sf::Keyboard::D;
-    GlobalMembers.keyboardControls[3] = sf::Keyboard::S;
-    GlobalMembers.keyboardControls[4] = sf::Keyboard::Left;
-    GlobalMembers.keyboardControls[5] = sf::Keyboard::Up;
-    GlobalMembers.keyboardControls[6] = sf::Keyboard::Right;
-	GlobalMembers.keyboardControls[7] = sf::Keyboard::Down;
-	GlobalMembers.keyboardControls[8] = sf::Keyboard::RShift;
-	GlobalMembers.keyboardControls[9] = sf::Keyboard::P;
-
-	GlobalMembers.joystickControls[0] = -100;
-	GlobalMembers.joystickControls[1] = -100;
-	GlobalMembers.joystickControls[2] = 100;
-	GlobalMembers.joystickControls[3] = 100;
-	GlobalMembers.joystickControls[4] = 3;
-	GlobalMembers.joystickControls[5] = 0;
-	GlobalMembers.joystickControls[6] = 1;
-	GlobalMembers.joystickControls[7] = 2;
-	GlobalMembers.joystickControls[8] = 5;
-	GlobalMembers.joystickControls[9] = 9;
-
-
-	dir = "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC";
-
-	/*
-	0 = repeater
-	5 = spreader
-	*/
+	GlobalMembers.keyboardControls = DefaultKeyboardMaps;
+	GlobalMembers.joystickControls = XboxKeyMaps;
 
 	GlobalMembers.weapons.reserve(7);
 	GlobalMembers.weapons.push_back(0);
@@ -265,13 +219,7 @@ World::World(){
 	GlobalMembers.weapons.push_back(0);
 	GlobalMembers.weapons.push_back(0);
 
-	GlobalMembers.weapons.at(0) = 0;
-	GlobalMembers.weapons.at(1) = 0;
-	GlobalMembers.weapons.at(2) = 0;
-	GlobalMembers.weapons.at(3) = 0;
-	GlobalMembers.weapons.at(4) = 0;
-	GlobalMembers.weapons.at(5) = 0;
-	GlobalMembers.weapons.at(6) = 0;
+	GlobalMembers.weapons.at(0) = 1;
 
 }
 
@@ -317,10 +265,30 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
 	sf::Joystick::update();
 	bool joystick = sf::Joystick::isConnected(0);
 	int buttons = sf::Joystick::getButtonCount(0);
+	sf::Joystick::Identification joy = sf::Joystick::getIdentification(0);
+	std::string joyName = joy.name;
+	int joyID = joy.productId;
+	int joyVIN = joy.vendorId;
+
+	
 	int axisx = sf::Joystick::hasAxis(0,sf::Joystick::Axis::X);
 	int axisy = sf::Joystick::hasAxis(0, sf::Joystick::Axis::Y);
 
+	if (joystick == true) usingController = true;
 
+	/*
+	
+	xbox one
+	767
+	1118
+	
+	
+	*/
+
+
+	std::cout << "Joystick Name : " << joyName << std::endl;
+	std::cout << "Joystick ID: " << joyID << std::endl;
+	std::cout << "Joystick VIN : " << joyVIN << std::endl;
 	std::cout << "Joystick? : " << joystick << std::endl;
 	std::cout << "Button? : " << buttons << std::endl;
 	std::cout << "Axis? : " << axisx << ", " << axisy << std::endl;
@@ -333,6 +301,7 @@ void World::ReadyScene(std::string mapName){
    if(mapName == "menu" || mapName == "gameScene0" ) WorldScene.transition = std::unique_ptr<Transition>(new Fade(mapName, TRANOUT));
    else WorldScene.transition = std::unique_ptr<Transition>(new BlockFade(mapName, TRANOUT));
    //turn music down
+
    World::GetInstance()->WorldScene.audioContainer.MusicFadeOut();
 
 
@@ -456,7 +425,29 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
      
      RemoveTimeObjects();
 
-	 testShape.setPosition(viewPos.x, viewPos.y);
+	 /*
+	 
+	 Xbox keys
+
+	 0 = a
+	 1 = b
+	 2 = x
+	 3 = y
+	 4 = lb
+	 5 = rb
+	 6 = select
+	 7 = start
+	 8 = left analog press
+	 9 = right analog press
+
+	 X/Y axis = left analog
+	 R/U axis = right analog
+	 POVX/POVY = dpad
+	 Z/V axis = LT/RT
+	 
+	 
+	 */
+
 }
 
 void World::UpdateTime(float timestamp){
@@ -508,7 +499,7 @@ void World::UpdateCamera(){
     
 	if (WorldScene.isLoaded) {
 
-		if (CurrentScene->mapType == MAP || ENCOUNTER) {
+		if (CurrentScene->mapType == MAP) {
 
 			//center the camera on player
 
@@ -626,7 +617,7 @@ void World::UpdateCamera(){
 
 		}
 
-		if (CurrentScene->mapType == MENU || CurrentScene->mapType == GAMESCENE) {
+		if (CurrentScene->mapType == MENU || CurrentScene->mapType == GAMESCENE || CurrentScene->mapType == ENCOUNTER) {
 
 			viewPos.x = 240;
 			viewPos.y = 135;
@@ -746,33 +737,44 @@ SceneScript::SceneScript(std::string tempname, int tempmapType, float tempdurati
     
 }
 
-bool World::PlayerPressedButton(int button) {
+bool World::PlayerPressedButton(int button, bool menuAction) {
 
 	bool buttonPressed = false;
-	sf::Joystick::update();
 
-	if ((WorldScene.playerPtr != nullptr && IsPlayerActive())) {
+	if (((WorldScene.playerPtr != nullptr && IsPlayerActive()) || menuAction == true)) {
 
-		if (sf::Joystick::isConnected(0)) {
+		//Check if we're using a controller
 
-			if (button == controlsUp
-				|| button == controlsDown) {
+		if (usingController == true) {
 
-				if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
+			//Check if this button is actually an axis (not sure how this will work)
 
+			if (abs(World::GetInstance()->GlobalMembers.joystickControls[button].first) == 100) {
+
+				//Check if the axis is negative or positive
+
+				int axisPos = sf::Joystick::getAxisPosition(0, World::GetInstance()->GlobalMembers.joystickControls[button].second);
+				int axisTrigger = World::GetInstance()->GlobalMembers.joystickControls[button].first;
+
+				if (axisTrigger == -100) {
+
+					if (axisPos < -20) buttonPressed = true;
+				}
+
+				else if (axisTrigger == 100) {
+
+					if (axisPos > 20) buttonPressed = true;
+
+				}
 			}
 
-			else if (button == controlsLeft
-				|| button == controlsRight) {
-
-				if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
-
-
-			}
-
-			else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button]);
+			//if it is not on an axis, just check if that button is pressed
+			
+			else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button].first);
 
 		}
+
+		//if we're not using a controller, check for keyboard
 
 		else buttonPressed = sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[button]);
 
@@ -785,55 +787,20 @@ bool World::PlayerPressedButton(int button) {
 bool World::PlayerPressedActionButton() {
 
 	bool buttonPressed = false;
-	sf::Joystick::update();
 
-	if ((WorldScene.playerPtr != nullptr && IsPlayerActive())) {
-
-		if (sf::Joystick::isConnected(0)) {
-
-			if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsShootLeft]) == true) buttonPressed = true;
-			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsShootUp]) == true) buttonPressed = true;
-			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsShootRight]) == true) buttonPressed = true;
-			else if (sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[controlsShootDown]) == true) buttonPressed = true;
-
-		}
-	}
+	if(PlayerPressedButton(controlsShootLeft,true)) buttonPressed = true;
+	else if(PlayerPressedButton(controlsShootUp,true)) buttonPressed = true;
+	else if(PlayerPressedButton(controlsShootRight,true)) buttonPressed = true;
+	else if(PlayerPressedButton(controlsShootDown,true)) buttonPressed = true;
 
 	return buttonPressed;
 
 }
 
-bool World::PressedButtonforUI(int button) {
-
-	bool buttonPressed = false;
-	sf::Joystick::update();
+void MapController(int id, int vendor) {
 
 
-		if (sf::Joystick::isConnected(0)) {
 
-			if (button == controlsUp
-				|| button == controlsDown) {
-
-				if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
-
-			}
-
-			else if (button == controlsLeft
-				|| button == controlsRight) {
-
-				if (sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X) == World::GetInstance()->GlobalMembers.joystickControls[button]) buttonPressed = true;
-
-
-			}
-
-			else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button]);
-
-		}
-
-		else buttonPressed = sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[button]);
-
-
-	return buttonPressed;
 
 }
 
