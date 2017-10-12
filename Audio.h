@@ -36,6 +36,8 @@ class Audio
 		void playLoopedMusic(float length, std::string musicName = "map1");
         void Update();
         sf::Music music;
+		int musicVolume = 100;
+		int sfxVolume = 80;
         std::map<std::string,AudioItem> AudioContainer;
 		std::map<std::string, sf::MemoryInputStream> MusicContainer;
 

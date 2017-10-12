@@ -55,7 +55,7 @@ void Audio::PlaySFX(std::string soundName, bool multipleInstances){
 		if (AudioContainer.at(soundName).sample.getStatus() == sf::Sound::Status::Stopped) {
 
 			iter->second.sample.setBuffer(iter->second.buffer);
-			iter->second.sample.setVolume(80);
+			iter->second.sample.setVolume(sfxVolume);
 			iter->second.sample.play();
 		}
 
@@ -64,7 +64,7 @@ void Audio::PlaySFX(std::string soundName, bool multipleInstances){
 	else {
 
 		iter->second.sample.setBuffer(iter->second.buffer);
-		iter->second.sample.setVolume(80);
+		iter->second.sample.setVolume(sfxVolume);
 		iter->second.sample.play();
 
 	}
@@ -80,7 +80,7 @@ void Audio::MusicFadeIn() {
 
 void Audio::MusicFadeOut() {
 
-	if(mute == false) music.setVolume(100);
+	if(mute == false) music.setVolume(musicVolume);
 	mute = true;
 
 }
@@ -91,7 +91,7 @@ void Audio::PlayMusic(std::string musicName){
 	music.openFromStream(MusicContainer.at(musicName));
     music.setLoop(true);
     music.play();
-    music.setVolume(100);
+    music.setVolume(musicVolume);
     
 }
 
@@ -112,7 +112,7 @@ Audio::~Audio(){
 
 void Audio::Update() {
 
-	if (mute == false && music.getVolume() != 100) {
+	if (mute == false && music.getVolume() != musicVolume) {
 
 		music.setVolume(music.getVolume() + 1);
 
@@ -260,12 +260,12 @@ void Audio::playLoopedMusic(float length, std::string musicName)
 	float duration = 13.496f - 5.579f;
 
 	// Display sound informations
-	std::cout << "orchestral.ogg (Music, Loop):" << std::endl;
-	std::cout << " " << musicFile.getDuration().asSeconds() << " seconds" << std::endl;
-	std::cout << " " << musicFile.getSampleRate() << " samples / sec" << std::endl;
-	std::cout << " " << musicFile.getChannelCount() << " channels" << std::endl;
-	std::cout << " Looping from " << music.getLoopBegin().asSeconds() <<
-		" sec to " << music.getLoopEnd().asSeconds() << " sec" << std::endl;
+	//std::cout << "orchestral.ogg (Music, Loop):" << std::endl;
+	//std::cout << " " << musicFile.getDuration().asSeconds() << " seconds" << std::endl;
+	//std::cout << " " << musicFile.getSampleRate() << " samples / sec" << std::endl;
+	//std::cout << " " << musicFile.getChannelCount() << " channels" << std::endl;
+	//std::cout << " Looping from " << music.getLoopBegin().asSeconds() <<
+    //" sec to " << music.getLoopEnd().asSeconds() << " sec" << std::endl;
 
 	music.setLoop(true);
 	music.play();

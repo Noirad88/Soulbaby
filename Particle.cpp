@@ -26,7 +26,8 @@ namespace Entity
 	//////////////// GUI & RELATED ////////////////////////////////////////////////////////////////////////////////////
 	bool Player::dead = false;
 	int MenuItem::count = 0;
-	sf::Font MenuItem::menuFnt;
+	std::vector<MenuItemHolder> Menu::menuContainer;
+
 	sf::Font HitNum::hitFnt;
 	int Object::center = 0;
 	int Object::bottomCenter = 1;
@@ -61,54 +62,290 @@ namespace Entity
 		if (guiCount < 0) guiCount = 0;
 	}
 
-	MenuItem::MenuItem(std::string lableName, char typeName) : GUI() {
-		// hand icon
+
+	//MenuItem should be derived, so each menu item class can have its own draw position, ui, etc
+	//Menu updates itself ... only needs to check going back here. menu update then calls the menuItem update thats currently selected
+
+
+	MenuItem::MenuItem() : GUI() {
+	
+
 		hand.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
 		hand.setTextureRect(sf::IntRect(154, 15, 13, 8));
+		menuLable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
+		menuLable.setCharacterSize(16);
+		menuLable.setColor(sf::Color(150, 150, 150));
+		count++;
 
-			menuLable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
-			menuLable.setString(lableName);
-			menuLable.setPosition(212, 150 + (count * 15));
-			menuLable.setCharacterSize(16);
-			menuLable.setColor(sf::Color(150, 150, 150));
+	}
+
+	//Menu Item for Start
+
+	MenuItemStart::MenuItemStart() : MenuItem(){
+
+		menuLable.setString("Start");
+		menuLable.setPosition(212, 150 + (count * 15));
+
+
+	}
+
+	void MenuItemStart::Update(){
+
+
+	}
+
+	void MenuItemStart::Action() {
+
+		World::GetInstance()->ReadyScene("map2_1");
+
+	}
+
+	MenuItemControls::MenuItemControls() : MenuItem() {
+
+		menuLable.setString("Control Settings");
+		menuLable.setPosition(212, 150 + (count * 15));
+
+
+	}
+
+	void MenuItemControls::Update() {
+
+	}
+
+	void MenuItemControls::Action() {
+
+
+		MenuItemHolder menuHolder;
+		menuHolder.menuList.at(0)->ToggleSelection();
+		Menu::menuContainer.push_back(menuHolder);
+
+	}
+
+	MenuItemCRTMode::MenuItemCRTMode() : MenuItem() {
+		std::string crtModeStatus = "Off";
+		if(World::GetInstance()->GlobalMembers.currentCRTMode == 1) crtModeStatus = "On";
+		menuLable.setString("CRT Mode: " + crtModeStatus);
+		menuLable.setPosition(212, 150 + (count * 15));
+
+
+	}
+
+	void MenuItemCRTMode::Update() {
+
+		if ((World::GetInstance()->PlayerPressedButton(controlsLeft, true))) {
+
+			World::GetInstance()->GlobalMembers.currentCRTMode = !World::GetInstance()->GlobalMembers.currentCRTMode;
+				std::string crtModeStatus = "Off";
+				if (World::GetInstance()->GlobalMembers.currentCRTMode == 1) crtModeStatus = "On";
+				menuLable.setString("CRT Mode: " + crtModeStatus);
+
+
+		}
+
+		else if ((World::GetInstance()->PlayerPressedButton(controlsRight, true))) {
+
+			World::GetInstance()->GlobalMembers.currentCRTMode = !World::GetInstance()->GlobalMembers.currentCRTMode;
+				std::string crtModeStatus = "Off";
+				if (World::GetInstance()->GlobalMembers.currentCRTMode == 1) crtModeStatus = "On";
+				menuLable.setString("CRT Mode: " + crtModeStatus);
+
+
+		}
+
+	}
+
+	void MenuItemCRTMode::Action() {
+
+
+	}
+
+	//Menu item for Options
+
+	MenuItemOptions::MenuItemOptions() : MenuItem() {
+
+		menuLable.setString("Options");
+		menuLable.setPosition(212, 150 + (count * 15));
+
+
+	}
+
+	void MenuItemOptions::Update() {
 
 
 
-		type = typeName;
+	}
 
-		if (type == SWITCH) {
+	void MenuItemOptions::Action() {
 
-			objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_menu_bar"));
-			objectSprite.setPosition(menuLable.getPosition().x + (35), menuLable.getPosition().y + 7);
-			objectSprite.setTextureRect(sf::IntRect(0, 0, 1, 10));
+		MenuItemHolder menuHolder;
+		MenuItemMusicVolume* item1 = new MenuItemMusicVolume;
+		MenuItemSFXVolume* item2 = new MenuItemSFXVolume;
+		MenuItemResolution* item3 = new MenuItemResolution;
+		MenuItemCRTMode* item4 = new MenuItemCRTMode;
+		MenuItemControls* item5 = new MenuItemControls;
 
-			if (lableName == "Volume") {
+		menuHolder.menuList.push_back(item1);
+		menuHolder.menuList.push_back(item2);
+		menuHolder.menuList.push_back(item3);
+		menuHolder.menuList.push_back(item4);
+		menuHolder.menuList.push_back(item5);
 
-				linkedAttribute = std::weak_ptr<int>(World::GetInstance()->GlobalMembers.maxVolume);
-				objectSprite.setTextureRect(sf::IntRect(0, 0, *World::GetInstance()->GlobalMembers.maxVolume, 10));
+		menuHolder.menuList.at(0)->ToggleSelection();
+		Menu::menuContainer.push_back(menuHolder);
+
+	}
+
+	MenuItemQuit::MenuItemQuit() : MenuItem() {
+
+		menuLable.setString("Quit");
+		menuLable.setPosition(212, 150 + (count * 15));
+
+	}
+
+	void MenuItemQuit::Update() {
+
+	}
+
+	void MenuItemQuit::Action() {
+
+		World::GetInstance()->windowWorld->close();
+
+	}
+
+	MenuItemMusicVolume::MenuItemMusicVolume() : MenuItem() {
+		
+		menuLable.setString("Music Volume: " + std::to_string(World::GetInstance()->WorldScene.audioContainer.musicVolume));
+		menuLable.setPosition(212, 150 + (count * 15));
+
+	}
+
+	void MenuItemMusicVolume::Update() {
+
+		if ((World::GetInstance()->PlayerPressedButton(controlsLeft, true))) {
+
+			if (World::GetInstance()->WorldScene.audioContainer.musicVolume > 0) {
+
+				--World::GetInstance()->WorldScene.audioContainer.musicVolume;
+
 			}
 
-			else if (lableName == "Health") {
+		}
 
-				linkedAttribute = std::weak_ptr<int>(World::GetInstance()->GlobalMembers.health);
-				objectSprite.setTextureRect(sf::IntRect(0, 0, *World::GetInstance()->GlobalMembers.health, 10));
+		else if ((World::GetInstance()->PlayerPressedButton(controlsRight, true))) {
+
+			if (World::GetInstance()->WorldScene.audioContainer.musicVolume < 100) {
+
+				++World::GetInstance()->WorldScene.audioContainer.musicVolume;
+
+			}
+			
+
+		}
+
+		menuLable.setString("Music Volume: " + std::to_string(World::GetInstance()->WorldScene.audioContainer.musicVolume));
+
+	}
+
+	void MenuItemMusicVolume::Action() {
+
+	}
+
+	MenuItemSFXVolume::MenuItemSFXVolume() : MenuItem() {
+
+		menuLable.setString("SFX Volume: " + std::to_string(World::GetInstance()->WorldScene.audioContainer.sfxVolume));
+		menuLable.setPosition(212, 150 + (count * 15));
+
+	}
+
+	void MenuItemSFXVolume::Update() {
+
+		if ((World::GetInstance()->PlayerPressedButton(controlsLeft, true))) {
+
+			if (World::GetInstance()->WorldScene.audioContainer.sfxVolume > 0) {
+
+				--World::GetInstance()->WorldScene.audioContainer.sfxVolume;
+
+			}
+
+		}
+
+		else if ((World::GetInstance()->PlayerPressedButton(controlsRight, true))) {
+
+			if (World::GetInstance()->WorldScene.audioContainer.sfxVolume < 100) {
+
+				++World::GetInstance()->WorldScene.audioContainer.sfxVolume;
 
 			}
 
 
 		}
 
-		count++;
+		menuLable.setString("SFX Volume: " + std::to_string(World::GetInstance()->WorldScene.audioContainer.sfxVolume));
+
+	}
+
+	void MenuItemSFXVolume::Action() {
 
 	}
 
 
+	MenuItemResolution::MenuItemResolution() : MenuItem() {
+
+		menuLable.setString("Resolution: " + std::to_string(World::GetInstance()->GlobalMembers.currentResolution) + "X");
+		menuLable.setPosition(212, 150 + (count * 15));
+
+	}
+
+	void MenuItemResolution::Update() {
+
+		int resolution;
+
+
+		if ((World::GetInstance()->PlayerPressedButton(controlsLeft, true))) {
+
+			if (World::GetInstance()->GlobalMembers.currentResolution > 1) {
+				--World::GetInstance()->GlobalMembers.currentResolution;
+				resolution = World::GetInstance()->GlobalMembers.currentResolution;
+				World::GetInstance()->windowWorld->setSize(sf::Vector2u(480 * resolution, 270 * resolution));
+				sf::VideoMode userMode = sf::VideoMode::getDesktopMode();
+				World::GetInstance()->windowWorld->setPosition(sf::Vector2i(userMode.width / 2 - ((480 * resolution) / 2), userMode.height / 2 - ((270 * resolution) / 2)));
+
+
+			}
+
+
+		}
+
+		else if ((World::GetInstance()->PlayerPressedButton(controlsRight, true))) {
+
+			if (World::GetInstance()->GlobalMembers.currentResolution < 6) {
+
+				++World::GetInstance()->GlobalMembers.currentResolution;
+				resolution = World::GetInstance()->GlobalMembers.currentResolution;
+				World::GetInstance()->windowWorld->setSize(sf::Vector2u(480 * resolution, 270 * resolution));
+				sf::VideoMode userMode = sf::VideoMode::getDesktopMode();
+				World::GetInstance()->windowWorld->setPosition(sf::Vector2i(userMode.width/2-((480 * resolution)/2), userMode.height/2 - ((270 * resolution) / 2)));
+
+			}
+
+
+		}
+
+		menuLable.setString("Resolution: " + std::to_string(World::GetInstance()->GlobalMembers.currentResolution) + "X");
+
+	}
+
+	void MenuItemResolution::Action() {
+
+	}
 
 	void MenuItem::Update() {
 
-
-
 	};
+
+	void MenuItem::Action() {
+
+	}
 
 	void MenuItem::ToggleSelection() {
 
@@ -161,17 +398,15 @@ namespace Entity
 	Menu::Menu() : GUI() {
 
 		MenuItemHolder menuHolder;
-		MenuItem item1("Start", START);
-		MenuItem item2("Options", DIVE);
-		MenuItem item3("Quit", EXIT);
+		MenuItemStart* item1 = new MenuItemStart;
+		MenuItemOptions* item2 = new MenuItemOptions;
+		MenuItemQuit* item3 = new MenuItemQuit;
 
 		menuHolder.menuList.push_back(item1);
 		menuHolder.menuList.push_back(item2);
 		menuHolder.menuList.push_back(item3);
-		menuHolder.menuList.at(0).ToggleSelection();
+		menuHolder.menuList.at(0)->ToggleSelection();
 		menuContainer.push_back(menuHolder);
-
-
 
 	}
 
@@ -181,24 +416,26 @@ namespace Entity
 
 		int currentScreen = menuContainer.size() - 1;
 
-		if (World::GetInstance()->Timer(*this, FAST)) {
+		if (World::GetInstance()->Timer(*this, SLOW)) {
+
+			//Up/Down Selection
 
 			if ((World::GetInstance()->PlayerPressedButton(controlsUp,true))) {
 
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
 				if (menuContainer.at(currentScreen).currentPos != 0) {
 
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
 					--menuContainer.at(currentScreen).currentPos;
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
 
 				}
 
 				else {
 
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
 					menuContainer.at(currentScreen).currentPos = menuContainer.at(currentScreen).menuList.size() - 1;
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
 
 				}
 
@@ -209,94 +446,92 @@ namespace Entity
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
 				if (menuContainer.at(currentScreen).currentPos != menuContainer.at(currentScreen).menuList.size() - 1) {
 
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
 					++menuContainer.at(currentScreen).currentPos;
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
 
 				}
 
 				else {
 
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
 					menuContainer.at(currentScreen).currentPos = 0;
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).ToggleSelection();
+					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
 				}
 
 			}
 
+			//Detect possible inputs only for menu item that is selected
 
-			else if ((World::GetInstance()->PlayerPressedButton(controlsLeft,true)) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
+			menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->Update();
 
-				--*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
-				// switch visul changes need to go here
-				std::cout << *World::GetInstance()->GlobalMembers.maxVolume << std::endl;
-				menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).objectSprite.setTextureRect(sf::IntRect(0, 0, *menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock(), 10));
+			// Call Action() on selected menu item if press action/fire button
 
-			}
+			if ((World::GetInstance()->PlayerPressedButton(controlsShootLeft,true))) {
 
-			else if ((World::GetInstance()->PlayerPressedButton(controlsRight,true)) && HasSwitch(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos))) {
-
-				++*menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock();
-				// switch visul changes need to go here
-				std::cout << *World::GetInstance()->GlobalMembers.maxVolume << std::endl;
-				//menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).objectSprite.setTextureRect(sf::IntRect(0, 0, *menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos).linkedAttribute.lock(), 10));
-
-			}
-
-			else if ((World::GetInstance()->PlayerPressedButton(controlsShootLeft,true))) {
-
-				DoMenuAction(menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos));
+				menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->Action();
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
 
 			}
 
-			else if ((World::GetInstance()->PlayerPressedButton(controlsShootLeft,true) && menuContainer.size() != 1)) menuContainer.pop_back();
+			// Go back a menu state if pressed cancel/dash button
+
+			else if ((World::GetInstance()->PlayerPressedButton(controlsShootRight,true) && menuContainer.size() != 1)) menuContainer.pop_back();
 
 		}
 	}
 
-	void Menu::DoMenuAction(MenuItem& item) {
-
-		if (item.type == START) World::GetInstance()->ReadyScene("map2_1");
-
-
-		else if (item.type == DIVE) {
-
-			MenuItemHolder menuHolder;
-			MenuItem item1("Volume", SWITCH);
-			MenuItem item2("Health", SWITCH);
-
-			menuHolder.menuList.push_back(item1);
-			menuHolder.menuList.push_back(item2);
-			menuHolder.menuList.at(0).ToggleSelection();
-			menuContainer.push_back(menuHolder);
-
-		}
-
-		else if (item.type == EXIT) World::GetInstance()->windowWorld->close();
-	}
-
-	bool Menu::HasSwitch(MenuItem& item) {
-
-		return item.type == SWITCH;
-
-	}
 
 	void Menu::Draw(sf::RenderTarget& window) {
 
-		for (auto i : menuContainer.at(menuContainer.size() - 1).menuList) i.Draw(window);
+		for (auto i : menuContainer.at(menuContainer.size() - 1).menuList) i->Draw(window);
 		World::GetInstance()->DrawObject(objectSprite);
 
 	}
 
 	Menu::~Menu() {
 
+	}
+
+	MenuItem::~MenuItem() {
+
+	}
+
+	MenuItemOptions::~MenuItemOptions() {
+
+	}
+
+	MenuItemMusicVolume::~MenuItemMusicVolume() {
+
+	}
+
+	MenuItemSFXVolume::~MenuItemSFXVolume() {
+
+	}
+
+	MenuItemResolution::~MenuItemResolution() {
+
+	}
+
+	MenuItemControls::~MenuItemControls() {
+
+	}
+
+	MenuItemStart::~MenuItemStart() {
+
+	}
+
+	MenuItemQuit::~MenuItemQuit() {
+
+	}
+
+	MenuItemCRTMode::~MenuItemCRTMode() {
 
 	}
 
 	QuakeManager::QuakeManager(){
 
-		std::cout << "quake manager created" << std::endl;
+		//std::cout << "quake manager created" << std::endl;
     }
 
 	Guide::Guide() {
@@ -308,10 +543,6 @@ namespace Entity
 		World::GetInstance()->WorldScene.guidePtr = this;
 	}
     
-    MenuItem::~MenuItem(){
-    
-    }
-
 	QuakeManager::~QuakeManager() {
 
 	}
@@ -382,7 +613,7 @@ namespace Entity
 
 		characterNamePos = nameAndScript[0] - '0';
 
-		std::cout << scriptNumber << " \ " << characterNamePos;
+		//std::cout << scriptNumber << " \ " << characterNamePos;
 
 		characterName = characters[characterNamePos];
         
@@ -519,7 +750,7 @@ namespace Entity
 		choice2bg.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
 		choice2bg.setTextureRect(sf::IntRect(144, 218, 66, 30));
 
-        progressSpeed = *World::GetInstance()->GlobalMembers.textSpeed.get();
+        progressSpeed = 2;
         
         
     }
@@ -678,7 +909,7 @@ namespace Entity
 
 					if (World::GetInstance()->GlobalMembers.levelsCompleted[characterNamePos] != 0 && World::GetInstance()->GlobalMembers.weapons[characterNamePos+1] == 0) {
 						
-						std::cout << "ABILLTY LEARNED" << std::endl;
+						//std::cout << "ABILLTY LEARNED" << std::endl;
 						itemQueue learn;
 						learn.properties["PosX"] = std::to_string(World::GetInstance()->CameraTarget->objectSprite.getPosition().x);
 						learn.properties["PosY"] = std::to_string(World::GetInstance()->CameraTarget->objectSprite.getPosition().y - (World::GetInstance()->CameraTarget->objectSprite.getTextureRect().height / 2));
@@ -698,7 +929,7 @@ namespace Entity
 						if (selectState == 0) {
 
 							int thisGateKeeper = World::GetInstance()->GlobalMembers.currentLevel;
-							std::cout << "npc " << thisGateKeeper << std::endl;
+							//std::cout << "npc " << thisGateKeeper << std::endl;
 							World::GetInstance()->GlobalMembers.gateKeepersSaved[thisGateKeeper] = 1;
 							World::GetInstance()->ReadyScene("map2_1");
 
@@ -710,7 +941,7 @@ namespace Entity
 						if (selectState == 1) {
 
 							World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon)++;
-							std::cout << "weapon is not " << World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon);
+							//std::cout << "weapon is not " << World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon);
 							World::GetInstance()->ReadyScene("map2_1");
 
 						}
@@ -1010,11 +1241,11 @@ namespace Entity
 			itemList.push_back(7);
 		}
 
-		std::cout << "list size: " << itemList.size() << " " << std::endl;
+		//std::cout << "list size: " << itemList.size() << " " << std::endl;
 
 		for (int i = 0; i != itemList.size(); i++) {
 
-			std::cout << itemList.at(i);
+			//std::cout << itemList.at(i);
 
 
 
@@ -1268,14 +1499,12 @@ namespace Entity
     Player::Player(sf::Vector2i pos) : Object ()
     {
         
-        std::cout << "Player created" << std::endl;
+        //std::cout << "Player created" << std::endl;
         objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_player"));
         objectSprite.setTextureRect(sf::IntRect(0, south, 13, 24));
         SetCharacterOrigin();
         spriteHeight = objectSprite.getTextureRect().height;
         spriteWidth = objectSprite.getTextureRect().width;
-        playerHealth = World::GetInstance()->GlobalMembers.playerMaxHP;
-        playerPow = World::GetInstance()->GlobalMembers.playerMaxMP;
         World::GetInstance()->WorldScene.playerPtr = this;
         SetShadow();
         type = "Player";
@@ -1448,7 +1677,7 @@ namespace Entity
 
 	void BattlePlayer::DoChargeAttack() {
 
-		std::cout << "charge commenced" << std::endl;
+		//std::cout << "charge commenced" << std::endl;
 		jumpFlag = false;
 
 		sf::Vector2f tempPos = objectSprite.getPosition();
@@ -1568,7 +1797,7 @@ namespace Entity
 
 		if (jumpFlag == true && !World::GetInstance()->PlayerPressedButton(controlsDash)) {
 
-			std::cout << "DASH START" << std::endl;
+			//std::cout << "DASH START" << std::endl;
 			//do the appropraite charge move here
 			DoChargeAttack();
 			dashSave = true;
@@ -1713,7 +1942,7 @@ namespace Entity
 
 			dashing = false;
 			dashSave = false;
-			std::cout << "DASH BREAK" << std::endl;
+			//std::cout << "DASH BREAK" << std::endl;
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_knockwave");
 			vel.x = 0;
 			vel.y = 0;
@@ -1759,7 +1988,7 @@ namespace Entity
 
 						if (abs((vel.x - objectSprite.getPosition().x) / 5) <= 0.5 && abs((vel.y - objectSprite.getPosition().y) / 5) <= 0.5) {
 
-							std::cout << "DASH ENDS" << std::endl;
+							//std::cout << "DASH ENDS" << std::endl;
 							dashing = false;
 							hyperDash = false;
 							jumpFlag = false;
@@ -1779,7 +2008,7 @@ namespace Entity
 
 						if ( abs((vel.x - objectSprite.getPosition().x) / 5) <= 0.5 && abs((vel.y - objectSprite.getPosition().y) / 5) <= 0.5) {
 
-							std::cout << "DASH ENDS" << std::endl;
+							//std::cout << "DASH ENDS" << std::endl;
 							dashing = false;
 							hyperDash = false;
 							jumpFlag = false;
@@ -2177,7 +2406,7 @@ namespace Entity
 
 	LearnedAbility::LearnedAbility() : Fixed() {
 
-		std::cout << "created ability" << std::endl;
+		//std::cout << "created ability" << std::endl;
 		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_particles"));
 		objectSprite.setTextureRect(sf::IntRect(64,288, 11, 11));
 		maxFrame = 3;
@@ -3209,7 +3438,7 @@ namespace Entity
 
 		if (projectileNode) {
 
-			std::cout << time << std::endl;
+			//std::cout << time << std::endl;
 
 			float nPosX = objectSprite.getPosition().x + (cos(count) * (count*10));
 			float nPosY = objectSprite.getPosition().y + (sin(count) * (count*10));
@@ -4604,6 +4833,8 @@ namespace Entity
 
 		std::string level = std::to_string(World::GetInstance()->GlobalMembers.currentLevel);
     
+		bgwall.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_wall"));
+		bgwall.setTextureRect(sf::IntRect(0, 0, 480, 270));
         bg.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_bg_" + level + ""));
         bg.setTextureRect(sf::IntRect (0,0,2000,2000));
         bg.setOrigin(2000/2,2000/2);
@@ -4683,7 +4914,7 @@ namespace Entity
 		if (World::GetInstance()->Timer(*this, 5000000.0)) {
 
 
-			std::cout << lvlEnemyBank[0] << ".. " << lvlEnemyBank[1] << ".. " << lvlEnemyBank[2] << std::endl;
+			//std::cout << lvlEnemyBank[0] << ".. " << lvlEnemyBank[1] << ".. " << lvlEnemyBank[2] << std::endl;
 
 
 		}
@@ -4735,6 +4966,7 @@ namespace Entity
     void LevelManager::Draw(sf::RenderTarget &window){
         
         World::GetInstance()->DrawObject(bg,"waveShader");
+		World::GetInstance()->DrawObject(bgwall);
 
     }
     
@@ -4959,7 +5191,7 @@ namespace Entity
 
 	Buddy::Buddy() : Object()
 	{
-		std::cout << "buddy created" << std::endl;
+		//std::cout << "buddy created" << std::endl;
 		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc"));
 		objectSprite.setTextureRect(sf::IntRect(204, 0, 4, 8));
 		SetHitBox(sf::Vector2f(5, 5));
@@ -5090,7 +5322,7 @@ namespace Entity
 		SetCharacterOrigin();
 		SetShadow();
 		speed = 0.5;
-		health = 30;
+		health = 60;
 		flatAnimation = true;
 		animationSpeed = VERY_SLOW*2;
 		AssignedBehavior = &Enemy::FollowPlayer;
@@ -5140,7 +5372,7 @@ namespace Entity
     
     Boss::Boss()
     {
-        std::cout << "Boss created" << std::endl;
+        //std::cout << "Boss created" << std::endl;
 		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses"));
         healthBar.setSize(sf::Vector2f(0,8));
         healthBar.setFillColor(sf::Color::Yellow);
@@ -5174,7 +5406,6 @@ namespace Entity
 		wings.setTextureRect(sf::IntRect(0,0, 175, 44));
         speed = 2;
 		maxhealth = 1200;
-		maxhealth = 30;
         health = maxhealth;
         moveType = NORMAL;
 		sf::Sprite *mysprite = &wings;
@@ -5895,7 +6126,7 @@ namespace Entity
 		for (int i = 0; i < BehaviorList.size(); i++) {
 
 			BehaviorList[i] = tempList[RandomNumber(3,0)];
-			std::cout << i << " for " << BehaviorList.size() << std::endl;
+			//std::cout << i << " for " << BehaviorList.size() << std::endl;
 				
 		}
 
@@ -6225,7 +6456,7 @@ namespace Entity
 			if (targetPosition.y < 100) targetPosition.y = 100;
 			if (targetPosition.y >(World::GetInstance()->WorldScene.levelContainer->lvlSize.x / 2)) targetPosition.y = (World::GetInstance()->WorldScene.levelContainer->lvlSize.x / 2);
 
-			std::cout << targetPosition.x << " & " << targetPosition.y << std::endl;
+			//std::cout << targetPosition.x << " & " << targetPosition.y << std::endl;
 
 		}
 
@@ -6514,7 +6745,7 @@ namespace Entity
 	}
 
 	Buddy::~Buddy() {
-		std::cout << "buddy destroyed" << std::endl;
+		//std::cout << "buddy destroyed" << std::endl;
 	}
     
     EnemyNode::~EnemyNode(){

@@ -119,7 +119,7 @@ TMXTileSet* TMXMap::getTileSet(std::string tileSetName)
         }
     }
     
-    std::cout << "TMXLoader: tileset layer '" << tileSetName << "' could not be found." << std::endl;
+    //std::cout << "TMXLoader: tileset layer '" << tileSetName << "' could not be found." << std::endl;
     
     return nullptr;
 }
@@ -146,7 +146,7 @@ TMXTileLayer* TMXMap::getTileLayer(std::string layerName)
         }
     }
     
-    std::cout << "TMXLoader: tile layer '" << layerName << "' could not be found." << std::endl;
+    //std::cout << "TMXLoader: tile layer '" << layerName << "' could not be found." << std::endl;
     
     return nullptr;
 }
@@ -161,7 +161,7 @@ TMXObjectLayer* TMXMap::getObjectLayer(std::string layerName)
         }
     }
     
-    std::cout << "TMXLoader: tile layer '" << layerName << "' could not be found." << std::endl;
+    //std::cout << "TMXLoader: tile layer '" << layerName << "' could not be found." << std::endl;
     
     return nullptr;
 }

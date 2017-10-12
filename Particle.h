@@ -151,18 +151,92 @@ namespace Entity
 		friend class MenuItemHolder;
 
 	public:
-		MenuItem(std::string lableName, char typeName);
-		~MenuItem();
-		void Update();
+		MenuItem();
+		virtual ~MenuItem();
+		virtual void Update();
 		void Draw(sf::RenderTarget& window);
+		virtual void Action();
 		void ToggleSelection();
+		static int count;
 		sf::Text menuLable;
 		sf::Sprite hand;
-		static sf::Font menuFnt;
-		char type;
-		std::weak_ptr<int> linkedAttribute;
-		static int count;
 
+	};
+
+	class MenuItemStart : public MenuItem
+	{
+
+	public:
+		MenuItemStart();
+		~MenuItemStart();
+		void Update();
+		void Action();
+
+	};
+
+	class MenuItemOptions: public MenuItem
+	{
+
+	public:
+		MenuItemOptions();
+		~MenuItemOptions();
+		void Update();
+		void Action();
+
+	};
+
+	class MenuItemMusicVolume : public MenuItem {
+
+	public:
+		MenuItemMusicVolume();
+		~MenuItemMusicVolume();
+		void Update();
+		void Action();
+	};
+
+	class MenuItemSFXVolume : public MenuItem {
+
+	public:
+		MenuItemSFXVolume();
+		~MenuItemSFXVolume();
+		void Update();
+		void Action();
+	};
+
+	class MenuItemResolution : public MenuItem {
+
+	public:
+		MenuItemResolution();
+		~MenuItemResolution();
+		void Update();
+		void Action();
+	};
+
+	class MenuItemControls : public MenuItem {
+
+	public:
+		MenuItemControls();
+		~MenuItemControls();
+		void Update();
+		void Action();
+	};
+
+	class MenuItemCRTMode : public MenuItem {
+
+	public:
+		MenuItemCRTMode();
+		~MenuItemCRTMode();
+		void Update();
+		void Action();
+	};
+
+	class MenuItemQuit : public MenuItem
+	{
+	public:
+		MenuItemQuit();
+		~MenuItemQuit();
+		void Update();
+		void Action();
 	};
 
 
@@ -175,7 +249,7 @@ namespace Entity
 		void Update();
 		void Draw(sf::RenderTarget& window);
 		int currentPos = 0;
-		std::vector<MenuItem> menuList;
+		std::vector<MenuItem*> menuList;
 
 
 	};
@@ -187,10 +261,8 @@ namespace Entity
 		Menu();
 		~Menu();
 		void Update();
-		void DoMenuAction(MenuItem& item);
-		bool HasSwitch(MenuItem& item);
 		void Draw(sf::RenderTarget& window);
-		std::vector<MenuItemHolder> menuContainer;
+		static std::vector<MenuItemHolder> menuContainer;
 
 	};
 
@@ -1067,6 +1139,7 @@ namespace Entity
         // default int maxEnemies = 150;
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
+		sf::Sprite bgwall;
 		std::array<int, 3> lvlEnemyBank;
 
     };

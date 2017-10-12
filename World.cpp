@@ -207,8 +207,6 @@ void World::UpdateTransition(){
 
 World::World(){
     
-	GlobalMembers.keyboardControls = DefaultKeyboardMaps;
-	GlobalMembers.joystickControls = XboxKeyMaps;
 
 	GlobalMembers.weapons.reserve(7);
 	GlobalMembers.weapons.push_back(0);
@@ -225,9 +223,9 @@ World::World(){
 
 void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events){
     
-    GlobalMembers.maxVolume = std::shared_ptr<int> (new int(80));
-    GlobalMembers.health = std::shared_ptr<int> (new int(30));
-    GlobalMembers.textSpeed = std::shared_ptr<int> (new int(5));
+    GlobalMembers.musicVolume = std::shared_ptr<int> (new int(80));
+	GlobalMembers.sfxVolume = std::shared_ptr<int>(new int(80));
+
 	Screen.setSize(WINDOW_X/3, WINDOW_Y/3);
 
     
@@ -258,40 +256,8 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
 	Menu "menu"
 	*/
 
+	DetectController();
 	LoadScene("menu");
-	testShape.setFillColor(sf::Color::Blue);
-	testShape.setSize(sf::Vector2f(200,200));
-
-	sf::Joystick::update();
-	bool joystick = sf::Joystick::isConnected(0);
-	int buttons = sf::Joystick::getButtonCount(0);
-	sf::Joystick::Identification joy = sf::Joystick::getIdentification(0);
-	std::string joyName = joy.name;
-	int joyID = joy.productId;
-	int joyVIN = joy.vendorId;
-
-	
-	int axisx = sf::Joystick::hasAxis(0,sf::Joystick::Axis::X);
-	int axisy = sf::Joystick::hasAxis(0, sf::Joystick::Axis::Y);
-
-	if (joystick == true) usingController = true;
-
-	/*
-	
-	xbox one
-	767
-	1118
-	
-	
-	*/
-
-
-	std::cout << "Joystick Name : " << joyName << std::endl;
-	std::cout << "Joystick ID: " << joyID << std::endl;
-	std::cout << "Joystick VIN : " << joyVIN << std::endl;
-	std::cout << "Joystick? : " << joystick << std::endl;
-	std::cout << "Button? : " << buttons << std::endl;
-	std::cout << "Axis? : " << axisx << ", " << axisy << std::endl;
 
 }
 
@@ -313,10 +279,10 @@ void World::LoadScene(std::string sceneName){
         ResetScene();
         SceneScript currentScript = SceneScriptBank.at(sceneName);
         *CurrentScene = currentScript;
-        std::cout << "Loading " << CurrentScene->name << std::endl;
+        //std::cout << "Loading " << CurrentScene->name << std::endl;
         WorldScene.levelContainer->CreateScene();
         WorldScene.isLoaded = true;
-        std::cout << "Done Loading" << CurrentScene->name << std::endl;
+        //std::cout << "Done Loading" << CurrentScene->name << std::endl;
 		// turn music back up
 		World::GetInstance()->WorldScene.audioContainer.MusicFadeIn();
 
@@ -363,6 +329,42 @@ void World::ResetScene(){
     WorldScene.levelContainer->LvlContainer.clear();
     
 }
+
+void World::DetectController() {
+
+	GlobalMembers.keyboardControls = DefaultKeyboardMaps;
+
+	//Detect if there is a controller plugged in
+
+	sf::Joystick::update();
+
+	usingController = sf::Joystick::isConnected(0);
+	sf::Joystick::Identification joyID = sf::Joystick::getIdentification(0);
+	int joyVinId = joyID.vendorId;
+	int joyProductId = joyID.productId;
+
+	//if this is a recognize controller, load their default keys
+
+	//Xbox One Controller
+
+	if (joyVinId == 1118 && joyProductId == 767) {
+
+		GlobalMembers.joystickControls = XboxKeyMaps;
+
+	}
+
+	//Non-analog
+
+	else {
+
+		GlobalMembers.joystickControls = DefaultControllerMaps;
+
+
+	}
+
+}
+
+
 
 void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 

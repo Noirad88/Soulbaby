@@ -58,11 +58,11 @@ void TMXLoader::loadMap(std::string mapName, std::string filePath)
         loadObjectLayers(m_mapContainer[mapName], parentNode);
 
         
-        std::cout << "TMXLoader: loaded map '" << mapName << "' from: '" << filePath << "' successfully" << std::endl;
+        //std::cout << "TMXLoader: loaded map '" << mapName << "' from: '" << filePath << "' successfully" << std::endl;
     }
     else
     {
-        std::cout << "TMXLoader: map '" << mapName << "' at '" << filePath << "' could not be loaded." << std::endl;
+        //std::cout << "TMXLoader: map '" << mapName << "' at '" << filePath << "' could not be loaded." << std::endl;
     }
 }
 
@@ -84,7 +84,7 @@ void TMXLoader::loadMapData(std::string mapName, ::string mapData)
 		loadLayers(m_mapContainer[mapName], parentNode);
 		loadObjectLayers(m_mapContainer[mapName], parentNode);
 
-		std::cout << "TMXLoader: loaded map '" << mapName << "' successfully" << std::endl;
+		//std::cout << "TMXLoader: loaded map '" << mapName << "' successfully" << std::endl;
 	
 }
 
@@ -97,7 +97,7 @@ TMXMap* TMXLoader::getMap(std::string mapName)
     
     if (iterator == m_mapContainer.end())
     {
-        std::cout << "TMXLoader: map '" << mapName << "' not found." << std::endl;
+        //std::cout << "TMXLoader: map '" << mapName << "' not found." << std::endl;
     }
     else
     {
@@ -116,7 +116,7 @@ void TMXLoader::printMapData(std::string mapName)
     
     if (iterator == m_mapContainer.end())
     {
-        std::cout << "TMXLoader: map '" << mapName << "' not found." << std::endl;
+        //std::cout << "TMXLoader: map '" << mapName << "' not found." << std::endl;
     }
     else
     {
@@ -398,7 +398,7 @@ void TMXLoader::loadObjectLayers(std::unique_ptr<TMXMap> const &map, rapidxml::x
             objx = atoi(attrVector[3]);
             objy = atoi(attrVector[4]);
             objy-= 16;
-            std::cout << objy << std::endl;
+            //std::cout << objy << std::endl;
             objWidth = atoi(attrVector[5]);
             objHeight = atoi(attrVector[6]);
             loadProperties(objectProperties, currentNode);

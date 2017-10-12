@@ -70,7 +70,7 @@ void CreateResourceMap() {
 		int resourceID = stoi(list.substr(i, 3));
 		std::string resourceName = list.substr(i - 32, list.find_first_of(' ', i - 32) - (i - 32));
 		std::string resourceType = list.substr(i - 32, list.find_first_of('_', i - 32) - (i - 32));
-		std::cout << resourceID << " | " << resourceName << " | " << resourceType << std::endl;
+		//std::cout << resourceID << " | " << resourceName << " | " << resourceType << std::endl;
 
 
 		//Check type and create to insert into correct container
@@ -172,7 +172,7 @@ int main()
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(WINDOW_X,WINDOW_Y), "SFML window", sf::Style::None);
 	sf::VideoMode userMode = sf::VideoMode::getDesktopMode();
-	std::cout << userMode.width << " x " << userMode.height << std::endl;
+	//std::cout << userMode.width << " x " << userMode.height << std::endl;
 
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);

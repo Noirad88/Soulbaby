@@ -209,6 +209,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Image Include="levels\tx_battle_bg_2.png" />
     <Image Include="levels\tx_battle_bg_3.png" />
     <Image Include="levels\tx_battle_bg_4.png" />
+    <Image Include="levels\tx_battle_wall.png" />
     <Image Include="levels\tx_gamescene0_bg_0.png" />
     <Image Include="levels\tx_map2_1_bg_0.png" />
     <Image Include="levels\tx_map2_1_bg_top.png" />
@@ -223,6 +224,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Image Include="textures\tx_enemies.png" />
     <Image Include="textures\tx_icon.ico" />
     <Image Include="textures\tx_map.png" />
+    <Image Include="textures\tx_menu_bar.png" />
     <Image Include="textures\tx_misc.png" />
     <Image Include="textures\tx_particles.png" />
     <Image Include="textures\tx_player.png" />

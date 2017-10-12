@@ -17,7 +17,7 @@ Container::Container()
     posX = 400;
     posY = 200;
     SpawnPoint.move(posX,posY);
-    std::cout << "Spawn Point created at " << posX << ", " << posY << std::endl;
+    //std::cout << "Spawn Point created at " << posX << ", " << posY << std::endl;
     
 }
 

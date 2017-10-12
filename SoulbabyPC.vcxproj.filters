@@ -191,6 +191,12 @@
     <Image Include="levels\tx_map2_1_bg_top.png" />
     <Image Include="levels\tx_menu_bg_0.png" />
     <Image Include="textures\tx_icon.ico" />
+    <Image Include="levels\tx_battle_wall.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="textures\tx_menu_bar.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="fonts\basis33.ttf" />

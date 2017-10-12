@@ -89,13 +89,12 @@ namespace Level{
 
 struct Attributes{
     
-    int playerMaxHP = 30;
-    int playerMaxMP = 55;
-    std::shared_ptr<int> maxVolume;
-    std::shared_ptr<int> health;
-    std::shared_ptr<int> textSpeed;
+	int currentResolution = 1;
+	bool currentCRTMode = false;
+    std::shared_ptr<int> musicVolume;
+	std::shared_ptr<int> sfxVolume;
 	bool firstTimeInNexus = false;
-    std::array<int,7> levelsCompleted;
+    std::array<int,13> levelsCompleted;
 	std::array<int, 7> gateKeepersSaved;
     std::vector<int> weapons;
 	int currentWeapon = 0;
@@ -317,7 +316,8 @@ class World{
 
 
 	bool usingController = false;
-	sf::RectangleShape testShape;
+	void DetectController();
+
     static World *GetInstance(){
         
         if(!Worldptr) Worldptr = new World;
