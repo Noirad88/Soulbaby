@@ -159,7 +159,10 @@ namespace Entity
 		void ToggleSelection();
 		static int count;
 		sf::Text menuLable;
+		sf::Text joyAssignment;
 		sf::Sprite hand;
+		bool locked = false;
+		bool disabled = false;
 
 	};
 
@@ -203,6 +206,15 @@ namespace Entity
 		void Action();
 	};
 
+	class MenuItemFullscreen : public MenuItem {
+
+	public:
+		MenuItemFullscreen();
+		~MenuItemFullscreen();
+		void Update();
+		void Action();
+	};
+
 	class MenuItemResolution : public MenuItem {
 
 	public:
@@ -219,6 +231,20 @@ namespace Entity
 		~MenuItemControls();
 		void Update();
 		void Action();
+	};
+
+	class MenuItemSetKey : public MenuItem {
+
+	public:
+		MenuItemSetKey(int key);
+		~MenuItemSetKey();
+		void Update();
+		void ResetLables();
+		void Draw(sf::RenderTarget& window);
+		void Action();
+		int assignedKey = 0;
+		bool isAssigningNewKey = false;
+		int waitASec = 0;
 	};
 
 	class MenuItemCRTMode : public MenuItem {

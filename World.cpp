@@ -225,7 +225,6 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     
     GlobalMembers.musicVolume = std::shared_ptr<int> (new int(80));
 	GlobalMembers.sfxVolume = std::shared_ptr<int>(new int(80));
-
 	Screen.setSize(WINDOW_X/3, WINDOW_Y/3);
 
     
@@ -385,17 +384,6 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
-
-			ReadyScene("battle");
-
-		}
-
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num8)) {
-
-			ReadyScene("map1");
-
-		}
 
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)) {
 
@@ -743,44 +731,46 @@ bool World::PlayerPressedButton(int button, bool menuAction) {
 
 	bool buttonPressed = false;
 
-	if (((WorldScene.playerPtr != nullptr && IsPlayerActive()) || menuAction == true)) {
+	windowWorld->pollEvent(*World::GetInstance()->eventWorld);
 
-		//Check if we're using a controller
+		if (((WorldScene.playerPtr != nullptr && IsPlayerActive()) || menuAction == true)) {
 
-		if (usingController == true) {
+			//Check if we're using a controller
 
-			//Check if this button is actually an axis (not sure how this will work)
+			if (usingController == true) {
 
-			if (abs(World::GetInstance()->GlobalMembers.joystickControls[button].first) == 100) {
+				//Check if this button is actually an axis (not sure how this will work)
 
-				//Check if the axis is negative or positive
+				if (World::GetInstance()->GlobalMembers.joystickControls[button].second != -1) {
 
-				int axisPos = sf::Joystick::getAxisPosition(0, World::GetInstance()->GlobalMembers.joystickControls[button].second);
-				int axisTrigger = World::GetInstance()->GlobalMembers.joystickControls[button].first;
+					//Check if the axis is negative or positive
 
-				if (axisTrigger == -100) {
+					int axisPos = sf::Joystick::getAxisPosition(0, World::GetInstance()->GlobalMembers.joystickControls[button].second);
+					int axisTrigger = World::GetInstance()->GlobalMembers.joystickControls[button].first;
 
-					if (axisPos < -20) buttonPressed = true;
+					if (axisTrigger == -100) {
+
+						if (axisPos < -20) buttonPressed = true;
+					}
+
+					else if (axisTrigger == 100) {
+
+						if (axisPos > 20) buttonPressed = true;
+
+					}
 				}
 
-				else if (axisTrigger == 100) {
+				//if it is not on an axis, just check if that button is pressed
 
-					if (axisPos > 20) buttonPressed = true;
+				else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button].first);
 
-				}
 			}
 
-			//if it is not on an axis, just check if that button is pressed
-			
-			else buttonPressed = sf::Joystick::isButtonPressed(0, World::GetInstance()->GlobalMembers.joystickControls[button].first);
+			//if we're not using a controller, check for keyboard
+
+			else buttonPressed = sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[button]);
 
 		}
-
-		//if we're not using a controller, check for keyboard
-
-		else buttonPressed = sf::Keyboard::isKeyPressed(World::GetInstance()->GlobalMembers.keyboardControls[button]);
-
-	}
 	
 	return buttonPressed;
 
@@ -790,10 +780,15 @@ bool World::PlayerPressedActionButton() {
 
 	bool buttonPressed = false;
 
-	if(PlayerPressedButton(controlsShootLeft,true)) buttonPressed = true;
-	else if(PlayerPressedButton(controlsShootUp,true)) buttonPressed = true;
-	else if(PlayerPressedButton(controlsShootRight,true)) buttonPressed = true;
-	else if(PlayerPressedButton(controlsShootDown,true)) buttonPressed = true;
+	windowWorld->pollEvent(*World::GetInstance()->eventWorld);
+
+
+		if (PlayerPressedButton(controlsShootLeft, true)) buttonPressed = true;
+		else if (PlayerPressedButton(controlsShootUp, true)) buttonPressed = true;
+		else if (PlayerPressedButton(controlsShootRight, true)) buttonPressed = true;
+		else if (PlayerPressedButton(controlsShootDown, true)) buttonPressed = true;
+
+
 
 	return buttonPressed;
 

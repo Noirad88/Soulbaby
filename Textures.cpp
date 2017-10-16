@@ -87,6 +87,11 @@ namespace Textures{
 
 	}
 
+	CrtShader::CrtShader()
+	{
+		shader.loadFromStream(TextureContainer::shaderMap.at("sh_crt"), sf::Shader::Fragment);
+
+	}
 
     Shader::~Shader(){
         
@@ -113,6 +118,10 @@ namespace Textures{
 	}
 
 	DimShader::~DimShader() {
+
+	}
+
+	CrtShader::~CrtShader() {
 
 	}
 
@@ -147,6 +156,12 @@ namespace Textures{
         shader.setParameter("riseFactor",.0f);
         
     }
+
+	void CrtShader::Update() {
+
+		shader.setParameter("Texture", sf::Shader::CurrentTexture);
+		shader.setParameter("TextureSize", 480,270);
+	}
 
 	void ChargeShader::Update() {
 
@@ -308,6 +323,8 @@ namespace Textures{
 		dimShader = std::shared_ptr<DimShader>(new DimShader);
 		chargeShader = std::shared_ptr<ChargeShader>(new ChargeShader);
 		testShader = std::shared_ptr<TestShader>(new TestShader);
+		crtShader = std::shared_ptr<CrtShader>(new CrtShader);
+
 
 		shaders.insert(std::pair<std::string, sf::Shader&>("redShader", redShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("waveShader", waveShader.get()->shader));
@@ -317,6 +334,8 @@ namespace Textures{
 		shaders.insert(std::pair<std::string, sf::Shader&>("dimShader", dimShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("chargeShader", chargeShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("testShader", testShader.get()->shader));
+		shaders.insert(std::pair<std::string, sf::Shader&>("crtShader", crtShader.get()->shader));
+
 
 		GameFont.loadFromStream(Fontdata);
 		GameFontSmall.loadFromStream(FontdataSmall);
@@ -355,6 +374,8 @@ namespace Textures{
 		glitchShader->Update();
 		chargeShader->Update();
 		testShader->Update();
+		crtShader->Update();
+
         tick += 0.005;
         
     }

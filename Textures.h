@@ -96,6 +96,16 @@ namespace Textures
         ~RedShader();
         
     };
+
+	class CrtShader : public Shader
+	{
+
+	public:
+		CrtShader();
+		~CrtShader();
+		void Update();
+
+	};
     
     class DamageShader : public Shader
     {
@@ -150,6 +160,8 @@ namespace Textures
 		std::shared_ptr<DimShader> dimShader;
 		std::shared_ptr<ChargeShader> chargeShader;
 		std::shared_ptr<TestShader> testShader;
+		std::shared_ptr<CrtShader> crtShader;
+
 
         std::map<std::string,sf::Shader&> shaders;
 		std::string dir;

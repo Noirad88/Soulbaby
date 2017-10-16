@@ -14,6 +14,7 @@
 #define WINDOW_X int((SCREEN_X/480)*480)
 #define WINDOW_Y int((SCREEN_Y/270)*270)
 
+
 // Use below for gifs
 //#define WINDOW_X 1012
 //#define WINDOW_Y 569.25
@@ -176,7 +177,7 @@ int main()
 
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
-    window.setKeyRepeatEnabled(true);
+    //window.setKeyRepeatEnabled(true);
 
     sf::Event event;
         
@@ -192,29 +193,7 @@ int main()
         timestamp += clock.getElapsedTime().asMilliseconds();
         clock.restart();
         
-        // Process events
-        
-        while (window.pollEvent(event))
-        {
-            
-            // Close window : exit
-            if (event.type == sf::Event::Closed)
-            {
-                
-                window.close();
-                
-            }
-            
-            // Espace pressed : exit
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
-            {
-                
-                window.close();
-                
-            }
-            
-        }
-        
+		
         window.clear(sf::Color::Color(0,23,0));
         World::GetInstance()->Run(event,double(timestamp),clock);
         window.setView(*World::GetInstance()->GetView());

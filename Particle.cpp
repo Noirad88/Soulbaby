@@ -41,7 +41,7 @@ namespace Entity
 	int Textbox::scriptLength = 0;
 	int Textbox::progressSpeed = 0;
 	int Textbox::textboxCount = 0;
-	std::string Textbox::characters[11] = { "HAWZER","JIRA","DORAN","GURIAN","LIMA", "MOTHER", "NOTE",};
+	std::string Textbox::characters[11] = { "HAWZER","JIRA","DORAN","GURIAN","LIMA", "MOTHER", "NOTE", };
 
 	bool PlayerMenu::menuUp = false;
 
@@ -68,7 +68,7 @@ namespace Entity
 
 
 	MenuItem::MenuItem() : GUI() {
-	
+
 
 		hand.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_misc")));
 		hand.setTextureRect(sf::IntRect(154, 15, 13, 8));
@@ -81,7 +81,7 @@ namespace Entity
 
 	//Menu Item for Start
 
-	MenuItemStart::MenuItemStart() : MenuItem(){
+	MenuItemStart::MenuItemStart() : MenuItem() {
 
 		menuLable.setString("Start");
 		menuLable.setPosition(212, 150 + (count * 15));
@@ -89,7 +89,7 @@ namespace Entity
 
 	}
 
-	void MenuItemStart::Update(){
+	void MenuItemStart::Update() {
 
 
 	}
@@ -97,6 +97,116 @@ namespace Entity
 	void MenuItemStart::Action() {
 
 		World::GetInstance()->ReadyScene("map2_1");
+
+	}
+
+	MenuItemSetKey::MenuItemSetKey(int key) {
+
+		assignedKey = key;
+		joyAssignment.setCharacterSize(16);
+		joyAssignment.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
+		ResetLables();	
+		menuLable.setPosition(160, 20 + (count * 15));
+		joyAssignment.setPosition(menuLable.getPosition().x + 100, menuLable.getPosition().y);
+
+	}
+
+	void MenuItemSetKey::Update() {
+
+		if (isAssigningNewKey == true) {
+
+			if (waitASec < 10) waitASec++;
+
+			menuLable.setString(World::GetInstance()->GlobalMembers.keyNames.at(assignedKey) + ": Waiting for input...");
+			menuLable.setColor(sf::Color::Green);
+
+			if (waitASec >= 10) {
+
+				World::GetInstance()->windowWorld->pollEvent(*World::GetInstance()->eventWorld);
+
+				std::cout << World::GetInstance()->eventWorld->joystickMove.axis << std::endl;
+
+					if (World::GetInstance()->eventWorld->type == sf::Event::JoystickButtonPressed) {
+
+						std::cout << "joy pressed: " << World::GetInstance()->GlobalMembers.keycodes.at(World::GetInstance()->eventWorld->joystickButton.button) << std::endl;
+						int newButton = World::GetInstance()->eventWorld->joystickButton.button;
+						sf::Joystick::Axis newAxis = static_cast<sf::Joystick::Axis>(-1);
+						
+						World::GetInstance()->GlobalMembers.joystickControls.at(assignedKey).first = newButton;
+						World::GetInstance()->GlobalMembers.joystickControls.at(assignedKey).second = newAxis;
+
+						isAssigningNewKey = false;
+						waitASec = 0;
+						menuLable.setColor(sf::Color::White);
+						locked = false;
+						ResetLables();
+
+					}
+
+					else if (World::GetInstance()->eventWorld->type == sf::Event::JoystickMoved) {
+
+						std::cout << "joymoved pressed: " << World::GetInstance()->GlobalMembers.keycodes.at(World::GetInstance()->eventWorld->joystickMove.axis) << std::endl;
+						int newPosition = 0;
+						sf::Joystick::Axis newAxis = World::GetInstance()->eventWorld->joystickMove.axis;
+
+						if (World::GetInstance()->eventWorld->joystickMove.position > 0) newPosition = 100;
+						else newPosition = -100;
+						World::GetInstance()->GlobalMembers.joystickControls.at(assignedKey).first = newPosition;
+						World::GetInstance()->GlobalMembers.joystickControls.at(assignedKey).second = newAxis;
+						isAssigningNewKey = false;
+						waitASec = 0;
+						menuLable.setColor(sf::Color::White);
+						locked = false;
+						ResetLables();
+
+					}
+
+					else if (World::GetInstance()->eventWorld->type == sf::Event::KeyPressed) {
+
+						int joyKey = World::GetInstance()->eventWorld->joystickMove.axis;
+						std::cout << joyKey << std::endl;
+						sf::Keyboard::Key newKey = World::GetInstance()->eventWorld->key.code;
+						World::GetInstance()->GlobalMembers.keyboardControls.at(assignedKey) = newKey;
+						isAssigningNewKey = false;
+						waitASec = 0;
+						menuLable.setColor(sf::Color::White);
+						locked = false;
+						ResetLables();
+
+					}
+
+				
+
+			}
+
+		}
+
+
+	}
+
+	void MenuItemSetKey::Action() {
+
+		if (isAssigningNewKey == false) {
+
+			isAssigningNewKey = true;
+			locked = true;
+
+		}
+
+	}
+
+	void MenuItemSetKey::ResetLables() {
+
+		menuLable.setString(World::GetInstance()->GlobalMembers.keyNames.at(assignedKey) + ": " + World::GetInstance()->GlobalMembers.keycodes.at(World::GetInstance()->GlobalMembers.keyboardControls.at(assignedKey)));
+
+		if (abs(World::GetInstance()->GlobalMembers.joystickControls.at(assignedKey).first) == 100) {
+
+			joyAssignment.setString("Axis " + std::to_string(World::GetInstance()->GlobalMembers.joystickControls.at(assignedKey).second) + "(" + std::to_string(World::GetInstance()->GlobalMembers.joystickControls.at(assignedKey).first) + ")");
+
+		}
+
+		else joyAssignment.setString("Button " + std::to_string(World::GetInstance()->GlobalMembers.joystickControls.at(assignedKey).first));
+
 
 	}
 
@@ -116,6 +226,28 @@ namespace Entity
 
 
 		MenuItemHolder menuHolder;
+		MenuItemSetKey* item1 = new MenuItemSetKey(0);
+		MenuItemSetKey* item2 = new MenuItemSetKey(1);
+		MenuItemSetKey* item3 = new MenuItemSetKey(2);
+		MenuItemSetKey* item4 = new MenuItemSetKey(3);
+		MenuItemSetKey* item5 = new MenuItemSetKey(4);
+		MenuItemSetKey* item6 = new MenuItemSetKey(5);
+		MenuItemSetKey* item7 = new MenuItemSetKey(6);
+		MenuItemSetKey* item8 = new MenuItemSetKey(7);
+		MenuItemSetKey* item9 = new MenuItemSetKey(8);
+		MenuItemSetKey* item10 = new MenuItemSetKey(9);
+
+		menuHolder.menuList.push_back(item1);
+		menuHolder.menuList.push_back(item2);
+		menuHolder.menuList.push_back(item3);
+		menuHolder.menuList.push_back(item4);
+		menuHolder.menuList.push_back(item5);
+		menuHolder.menuList.push_back(item6);
+		menuHolder.menuList.push_back(item7);
+		menuHolder.menuList.push_back(item8);
+		menuHolder.menuList.push_back(item9);
+		menuHolder.menuList.push_back(item10);
+
 		menuHolder.menuList.at(0)->ToggleSelection();
 		Menu::menuContainer.push_back(menuHolder);
 
@@ -180,15 +312,17 @@ namespace Entity
 		MenuItemHolder menuHolder;
 		MenuItemMusicVolume* item1 = new MenuItemMusicVolume;
 		MenuItemSFXVolume* item2 = new MenuItemSFXVolume;
-		MenuItemResolution* item3 = new MenuItemResolution;
-		MenuItemCRTMode* item4 = new MenuItemCRTMode;
-		MenuItemControls* item5 = new MenuItemControls;
+		MenuItemFullscreen* item3 = new MenuItemFullscreen;
+		MenuItemResolution* item4 = new MenuItemResolution;
+		MenuItemCRTMode* item5 = new MenuItemCRTMode;
+		MenuItemControls* item6 = new MenuItemControls;
 
 		menuHolder.menuList.push_back(item1);
 		menuHolder.menuList.push_back(item2);
 		menuHolder.menuList.push_back(item3);
 		menuHolder.menuList.push_back(item4);
 		menuHolder.menuList.push_back(item5);
+		menuHolder.menuList.push_back(item6);
 
 		menuHolder.menuList.at(0)->ToggleSelection();
 		Menu::menuContainer.push_back(menuHolder);
@@ -286,6 +420,24 @@ namespace Entity
 
 	void MenuItemSFXVolume::Action() {
 
+
+	}
+
+	MenuItemFullscreen::MenuItemFullscreen() : MenuItem() {
+
+		menuLable.setString("Fullscreen: " + std::to_string(World::GetInstance()->GlobalMembers.fullscreen));
+		menuLable.setPosition(212, 150 + (count * 15));
+	}
+
+	void MenuItemFullscreen::Update() {
+
+
+	}
+
+	void MenuItemFullscreen::Action() {
+
+		
+
 	}
 
 
@@ -378,6 +530,21 @@ namespace Entity
 
 	}
 
+	void MenuItemSetKey::Draw(sf::RenderTarget& window) {
+
+		World::GetInstance()->DrawObject(objectSprite);
+		World::GetInstance()->DrawObject(menuLable);
+		World::GetInstance()->DrawObject(joyAssignment);
+
+
+		if (menuLable.getColor() == sf::Color::White) {
+
+			World::GetInstance()->DrawObject(hand);
+
+		}
+
+	}
+
 	MenuItemHolder::MenuItemHolder() : GUI() {
 
 		MenuItem::count = 0;
@@ -416,58 +583,68 @@ namespace Entity
 
 		int currentScreen = menuContainer.size() - 1;
 
-		if (World::GetInstance()->Timer(*this, SLOW)) {
+		if (menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->locked == false) {
 
 			//Up/Down Selection
+			if (World::GetInstance()->Timer(*this, SLOW)) {
 
-			if ((World::GetInstance()->PlayerPressedButton(controlsUp,true))) {
+				if (World::GetInstance()->PlayerPressedButton(controlsUp, true)) {
 
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
-				if (menuContainer.at(currentScreen).currentPos != 0) {
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
+					if (menuContainer.at(currentScreen).currentPos != 0) {
 
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
-					--menuContainer.at(currentScreen).currentPos;
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
+						menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
+						--menuContainer.at(currentScreen).currentPos;
+						menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
 
-				}
+					}
 
-				else {
+					else {
 
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
-					menuContainer.at(currentScreen).currentPos = menuContainer.at(currentScreen).menuList.size() - 1;
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
+						menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
+						menuContainer.at(currentScreen).currentPos = menuContainer.at(currentScreen).menuList.size() - 1;
+						menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
+
+					}
 
 				}
 
 			}
 
-			if ((World::GetInstance()->PlayerPressedButton(controlsDown,true))) {
+			if (World::GetInstance()->Timer(*this, SLOW)) {
 
-				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
-				if (menuContainer.at(currentScreen).currentPos != menuContainer.at(currentScreen).menuList.size() - 1) {
+				if (World::GetInstance()->PlayerPressedButton(controlsDown, true) && menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->locked == false) {
 
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
-					++menuContainer.at(currentScreen).currentPos;
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
+					World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump2");
+					if (menuContainer.at(currentScreen).currentPos != menuContainer.at(currentScreen).menuList.size() - 1) {
 
-				}
+						menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
+						++menuContainer.at(currentScreen).currentPos;
+						menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
 
-				else {
+					}
 
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
-					menuContainer.at(currentScreen).currentPos = 0;
-					menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
+					else {
+
+						menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
+						menuContainer.at(currentScreen).currentPos = 0;
+						menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->ToggleSelection();
+					}
+
 				}
 
 			}
 
-			//Detect possible inputs only for menu item that is selected
+		}
 
-			menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->Update();
+		//Detect possible inputs only for menu item that is selected
 
-			// Call Action() on selected menu item if press action/fire button
+		menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->Update();
 
-			if ((World::GetInstance()->PlayerPressedButton(controlsShootLeft,true))) {
+		// Call Action() on selected menu item if press action/fire button
+		if (menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->locked == false) {
+
+			if ((World::GetInstance()->PlayerPressedButton(controlsShootLeft, true))) {
 
 				menuContainer.at(currentScreen).menuList.at(menuContainer.at(currentScreen).currentPos)->Action();
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
@@ -476,10 +653,11 @@ namespace Entity
 
 			// Go back a menu state if pressed cancel/dash button
 
-			else if ((World::GetInstance()->PlayerPressedButton(controlsShootRight,true) && menuContainer.size() != 1)) menuContainer.pop_back();
+			else if ((World::GetInstance()->PlayerPressedButton(controlsShootRight, true) && menuContainer.size() != 1)) menuContainer.pop_back();
 
+			}
 		}
-	}
+	
 
 
 	void Menu::Draw(sf::RenderTarget& window) {
@@ -509,11 +687,19 @@ namespace Entity
 
 	}
 
+	MenuItemFullscreen::~MenuItemFullscreen() {
+
+	}
+
 	MenuItemResolution::~MenuItemResolution() {
 
 	}
 
 	MenuItemControls::~MenuItemControls() {
+
+	}
+
+	MenuItemSetKey::~MenuItemSetKey() {
 
 	}
 
