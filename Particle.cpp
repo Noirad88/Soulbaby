@@ -431,12 +431,55 @@ namespace Entity
 
 	void MenuItemFullscreen::Update() {
 
+		if ((World::GetInstance()->PlayerPressedButton(controlsLeft, true))) {
+
+			World::GetInstance()->GlobalMembers.fullscreen = 0;
+			menuLable.setString("Fullscreen: " + std::to_string(World::GetInstance()->GlobalMembers.fullscreen));
+
+		}
+
+		else if ((World::GetInstance()->PlayerPressedButton(controlsRight, true))) {
+
+			World::GetInstance()->GlobalMembers.fullscreen = 1;
+			menuLable.setString("Fullscreen: " + std::to_string(World::GetInstance()->GlobalMembers.fullscreen));
+
+		}
 
 	}
 
 	void MenuItemFullscreen::Action() {
 
+		if (World::GetInstance()->GlobalMembers.fullscreen == true) {
+
+
+			int desktopWidth = sf::VideoMode::getDesktopMode().width;
+			int desktopHeight = sf::VideoMode::getDesktopMode().height;
+
+			//2560 x 1600
+
+			int xdiff = ceil(desktopWidth / 480);
+			int ydiff = ceil(desktopHeight / 270);
+
+
+			std::cout << "desktopwidth: " << desktopWidth << std::endl;
+			int gameWidth = 480;
+			int gameHeight = 270 + (ydiff * 6);
+			World::GetInstance()->windowWorld->create(sf::VideoMode(desktopWidth, desktopHeight), "Soulbaby", sf::Style::Fullscreen);
+			World::GetInstance()->Screen.setSize(gameWidth, gameHeight);
+			World::GetInstance()->windowWorld->setFramerateLimit(60);
+			World::GetInstance()->windowWorld->setVerticalSyncEnabled(true);
+
+		}
+
+		if (World::GetInstance()->GlobalMembers.fullscreen == false) {
+
+			int resolution = World::GetInstance()->GlobalMembers.currentResolution;
+			World::GetInstance()->windowWorld->create(sf::VideoMode(480, 270), "Soulbaby", sf::Style::None);
+			World::GetInstance()->Screen.setSize(480*resolution, 270*resolution);
+			World::GetInstance()->windowWorld->setFramerateLimit(60);
+			World::GetInstance()->windowWorld->setVerticalSyncEnabled(true);
 		
+		}
 
 	}
 
@@ -452,39 +495,41 @@ namespace Entity
 
 		int resolution;
 
+		if (World::GetInstance()->GlobalMembers.fullscreen == 0) {
 
-		if ((World::GetInstance()->PlayerPressedButton(controlsLeft, true))) {
+			if ((World::GetInstance()->PlayerPressedButton(controlsLeft, true))) {
 
-			if (World::GetInstance()->GlobalMembers.currentResolution > 1) {
-				--World::GetInstance()->GlobalMembers.currentResolution;
-				resolution = World::GetInstance()->GlobalMembers.currentResolution;
-				World::GetInstance()->windowWorld->setSize(sf::Vector2u(480 * resolution, 270 * resolution));
-				sf::VideoMode userMode = sf::VideoMode::getDesktopMode();
-				World::GetInstance()->windowWorld->setPosition(sf::Vector2i(userMode.width / 2 - ((480 * resolution) / 2), userMode.height / 2 - ((270 * resolution) / 2)));
+				if (World::GetInstance()->GlobalMembers.currentResolution > 1) {
+					--World::GetInstance()->GlobalMembers.currentResolution;
+					resolution = World::GetInstance()->GlobalMembers.currentResolution;
+					World::GetInstance()->windowWorld->setSize(sf::Vector2u(480 * resolution, 270 * resolution));
+					sf::VideoMode userMode = sf::VideoMode::getDesktopMode();
+					World::GetInstance()->windowWorld->setPosition(sf::Vector2i(userMode.width / 2 - ((480 * resolution) / 2), userMode.height / 2 - ((270 * resolution) / 2)));
+
+
+				}
 
 
 			}
 
+			else if ((World::GetInstance()->PlayerPressedButton(controlsRight, true))) {
 
-		}
+				if (World::GetInstance()->GlobalMembers.currentResolution < 6) {
 
-		else if ((World::GetInstance()->PlayerPressedButton(controlsRight, true))) {
+					++World::GetInstance()->GlobalMembers.currentResolution;
+					resolution = World::GetInstance()->GlobalMembers.currentResolution;
+					World::GetInstance()->windowWorld->setSize(sf::Vector2u(480 * resolution, 270 * resolution));
+					sf::VideoMode userMode = sf::VideoMode::getDesktopMode();
+					World::GetInstance()->windowWorld->setPosition(sf::Vector2i(userMode.width / 2 - ((480 * resolution) / 2), userMode.height / 2 - ((270 * resolution) / 2)));
 
-			if (World::GetInstance()->GlobalMembers.currentResolution < 6) {
+				}
 
-				++World::GetInstance()->GlobalMembers.currentResolution;
-				resolution = World::GetInstance()->GlobalMembers.currentResolution;
-				World::GetInstance()->windowWorld->setSize(sf::Vector2u(480 * resolution, 270 * resolution));
-				sf::VideoMode userMode = sf::VideoMode::getDesktopMode();
-				World::GetInstance()->windowWorld->setPosition(sf::Vector2i(userMode.width/2-((480 * resolution)/2), userMode.height/2 - ((270 * resolution) / 2)));
 
 			}
 
+			menuLable.setString("Resolution: " + std::to_string(World::GetInstance()->GlobalMembers.currentResolution) + "X");
 
 		}
-
-		menuLable.setString("Resolution: " + std::to_string(World::GetInstance()->GlobalMembers.currentResolution) + "X");
-
 	}
 
 	void MenuItemResolution::Action() {
@@ -665,6 +710,14 @@ namespace Entity
 		for (auto i : menuContainer.at(menuContainer.size() - 1).menuList) i->Draw(window);
 		World::GetInstance()->DrawObject(objectSprite);
 
+		int desktopWidth = World::GetInstance()->windowWorld->getSize().x;
+
+		sf::Text t;
+		t.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
+		t.setCharacterSize(16);
+		t.setString(std::to_string(desktopWidth));
+		std::cout << "desktopwidth: " << desktopWidth << std::endl;
+		World::GetInstance()->DrawObject(t);
 	}
 
 	Menu::~Menu() {

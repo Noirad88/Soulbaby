@@ -225,15 +225,15 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     
     GlobalMembers.musicVolume = std::shared_ptr<int> (new int(80));
 	GlobalMembers.sfxVolume = std::shared_ptr<int>(new int(80));
-	Screen.setSize(WINDOW_X/3, WINDOW_Y/3);
-
     
     clockWorld = &clock;
     windowWorld = &window;
     eventWorld = &events;
     CurrentScene = std::shared_ptr<SceneScript>(new SceneScript);
     WorldScene.transition.reset();
-    
+
+	Screen.setSize(480,270);
+
     CreateCharacterScripts();
     GlobalMembers.levelsCompleted.fill(0);
 	//GlobalMembers.levelsCompleted.at(0) = 1;
@@ -412,6 +412,7 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 	if(WorldScene.UIPtr) WorldScene.UIPtr->Draw(*windowWorld);
     
     if(WorldScene.transition) UpdateTransition();
+
      
      RemoveTimeObjects();
 

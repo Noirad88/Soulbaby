@@ -11,10 +11,6 @@
 
 #define SCREEN_X sf::VideoMode::getDesktopMode().width
 #define SCREEN_Y sf::VideoMode::getDesktopMode().height
-#define WINDOW_X int((SCREEN_X/480)*480)
-#define WINDOW_Y int((SCREEN_Y/270)*270)
-
-
 // Use below for gifs
 //#define WINDOW_X 1012
 //#define WINDOW_Y 569.25
@@ -171,13 +167,12 @@ int main()
 	CreateResourceMap();
 
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(WINDOW_X,WINDOW_Y), "SFML window", sf::Style::None);
-	sf::VideoMode userMode = sf::VideoMode::getDesktopMode();
-	//std::cout << userMode.width << " x " << userMode.height << std::endl;
 
+	//videomode size doesn't matter when fullscreen
+
+    sf::RenderWindow window(sf::VideoMode(SCREEN_X,SCREEN_Y), "Soulbaby", sf::Style::Fullscreen);
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
-    //window.setKeyRepeatEnabled(true);
 
     sf::Event event;
         
