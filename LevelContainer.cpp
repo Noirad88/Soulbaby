@@ -21,6 +21,13 @@ namespace Level
     LevelContainer::LevelContainer()
     {
         
+		letterBoxTop.setFillColor(sf::Color::Black);
+		letterBoxBottom.setFillColor(sf::Color::Black);
+		letterBoxTop.setSize(sf::Vector2f(580,100));
+		letterBoxBottom.setSize(sf::Vector2f(580, 100));
+		letterBoxTop.setOrigin(letterBoxTop.getSize().x / 2, letterBoxTop.getSize().y / 2);
+		letterBoxBottom.setOrigin(letterBoxTop.getSize().x / 2, letterBoxTop.getSize().y / 2);
+
     }
     
     void LevelContainer::CreateScene(){
@@ -402,6 +409,24 @@ namespace Level
         World::GetInstance()->DrawObject(LevelBG[1]);
         
     }
+
+	void LevelContainer::DrawLetterBox() {
+
+		if (World::GetInstance()->GlobalMembers.fullscreen == true) {
+
+			letterBoxTop.setPosition(World::GetInstance()->Screen.getCenter().x,
+									World::GetInstance()->Screen.getCenter().y - 50 - 135);
+
+			letterBoxBottom.setPosition(World::GetInstance()->Screen.getCenter().x,
+				World::GetInstance()->Screen.getCenter().y + 50 + 135);
+
+			World::GetInstance()->DrawObject(letterBoxTop,"bypass");
+			World::GetInstance()->DrawObject(letterBoxBottom,"bypass");
+
+		}
+
+	}
+
     
     void LevelContainer::DrawLevel()
     {

@@ -88,6 +88,7 @@ namespace Level
         void DrawBG();
         void DrawLevel();
         void DrawBGTop();
+		void DrawLetterBox();
         void Update();
         void UpdateBackground();
         void CreateBoss();
@@ -106,6 +107,8 @@ namespace Level
         void CheckCollison(const std::unique_ptr<Entity::Object>& object);
         void GetSurroundingTiles(sf::Vector2f prevPos, sf::Vector2f currPos, sf::IntRect spriteRect);
         std::vector<sf::Sprite> LevelBG;
+		sf::RectangleShape letterBoxTop;
+		sf::RectangleShape letterBoxBottom;
         sf::Texture prevImg;
         sf::Vector2f lvlSize;
         std::vector<std::shared_ptr<Tile>> LvlContainer;

@@ -460,12 +460,11 @@ namespace Entity
 			int xdiff = ceil(desktopWidth / 480);
 			int ydiff = ceil(desktopHeight / 270);
 
-
-			std::cout << "desktopwidth: " << desktopWidth << std::endl;
 			int gameWidth = 480;
 			int gameHeight = 270 + (ydiff * 6);
 			World::GetInstance()->windowWorld->create(sf::VideoMode(desktopWidth, desktopHeight), "Soulbaby", sf::Style::Fullscreen);
 			World::GetInstance()->Screen.setSize(gameWidth, gameHeight);
+
 			World::GetInstance()->windowWorld->setFramerateLimit(60);
 			World::GetInstance()->windowWorld->setVerticalSyncEnabled(true);
 

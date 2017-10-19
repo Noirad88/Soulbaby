@@ -170,7 +170,7 @@ int main()
 
 	//videomode size doesn't matter when fullscreen
 
-    sf::RenderWindow window(sf::VideoMode(SCREEN_X,SCREEN_Y), "Soulbaby", sf::Style::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode(480*3,270*3), "Soulbaby", sf::Style::None);
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
 

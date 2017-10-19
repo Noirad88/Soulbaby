@@ -370,10 +370,6 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 	UpdateTime(timestamp);
 	eventWorld = &event;
 
-	//sf::Time test = WorldScene.audioContainer.music.getPlayingOffset();
-
-	//if (test.asMilliseconds() >= 6850)  WorldScene.audioContainer.music.play();
-	//std::cout << test.asMilliseconds() << std::endl;
 
 	if (Timer(*this, 100.0f)) {
 
@@ -402,8 +398,6 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
 	WorldScene.objectContainer->CheckCollisions();
 	WorldScene.levelContainer->CheckCollisions();
 
-	UpdateCamera(); 
-
 	WorldScene.levelContainer->DrawLevel();
 	WorldScene.objectContainer->DrawObjects(*windowWorld, *this);
 
@@ -413,7 +407,11 @@ void World::Run(sf::Event& event, float timestamp, sf::Clock& clock) {
     
     if(WorldScene.transition) UpdateTransition();
 
-     
+	WorldScene.levelContainer->DrawLetterBox();
+
+	UpdateCamera();
+
+
      RemoveTimeObjects();
 
 	 /*
