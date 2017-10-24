@@ -464,7 +464,6 @@ namespace Entity
 			int gameHeight = 270 + (ydiff * 6);
 			World::GetInstance()->windowWorld->create(sf::VideoMode(desktopWidth, desktopHeight), "Soulbaby", sf::Style::Fullscreen);
 			World::GetInstance()->Screen.setSize(gameWidth, gameHeight);
-
 			World::GetInstance()->windowWorld->setFramerateLimit(60);
 			World::GetInstance()->windowWorld->setVerticalSyncEnabled(true);
 
@@ -473,7 +472,7 @@ namespace Entity
 		if (World::GetInstance()->GlobalMembers.fullscreen == false) {
 
 			int resolution = World::GetInstance()->GlobalMembers.currentResolution;
-			World::GetInstance()->windowWorld->create(sf::VideoMode(480, 270), "Soulbaby", sf::Style::None);
+			World::GetInstance()->windowWorld->create(sf::VideoMode(480, 270), "Soulbaby", sf::Style::Titlebar);
 			World::GetInstance()->Screen.setSize(480*resolution, 270*resolution);
 			World::GetInstance()->windowWorld->setFramerateLimit(60);
 			World::GetInstance()->windowWorld->setVerticalSyncEnabled(true);
@@ -709,14 +708,6 @@ namespace Entity
 		for (auto i : menuContainer.at(menuContainer.size() - 1).menuList) i->Draw(window);
 		World::GetInstance()->DrawObject(objectSprite);
 
-		int desktopWidth = World::GetInstance()->windowWorld->getSize().x;
-
-		sf::Text t;
-		t.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
-		t.setCharacterSize(16);
-		t.setString(std::to_string(desktopWidth));
-		std::cout << "desktopwidth: " << desktopWidth << std::endl;
-		World::GetInstance()->DrawObject(t);
 	}
 
 	Menu::~Menu() {
@@ -1590,20 +1581,6 @@ namespace Entity
 
     void Hud::Draw(sf::RenderTarget& window){
 
-		if (World::GetInstance()->CurrentScene->mapType == 2) {
-
-			if (World::GetInstance()->WorldScene.playerPtr) {
-
-				if ((World::GetInstance()->CameraTarget == World::GetInstance()->WorldScene.playerPtr)) {
-
-					//World::GetInstance()->DrawObject(pow2Lable, "bypass");
-					//World::GetInstance()->DrawObject(manaBar, "bypass");
-
-
-				}
-			}
-
-		}
 
 		if (isExpanded == true) {
 
@@ -1638,10 +1615,12 @@ namespace Entity
 
 		}
 
+		if (World::GetInstance()->CurrentScene->mapType != ENCOUNTER) {
 
-		World::GetInstance()->DrawObject(objectSprite, "bypass");
-		World::GetInstance()->DrawObject(selectedWeapon, "bypass");
-		World::GetInstance()->DrawObject(pow1Lable,"bypass");
+			World::GetInstance()->DrawObject(objectSprite, "bypass");
+			World::GetInstance()->DrawObject(selectedWeapon, "bypass");
+			World::GetInstance()->DrawObject(pow1Lable, "bypass");
+		}
 
 
 		if (isExpanded == true && newAbility == 0) World::GetInstance()->DrawObject(hand, "bypass");
@@ -1841,12 +1820,55 @@ namespace Entity
 
 	void Player::Bounce() {
 
+		int borderLeft = World::GetInstance()->WorldScene.levelContainer->battleBorder.left;
+		int borderTop = World::GetInstance()->WorldScene.levelContainer->battleBorder.top;
+		int borderRight = borderLeft + World::GetInstance()->WorldScene.levelContainer->battleBorder.width;
+		int borderBottom = borderTop + World::GetInstance()->WorldScene.levelContainer->battleBorder.height;
+		int waveDirOne = 0;
+		int waveDirTwo = 0;
+
+
 		// Need to bounce the player back inside of arena; could be far outside and will get stuck
 
-		if (objectSprite.getPosition().x <= 0) objectSprite.setPosition(1, objectSprite.getPosition().y);
-		else if (objectSprite.getPosition().x >= World::GetInstance()->WorldScene.levelContainer->lvlSize.x) objectSprite.setPosition(World::GetInstance()->WorldScene.levelContainer->lvlSize.x-1, objectSprite.getPosition().y);
-		if (objectSprite.getPosition().y <= 0) objectSprite.setPosition(objectSprite.getPosition().x, 1);
-		else if (objectSprite.getPosition().y >= World::GetInstance()->WorldScene.levelContainer->lvlSize.y) objectSprite.setPosition(objectSprite.getPosition().x, World::GetInstance()->WorldScene.levelContainer->lvlSize.y-1);
+		if (objectHitBox.getPosition().x <= borderLeft) {
+
+			std::cout << "borderLeft" << std::endl;
+
+			objectSprite.setPosition(borderLeft + 1, objectSprite.getPosition().y);
+			waveDirOne = north;
+			waveDirTwo = south;
+
+		}
+
+		else if (objectHitBox.getPosition().y >= borderBottom) {
+
+			std::cout << "borderBottom" << std::endl;
+
+			objectSprite.setPosition(objectSprite.getPosition().x, borderBottom - 1);
+			waveDirOne = west;
+			waveDirTwo = east;
+		}
+
+		else if (objectHitBox.getPosition().x >= borderRight) {
+
+
+			std::cout << "borderRight" << std::endl;
+			objectSprite.setPosition(borderRight - 1, objectSprite.getPosition().y);
+			waveDirOne = north;
+			waveDirTwo = south;
+
+		}
+
+		else if (objectHitBox.getPosition().y <= borderTop) {
+
+			std::cout << "borderTop" << std::endl;
+
+			objectSprite.setPosition(objectSprite.getPosition().x, borderTop + 1);
+			waveDirOne = west;
+			waveDirTwo = east;
+
+		}
+		
 
 		sf::Vector2f tempPos = objectSprite.getPosition();
 
@@ -1855,24 +1877,24 @@ namespace Entity
 		if (movement == north) movement = south;
 		else if (movement == neast) {
 
-			if (objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x) movement = nwest;
+			if (objectHitBox.getPosition().x > borderRight) movement = nwest;
 			else movement = seast;
 		}
 		else if (movement == nwest) {
 
-			if (objectHitBox.getPosition().x < 0) movement = neast;
+			if (objectHitBox.getPosition().x < borderLeft) movement = neast;
 			else movement = swest;
 		}
 		else if (movement == east) movement = west;
 		else if (movement == south) movement = north;
 		else if (movement == swest) {
 
-			if (objectHitBox.getPosition().x < 0) movement = seast;
+			if (objectHitBox.getPosition().x < borderLeft) movement = seast;
 			else movement = nwest;
 		}
 		else if (movement == seast) {
 
-			if (objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x) movement = swest;
+			if (objectHitBox.getPosition().x > borderRight) movement = swest;
 			else movement = neast;
 		}
 		else if (movement == west) movement = east;
@@ -1885,6 +1907,21 @@ namespace Entity
 		tempPos += vel;
 		vel = tempPos;
 
+		//if current weapon level is 2 or greater,  shoot projectile object
+
+		if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) > 1) {
+
+			itemQueue wave;
+			wave.properties["itemType"] = "BounceCrawler";
+			wave.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
+			wave.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+			wave.properties["Direction"] = std::to_string(waveDirOne);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(wave);
+			wave.properties["Direction"] = std::to_string(waveDirTwo);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(wave);
+
+		}
+
 		//effects and sxf
 
 		itemQueue dash;
@@ -1893,8 +1930,11 @@ namespace Entity
 		dash.properties["itemType"] = "ActionSpark";
 		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(dash);
 		World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_bouncyhit");
+		World::GetInstance()->WorldScene.levelContainer->levelManagerPtr->bgwallHit = true;
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(75));
+		World::GetInstance()->ScreenShake(20);
+
 
 
 	}
@@ -2483,8 +2523,13 @@ namespace Entity
 			   World::GetInstance()->DrawObject(objectSprite,"chargeShader");
 
 			}
+		
+			else if (hyperDash == false ){
 
-			else World::GetInstance()->DrawObject(objectSprite);
+				World::GetInstance()->DrawObject(objectSprite);
+
+			}
+
 			if(shield != 0 && shield != 41) World::GetInstance()->DrawObject(sshield);
 
 
@@ -2618,6 +2663,19 @@ namespace Entity
 
 	}
 
+	PlayerSpark::PlayerSpark() : Fixed() {
+
+		int randomSpark = RandomNumber(1);
+		if (randomSpark == 0) objectSprite.setTextureRect(sf::IntRect(27, 292, 7, 7));
+		else if (randomSpark == 1) objectSprite.setTextureRect(sf::IntRect(27, 299, 10, 10));
+
+		vel.y = 0;
+		SetEffectOrigin();
+		maxFrame = 3;
+		animSpeed = FAST;
+
+	}
+
 	EnemyPart::EnemyPart() : Fixed() {
 
 		objectSprite.setTextureRect(sf::IntRect(10, 292, 17, 17));
@@ -2637,6 +2695,11 @@ namespace Entity
 	EnemySpark::~EnemySpark() {
 
 	}
+
+	PlayerSpark::~PlayerSpark() {
+
+	}
+
 
 	EnemyPart::~EnemyPart() {
 
@@ -2927,6 +2990,22 @@ namespace Entity
 		animSpeed = VERY_FAST;
 	}
 
+	BounceCrawler::BounceCrawler() : Fixed() {
+
+		objectSprite.setTextureRect(sf::IntRect(80, 306, 17, 17));
+		SetEffectOrigin();
+
+		//Bounce crawler is slower depending on your weapon, so set the velocity if it is a specific weapon
+		vel.y = 3;
+		
+		maxFrame = 2;
+
+		//Bounce crawler lasts longer the higher your level
+		maxTime = SLOW + (SLOW * World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon));
+		animSpeed = VERY_FAST;
+	}
+
+
 	StarSpawn::StarSpawn() : Fixed() {
 
 		objectSprite.setTextureRect(sf::IntRect(44, 168, 15, 15));
@@ -3159,6 +3238,7 @@ namespace Entity
         
     }
 
+
 	ElectricNode::ElectricNode() : Projectile()
 	{
 		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
@@ -3178,7 +3258,7 @@ namespace Entity
 	{
 
 		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
-		objectSprite.setTextureRect(sf::IntRect(0, 238, 41, 41));
+		objectSprite.setTextureRect(sf::IntRect(0, 320, 36, 57));
 		objectSprite.setOrigin(20.5, 20.5);
 		SetEffectOrigin();
 		vel.y = 0;
@@ -3694,6 +3774,58 @@ namespace Entity
 		}
 
 	}
+
+	void BounceCrawler::Update() {
+
+		Fixed::Update();
+
+		// Here we need to check where the position of the crawler is
+
+		//depending on where it is, we just need to continue pushing it around the wall
+
+		//before we create the projectile, get its direction based off the crawlers direction
+
+		int centerX = World::GetInstance()->WorldScene.levelContainer->lvlSize.x / 2;
+		int centerY = World::GetInstance()->WorldScene.levelContainer->lvlSize.y / 2;
+		int shootDirection;
+
+		if (direction == 0) {
+
+			if(objectHitBox.getPosition().x < centerX) shootDirection = 6;
+			else shootDirection = 2;
+
+		}
+
+		else if (direction == 2) {
+
+			if (objectHitBox.getPosition().y < centerY) shootDirection = 0;
+			else shootDirection = 4;
+		}
+
+		else if (direction == 4) {
+
+			if (objectHitBox.getPosition().x < centerX) shootDirection = 6;
+			else shootDirection = 2;
+		}
+
+		else if (direction == 6) {
+
+			if (objectHitBox.getPosition().y < centerY) shootDirection = 0;
+			else shootDirection = 4;
+		}
+
+		if (World::GetInstance()->Timer(*this, NORMAL, NODELAY)) {
+
+			itemQueue proj;
+			proj.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
+			proj.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
+			proj.properties["Direction"] = std::to_string(shootDirection);
+			proj.properties["itemType"] = "PlayerLaser2";
+			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+
+		}
+	}
     
     void PlayerBeam::Update(){
         
@@ -3865,7 +3997,7 @@ namespace Entity
 			}
 		}
 
-		if (emitter != "") {
+		if (emitter != "" && misDestroyed == false) {
 
 			if (World::GetInstance()->Timer(*this, emitTime)) {
 
@@ -3875,15 +4007,15 @@ namespace Entity
 
 					if (emitScatter == true) {
 
-						particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x - 8 + RandomNumber(16));
-						particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 8 + RandomNumber(16));
+						particles.properties["PosX"] = std::to_string(double(objectSprite.getPosition().x - 8 + RandomNumber(16)));
+						particles.properties["PosY"] = std::to_string(double(objectSprite.getPosition().y - 8 + RandomNumber(16)));
 
 					}
 
 					else {
 
-						particles.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-						particles.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
+						particles.properties["PosX"] = std::to_string(double(objectSprite.getPosition().x));
+						particles.properties["PosY"] = std::to_string(double(objectSprite.getPosition().y));
 
 					}
 
@@ -4119,6 +4251,7 @@ namespace Entity
 		if (World::GetInstance()->WorldScene.playerPtr) {
 
 			objectSprite.setPosition(World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().x, World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition().y-10);
+			objectSprite.setRotation(45 * World::GetInstance()->WorldScene.playerPtr->movement);
 
 			if (World::GetInstance()->WorldScene.playerPtr->dashing == false) misDestroyed = true;
 
@@ -4129,9 +4262,9 @@ namespace Entity
 		if (World::GetInstance()->Timer(*this, FAST)) {
 
 			itemQueue clone;
-			clone.properties["PosX"] = std::to_string(objectSprite.getPosition().x);
-			clone.properties["PosY"] = std::to_string(objectSprite.getPosition().y);
-			clone.properties["itemType"] = "SpriteClone";
+			clone.properties["PosX"] = std::to_string((objectHitBox.getPosition().x-20) + RandomNumber(40));
+			clone.properties["PosY"] = std::to_string((objectHitBox.getPosition().y-20) + RandomNumber(40));
+			clone.properties["itemType"] = "PlayerSpark";
 			clone.parent = this;
 			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(clone);
 
@@ -4527,7 +4660,13 @@ namespace Entity
     void Object::DrawShadow(sf::RenderTarget& window)
     {
 		//World::GetInstance()->DrawObject(objectHitBox);
-        World::GetInstance()->DrawObject(objectShadow);
+
+		if (type == "Enemy") {
+
+			if(active == true) World::GetInstance()->DrawObject(objectShadow);
+		}
+
+		else World::GetInstance()->DrawObject(objectShadow);
         
     }
 
@@ -4659,6 +4798,10 @@ namespace Entity
 		star.properties["PosY"] = std::to_string(objectSprite.getPosition().y - 6);
 		star.properties["itemType"] = "Eball";
 		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(star);
+
+	}
+
+	BounceCrawler::~BounceCrawler() {
 
 	}
 
@@ -5032,11 +5175,17 @@ namespace Entity
     bool Object::isDestroyed(){
         
 
+
+		int borderLeft = World::GetInstance()->WorldScene.levelContainer->battleBorder.left;
+		int borderTop = World::GetInstance()->WorldScene.levelContainer->battleBorder.top;
+		int borderRight = borderLeft + World::GetInstance()->WorldScene.levelContainer->battleBorder.width;
+		int borderBottom = borderTop + World::GetInstance()->WorldScene.levelContainer->battleBorder.height;
+
 		if (World::GetInstance()->WorldScene.playerPtr) {
 
-			if (this == World::GetInstance()->WorldScene.playerPtr) {
+			if (this == World::GetInstance()->WorldScene.playerPtr && World::GetInstance()->CurrentScene->mapType == ENCOUNTER) {
 
-				if ((objectHitBox.getPosition().x < 0 || objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x || objectHitBox.getPosition().y < 0 || objectHitBox.getPosition().y > World::GetInstance()->WorldScene.levelContainer->lvlSize.y)) {
+				if ((objectHitBox.getPosition().x < borderLeft || objectHitBox.getPosition().x > borderRight || objectHitBox.getPosition().y < borderTop || objectHitBox.getPosition().y > borderBottom)) {
 					
 					Entity::Object* obj = this;
 					Entity::BattlePlayer* pobj = dynamic_cast<Entity::BattlePlayer*>(obj);
@@ -5067,6 +5216,8 @@ namespace Entity
     
     LevelManager::LevelManager() : Object(){
         
+		World::GetInstance()->WorldScene.levelContainer->levelManagerPtr = this;
+
         objectSprite.setTextureRect(sf::IntRect(0,0,0,0));
 
 		std::string level = std::to_string(World::GetInstance()->GlobalMembers.currentLevel);
@@ -5184,9 +5335,8 @@ namespace Entity
             
         }
         
-        else{
+        else if (bossIsCreated == false) {
             
-            misDestroyed = true;
             Entity::itemQueue boss;
             boss.properties["PosX"] = std::to_string(600/2);
             boss.properties["PosY"] = std::to_string(600/2);
@@ -5194,6 +5344,7 @@ namespace Entity
             //std::cout << "enemys left: " << maxEnemies << std:: endl;
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(boss);
             World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_boss");
+			bossIsCreated = true;
                 
         }
         
@@ -5203,8 +5354,24 @@ namespace Entity
     
     void LevelManager::Draw(sf::RenderTarget &window){
         
-        World::GetInstance()->DrawObject(bg,"waveShader");
-		World::GetInstance()->DrawObject(bgwall);
+		if (bossIsCreated == false) { 
+
+			World::GetInstance()->DrawObject(bg, "waveShader");
+
+		}
+
+		float transparency = (50 + cos(World::GetInstance()->clock2.getElapsedTime().asMilliseconds()*0.0015) * 50) + 90;
+		bgwall.setColor(sf::Color::Color(255, 255, 255, transparency + RandomNumber(60)));
+
+		if (bgwallHit == true) {
+
+			World::GetInstance()->DrawObject(bgwall, "whiteShader");
+			bgwallHit = false;
+
+		}
+
+		else World::GetInstance()->DrawObject(bgwall);
+
 
     }
     
@@ -5353,11 +5520,11 @@ namespace Entity
 
 	void Enemy::SetSpriteRedForHealth() {
 
-		float percent = 0;
+		double percent = 0;
 
 		if(health <= 0) percent = maxHealth / 1;
 		else percent = maxHealth / health;
-		float red = 255 / percent;
+		double red = 255 / percent;
 		objectSprite.setColor(sf::Color(255, red, red, 255));
 
 	}
@@ -5612,10 +5779,6 @@ namespace Entity
     {
         //std::cout << "Boss created" << std::endl;
 		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses"));
-        healthBar.setSize(sf::Vector2f(0,8));
-        healthBar.setFillColor(sf::Color::Yellow);
-        bossName.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont());
-        bossName.setCharacterSize(16);
 		bigDaddy = true;
 
 		// Create movesets
@@ -5643,8 +5806,8 @@ namespace Entity
 		wings.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_bosses"));
 		wings.setTextureRect(sf::IntRect(0,0, 175, 44));
         speed = 2;
-		maxhealth = 1200;
-        health = maxhealth;
+		health = 2400;
+		maxHealth = health;
         moveType = NORMAL;
 		sf::Sprite *mysprite = &wings;
         SetCharacterOrigin(&mysprite,true);
@@ -5652,11 +5815,9 @@ namespace Entity
         SetShadow();
         hasAttack = 0;
 		speed = 1;
-        bossName.setString("Mozza");
         targetPlayer = false;
 		moveOnAttack = true;
 		defending = true;
-
     }
     
 	void Enemy::MoveElse() {
@@ -6745,11 +6906,6 @@ namespace Entity
 
 	void Boss::HUDUpdate() {
 
-		healthBar.setPosition(World::GetInstance()->viewPos.x - ((WINDOW_X / 3) / 2), World::GetInstance()->viewPos.y + ((WINDOW_Y / 3) / 2 - 8));
-		bossName.setPosition(healthBar.getPosition().x, healthBar.getPosition().y - 22);
-		currhealth += -(healthBar.getSize().x - (float(WINDOW_X) / 3) / (maxhealth / health)) / 20;
-		healthBar.setSize(sf::Vector2f(currhealth, 8));
-		
 		if (health <= 0) {
 
 			Die();
@@ -6805,8 +6961,6 @@ namespace Entity
 
 		else World::GetInstance()->DrawObject(objectSprite);
 
-		World::GetInstance()->DrawObject(healthBar);
-		World::GetInstance()->DrawObject(bossName);
 		World::GetInstance()->DrawObject(wings);
 
 
@@ -6824,8 +6978,6 @@ namespace Entity
 
 		else World::GetInstance()->DrawObject(objectSprite);
         World::GetInstance()->DrawObject(objectHitBox);
-        World::GetInstance()->DrawObject(healthBar);
-        World::GetInstance()->DrawObject(bossName);
         
         
         
@@ -6845,7 +6997,7 @@ namespace Entity
 
 			pt.properties["PosX"] = std::to_string((objectSprite.getPosition().x - 10) + RandomNumber(20));
 			pt.properties["PosY"] = std::to_string((objectSprite.getPosition().y - 10) + RandomNumber(20));
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(pt);
+			//World::GetInstance()->WorldScene.objectContainer->Queue.push_back(pt);
 
 	    }
     }

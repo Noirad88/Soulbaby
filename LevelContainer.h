@@ -42,6 +42,7 @@ namespace Entity{
     class Passive;
     class Hit;
     class Enemy;
+	class LevelManager;
     class Player;
 }
 
@@ -115,9 +116,10 @@ namespace Level
         sf::Vector2f view;
         std::vector<std::shared_ptr< std::vector<TileItem>> > levelArray;
 		std::map<std::string, std::string> levelMap;
-
+		Entity::LevelManager* levelManagerPtr;
         
         sf::IntRect boundingRect;
+		sf::IntRect battleBorder;
         sf::RectangleShape recShape;
         std::vector<sf::Vector2i> collisionArray;
         std::vector<sf::RectangleShape> shapes;

@@ -285,10 +285,33 @@ void Container::AddObjects()
 			{
 
 				std::unique_ptr<Entity::EnemySpark> ptr(new Entity::EnemySpark);
-				//ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ptr->objectSprite.setPosition(stod((QI)->properties["PosX"]), stod((QI)->properties["PosY"]));
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
+
+
+			else if ((QI)->properties["itemType"] == "PlayerSpark")
+			{
+
+				std::unique_ptr<Entity::PlayerSpark> ptr(new Entity::PlayerSpark);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "BounceCrawler")
+			{
+
+				std::unique_ptr<Entity::BounceCrawler> ptr(new Entity::BounceCrawler);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
+				ptr->direction = stoi((QI)->properties["Direction"]);
+				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 
 			else if ((QI)->properties["itemType"] == "ChargeWaveAttack")
 			{

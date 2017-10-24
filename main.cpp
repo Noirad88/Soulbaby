@@ -9,11 +9,11 @@
 #include <memory.h>
 #include <math.h>
 
-#define SCREEN_X sf::VideoMode::getDesktopMode().width
-#define SCREEN_Y sf::VideoMode::getDesktopMode().height
+//#define SCREEN_X sf::VideoMode::getDesktopMode().width
+//#define SCREEN_Y sf::VideoMode::getDesktopMode().height
 // Use below for gifs
-//#define WINDOW_X 1012
-//#define WINDOW_Y 569.25
+#define WINDOW_X 1012
+#define WINDOW_Y 569.25
 #define PROJ_DIR "C:/Users/Darion/Documents/Visual Studio 2015/Projects/SoulbabyPC/SoulbabyPC"
 
 #include "resource.h"
@@ -170,7 +170,7 @@ int main()
 
 	//videomode size doesn't matter when fullscreen
 
-    sf::RenderWindow window(sf::VideoMode(480*3,270*3), "Soulbaby", sf::Style::None);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_X,WINDOW_Y), "Soulbaby", sf::Style::Titlebar);
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
 

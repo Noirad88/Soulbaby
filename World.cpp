@@ -217,7 +217,8 @@ World::World(){
 	GlobalMembers.weapons.push_back(0);
 	GlobalMembers.weapons.push_back(0);
 
-	GlobalMembers.weapons.at(0) = 1;
+	GlobalMembers.weapons.at(0) = 2;
+	GlobalMembers.weapons.at(1) = 2;
 
 }
 
@@ -699,7 +700,14 @@ void World::DrawObject(sf::Drawable& sprite, std::string shader){
 	else if (WorldScene.textureContainer.dimWorld == true) windowWorld->draw(sprite, &WorldScene.textureContainer.shaders.at("dimShader"));
     else if(WorldScene.playerPtr->dead) windowWorld->draw(sprite,&WorldScene.textureContainer.shaders.at("redShader"));
 	else if(worldShader == 1) windowWorld->draw(sprite, &WorldScene.textureContainer.shaders.at("glitchShader"));
-    else if (shader != "") windowWorld->draw(sprite,&WorldScene.textureContainer.shaders.at(shader));
+	else if (shader == "rippleShader") {
+
+		WorldScene.textureContainer.rippleShader->shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
+		windowWorld->draw(sprite, &WorldScene.textureContainer.shaders.at(shader));
+
+	}
+
+	else if (shader != "") windowWorld->draw(sprite, &WorldScene.textureContainer.shaders.at(shader));
     else windowWorld->draw(sprite);
 
 }

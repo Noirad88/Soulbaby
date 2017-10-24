@@ -91,7 +91,6 @@ struct Attributes{
     
 	int currentResolution = 1;
 	bool fullscreen = false;
-
 	bool currentCRTMode = false;
     std::shared_ptr<int> musicVolume;
 	std::shared_ptr<int> sfxVolume;

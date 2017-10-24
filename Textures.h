@@ -87,6 +87,16 @@ namespace Textures
 		void Update();
 
 	};
+
+	class RippleShader : public Shader
+	{
+
+	public:
+		RippleShader();
+		~RippleShader();
+		void Update();
+
+	};
     
     class RedShader : public Shader
     {
@@ -161,7 +171,7 @@ namespace Textures
 		std::shared_ptr<ChargeShader> chargeShader;
 		std::shared_ptr<TestShader> testShader;
 		std::shared_ptr<CrtShader> crtShader;
-
+		std::shared_ptr<RippleShader> rippleShader;
 
         std::map<std::string,sf::Shader&> shaders;
 		std::string dir;

@@ -21,12 +21,21 @@ namespace Level
     LevelContainer::LevelContainer()
     {
         
+		//letterbox for fullscreen assets only
+
 		letterBoxTop.setFillColor(sf::Color::Black);
 		letterBoxBottom.setFillColor(sf::Color::Black);
 		letterBoxTop.setSize(sf::Vector2f(580,100));
 		letterBoxBottom.setSize(sf::Vector2f(580, 100));
 		letterBoxTop.setOrigin(letterBoxTop.getSize().x / 2, letterBoxTop.getSize().y / 2);
 		letterBoxBottom.setOrigin(letterBoxTop.getSize().x / 2, letterBoxTop.getSize().y / 2);
+
+		//Sets the border for battle levels
+
+		battleBorder.left = 16;
+		battleBorder.top = 16;
+		battleBorder.width = 448;
+		battleBorder.height = 238;
 
     }
     

@@ -193,6 +193,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <None Include="shaders\dim.frag" />
     <None Include="shaders\glitch.frag" />
     <None Include="shaders\redoverlay.frag" />
+    <None Include="shaders\ripple.frag" />
     <None Include="shaders\sine.frag" />
     <None Include="shaders\sine.vert" />
     <None Include="shaders\test.frag" />

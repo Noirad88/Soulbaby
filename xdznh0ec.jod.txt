@@ -1,0 +1,54 @@
+﻿re-added UI, added mana point system, more visual fx, new sfx
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	modified:   Container.cpp
+#	modified:   LevelContainer.cpp
+#	modified:   Particle.cpp
+#	modified:   Particle.h
+#	modified:   Release/Container.obj
+#	modified:   Release/LevelContainer.obj
+#	modified:   Release/Particle.obj
+#	modified:   Release/SoulbabyPC.log
+#	modified:   Release/SoulbabyPC.tlog/CL.command.1.tlog
+#	modified:   Release/SoulbabyPC.tlog/CL.read.1.tlog
+#	modified:   Release/SoulbabyPC.tlog/CL.write.1.tlog
+#	modified:   Release/SoulbabyPC.tlog/rc.read.1.tlog
+#	modified:   Release/SoulbabyPC1.res
+#	modified:   Release/Textures.obj
+#	modified:   Release/Tile.obj
+#	modified:   Release/World.obj
+#	modified:   Release/main.obj
+#	modified:   Release/vc140.pdb
+#	modified:   SoulbabyPC.vcxproj
+#	modified:   SoulbabyPC.vcxproj.filters
+#	modified:   SoulbabyPC1.aps
+#	modified:   SoulbabyPC1.rc
+#	modified:   Textures.cpp
+#	modified:   Textures.h
+#	modified:   World.cpp
+#	modified:   World.h
+#	modified:   artfiles/tx_misc.ase
+#	modified:   artfiles/tx_misc.png
+#	modified:   artfiles/tx_particles.ase
+#	modified:   artfiles/tx_particles.png
+#	modified:   main.cpp
+#	modified:   resource.h
+#	new file:   sfx/sf_creepyscream.wav
+#	new file:   sfx/sfx_bubblyscreech.wav
+#	new file:   sfx/sfx_fullstatic.wav
+#	new file:   sfx/sfx_hummingstatic.wav
+#	new file:   sfx/sfx_lswallow.wav
+#	new file:   sfx/sfx_static.wav
+#	new file:   sfx/sfx_swallow
+#	modified:   textures/tx_misc.png
+#	modified:   textures/tx_particles.png
+#
+# Untracked files:
+#	artfiles/tx_particles_player.ase
+#	levels/map2_1..json
+#
+

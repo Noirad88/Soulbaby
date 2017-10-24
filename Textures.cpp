@@ -87,6 +87,13 @@ namespace Textures{
 
 	}
 
+	RippleShader::RippleShader()
+	{
+		shader.loadFromStream(TextureContainer::shaderMap.at("sh_ripple"), sf::Shader::Fragment);
+
+	}
+
+
 	CrtShader::CrtShader()
 	{
 		shader.loadFromStream(TextureContainer::shaderMap.at("sh_crt"), sf::Shader::Fragment);
@@ -108,6 +115,10 @@ namespace Textures{
     WaveShader::~WaveShader(){
         
     }
+
+	RippleShader::~RippleShader() {
+
+	}
 
 	ChargeShader::~ChargeShader() {
 
@@ -146,7 +157,7 @@ namespace Textures{
 	}
     
     void WaveShader::Update(){
-        
+       
         shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
         shader.setParameter("distortionMapTexture", distortionMap);
         shader.setParameter("time", TextureContainer::tick);
@@ -161,6 +172,12 @@ namespace Textures{
 
 		shader.setParameter("Texture", sf::Shader::CurrentTexture);
 		shader.setParameter("TextureSize", 480,270);
+	}
+
+	void RippleShader::Update() {
+
+		shader.setParameter("currentTexture", sf::Shader::CurrentTexture);
+		shader.setParameter("time", TextureContainer::tick);
 	}
 
 	void ChargeShader::Update() {
@@ -324,6 +341,8 @@ namespace Textures{
 		chargeShader = std::shared_ptr<ChargeShader>(new ChargeShader);
 		testShader = std::shared_ptr<TestShader>(new TestShader);
 		crtShader = std::shared_ptr<CrtShader>(new CrtShader);
+		rippleShader = std::shared_ptr<RippleShader>(new RippleShader);
+
 
 
 		shaders.insert(std::pair<std::string, sf::Shader&>("redShader", redShader.get()->shader));
@@ -335,6 +354,8 @@ namespace Textures{
 		shaders.insert(std::pair<std::string, sf::Shader&>("chargeShader", chargeShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("testShader", testShader.get()->shader));
 		shaders.insert(std::pair<std::string, sf::Shader&>("crtShader", crtShader.get()->shader));
+		shaders.insert(std::pair<std::string, sf::Shader&>("rippleShader", rippleShader.get()->shader));
+
 
 
 		GameFont.loadFromStream(Fontdata);
@@ -375,6 +396,8 @@ namespace Textures{
 		chargeShader->Update();
 		testShader->Update();
 		crtShader->Update();
+		rippleShader->Update();
+
 
         tick += 0.005;
         

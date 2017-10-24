@@ -473,6 +473,7 @@ namespace Entity
 		int shield = 41;
 		sf::Sprite sshield;
 		int mana = 0;
+		bool hyperDash = false;
 
 
 		ManaMeter* PlayerManaMeter;
@@ -489,7 +490,6 @@ namespace Entity
 		sf::Vector2f hotSpot;
 		void Update();
 		~BattlePlayer();
-		bool hyperDash = false;
 
 
 	};
@@ -645,6 +645,8 @@ namespace Entity
 
 	};
 
+	
+
 	class ElectricNode : public Projectile {
 
 	public:
@@ -787,6 +789,15 @@ namespace Entity
 
 	};
 
+	class BounceCrawler : public Fixed {
+	public:
+		BounceCrawler();
+		void Update();
+		~BounceCrawler();
+		int direction = 0;
+
+	};
+
 	class QuakeDirt : public Fixed {
 
 	public: QuakeDirt();
@@ -878,6 +889,13 @@ namespace Entity
 	public:
 		EnemySpark();
 		~EnemySpark();
+	};
+
+	class PlayerSpark : public Fixed {
+
+	public:
+		PlayerSpark();
+		~PlayerSpark();
 	};
 
 	class EnemyPart : public Fixed {
@@ -1166,6 +1184,8 @@ namespace Entity
         static std::array<std::string,26> enemyList;
         sf::Sprite bg;
 		sf::Sprite bgwall;
+		bool bgwallHit = false;
+		bool bossIsCreated = false;
 		std::array<int, 3> lvlEnemyBank;
 
     };
@@ -1382,10 +1402,6 @@ namespace Entity
 		void NextMovement();
 		void NewMovementSet();
         void Draw(sf::RenderTarget& window);
-        sf::RectangleShape healthBar;
-        sf::Text bossName;
-        float maxhealth = 1200;
-        float currhealth = 0;
 		int phase = 0;
 
 		std::vector<boost::function<void(Boss*)>> BehaviorList;

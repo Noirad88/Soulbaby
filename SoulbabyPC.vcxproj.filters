@@ -164,6 +164,7 @@
     <None Include="shaders\test.frag" />
     <None Include="shaders\crt.frag" />
     <None Include="shaders\crtv.vert" />
+    <None Include="shaders\ripple.frag" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SoulbabyPC1.rc" />
