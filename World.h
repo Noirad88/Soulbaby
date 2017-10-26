@@ -99,7 +99,20 @@ struct Attributes{
 	std::array<int, 7> gateKeepersSaved;
     std::vector<int> weapons;
 	int currentWeapon = 0;
+	int currentPowerLevel = 1;
     std::array<sf::Keyboard::Key,10> keyboardControls;
+	std::array<std::string, 7> WeaponNames{ 
+
+		"PlayerLaser",
+		"PlayerRepeater",
+		"null",
+		"null",
+		"null",
+		"null",
+		"null" 
+
+	};
+
 	std::array<std::pair<int, sf::Joystick::Axis>, 10> joystickControls;
 	std::array<int, 9> currentCharacterScripts;
 	std::array<std::string, 10> keyNames{

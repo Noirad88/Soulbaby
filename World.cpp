@@ -217,8 +217,9 @@ World::World(){
 	GlobalMembers.weapons.push_back(0);
 	GlobalMembers.weapons.push_back(0);
 
-	GlobalMembers.weapons.at(0) = 2;
-	GlobalMembers.weapons.at(1) = 2;
+	GlobalMembers.weapons.at(0) = 1;
+	GlobalMembers.weapons.at(1) = 1;
+	GlobalMembers.currentPowerLevel = 3;
 
 }
 

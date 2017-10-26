@@ -35,6 +35,20 @@ namespace Entity
 	int PlayerBomb::totalBombs = 0;
 	int PlayerBoomerang::totalBoomerangs = 0;
 
+	// array used for wall shooters to call the correct projectile and its behaviors
+	// first = speed
+	// second = time on screen
+
+	std::array<std::pair<int,float>, 7> BounceCrawler::BehaviorsForWeapons = std::array<std::pair<int,float>, 7> {
+		std::make_pair(3,SLOW),
+		std::make_pair(1, VERY_SLOW),
+		std::make_pair(0, SLOW),
+		std::make_pair(0, SLOW),
+		std::make_pair(0, SLOW),
+		std::make_pair(0, SLOW),
+		std::make_pair(0, SLOW),
+	};
+
 	int GUI::guiCount = 0;
 	int Textbox::lineLength = 55;
 	int Textbox::maxLines = 3;
@@ -1169,7 +1183,7 @@ namespace Entity
 
 						if (selectState == 1) {
 
-							World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon)++;
+							World::GetInstance()->GlobalMembers.currentPowerLevel++;
 							//std::cout << "weapon is not " << World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon);
 							World::GetInstance()->ReadyScene("map2_1");
 
@@ -1255,7 +1269,6 @@ namespace Entity
 
 		}
 
-
 	}
 
 	void Door::Draw(sf::RenderTarget &window) {
@@ -1285,15 +1298,8 @@ namespace Entity
 		pow1Lable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont("small"));
 		pow2Lable.setFont(World::GetInstance()->WorldScene.textureContainer.GetFont("small"));
 
-		if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) >= 3){
+		pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.currentPowerLevel));
 		
-			pow1Lable.setString("MAX");
-
-        }
-
-		else {
-			pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon)));
-		}
 		
 		pow2Lable.setString("MP:");
 		pow1Lable.setCharacterSize(16);
@@ -1404,7 +1410,6 @@ namespace Entity
 		selectedWeapon.setPosition((World::GetInstance()->viewPos.x) - 221, objectSprite.getPosition().y + 8);
 
 
-		//manaFillBar += -(manaFillBar - 100 / (World::GetInstance()->GlobalMembers.maxMana / World::GetInstance()->WorldScene.playerPtr->mana+0.1)) / 20;
 		manaBar.setSize(sf::Vector2f(50, 2));
 		manaBar.setPosition(pow2Lable.getPosition().x, pow2Lable.getPosition().y + 18);
 
@@ -1420,18 +1425,7 @@ namespace Entity
 
 			World::GetInstance()->GlobalMembers.currentWeapon = itemList.at(selectState);
 			selectedWeapon.setTextureRect(sf::IntRect(224, 240 + (World::GetInstance()->GlobalMembers.currentWeapon * 16), 16, 16));
-
-			if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) >= 3) {
-
-				pow1Lable.setString("MAX");
-
-
-			}
-
-			else {
-				pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon)));
-			}
-
+			pow1Lable.setString("Lv." + std::to_string(World::GetInstance()->GlobalMembers.currentPowerLevel));
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_jump4");
 
 		}
@@ -1909,7 +1903,7 @@ namespace Entity
 
 		//if current weapon level is 2 or greater,  shoot projectile object
 
-		if (World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon) > 1) {
+		if (World::GetInstance()->GlobalMembers.currentPowerLevel > 1) {
 
 			itemQueue wave;
 			wave.properties["itemType"] = "BounceCrawler";
@@ -2398,9 +2392,10 @@ namespace Entity
 
 			// repeater
 
+
 			if (World::GetInstance()->GlobalMembers.currentWeapon == 0 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
 
-				proj.properties["itemType"] = "PlayerLaser";
+				proj.properties["itemType"] = "PlayerLaser" + std::to_string(World::GetInstance()->GlobalMembers.currentPowerLevel);
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
@@ -2410,7 +2405,7 @@ namespace Entity
 
 			else if (World::GetInstance()->GlobalMembers.currentWeapon == 1 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
 
-				proj.properties["itemType"] = "PlayerRepeater";
+				proj.properties["itemType"] = "PlayerRepeater" + std::to_string(World::GetInstance()->GlobalMembers.currentPowerLevel);
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
 				proj.properties["Direction"] = std::to_string((fireDir * 45));
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
@@ -2996,12 +2991,12 @@ namespace Entity
 		SetEffectOrigin();
 
 		//Bounce crawler is slower depending on your weapon, so set the velocity if it is a specific weapon
-		vel.y = 3;
+		vel.y = BounceCrawler::BehaviorsForWeapons.at(World::GetInstance()->GlobalMembers.currentWeapon).first;
 		
 		maxFrame = 2;
 
 		//Bounce crawler lasts longer the higher your level
-		maxTime = SLOW + (SLOW * World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon));
+		maxTime = BounceCrawler::BehaviorsForWeapons.at(World::GetInstance()->GlobalMembers.currentWeapon).second + (SLOW * World::GetInstance()->GlobalMembers.weapons.at(World::GetInstance()->GlobalMembers.currentWeapon));
 		animSpeed = VERY_FAST;
 	}
 
@@ -3224,12 +3219,12 @@ namespace Entity
         
     }
     
-    PlayerLaser::PlayerLaser() : Projectile()
+    PlayerLaser1::PlayerLaser1() : Projectile()
     {
         
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
-        objectSprite.setTextureRect(sf::IntRect(0, 178, 5, 19));
-        objectSprite.setOrigin(5,5);
+        objectSprite.setTextureRect(sf::IntRect(0, 178, 5, 7));
+        objectSprite.setOrigin(2,7/2);
         SetEffectOrigin();
         vel.y = 5;
 		damage = 9;
@@ -3237,7 +3232,6 @@ namespace Entity
         SetHitBox(sf::Vector2f(16,16));
         
     }
-
 
 	ElectricNode::ElectricNode() : Projectile()
 	{
@@ -3269,15 +3263,54 @@ namespace Entity
 
 	}
 
-	PlayerLaser2::PlayerLaser2() : PlayerLaser()
+	PlayerLaser2::PlayerLaser2() : PlayerLaser1()
 	{
 		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
-		objectSprite.setTextureRect(sf::IntRect(0, 197, 6, 27));
-		objectSprite.setOrigin(7, 10);
+		objectSprite.setTextureRect(sf::IntRect(0, 185, 5, 14));
+		objectSprite.setOrigin(2, 7);
 		SetEffectOrigin();
 		vel.y = 5;
 		damage = 7;
 		SetHitBox(sf::Vector2f(6,6));
+		health = 1;
+
+	}
+
+	PlayerLaser3::PlayerLaser3() : PlayerLaser1()
+	{
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		objectSprite.setTextureRect(sf::IntRect(0, 199, 5, 13));
+		objectSprite.setOrigin(2.5, 7);
+		SetEffectOrigin();
+		vel.y = 5;
+		damage = 7;
+		SetHitBox(sf::Vector2f(6, 6));
+		health = 1;
+
+	}
+
+	PlayerLaser4::PlayerLaser4() : PlayerLaser1()
+	{
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		objectSprite.setTextureRect(sf::IntRect(0, 212, 8, 18));
+		objectSprite.setOrigin(4, 9);
+		SetEffectOrigin();
+		vel.y = 5;
+		damage = 7;
+		SetHitBox(sf::Vector2f(6, 6));
+		health = 1;
+
+	}
+
+	PlayerLaser5::PlayerLaser5() : PlayerLaser1()
+	{
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		objectSprite.setTextureRect(sf::IntRect(0, 230, 9, 21));
+		objectSprite.setOrigin(4.5, 10);
+		SetEffectOrigin();
+		vel.y = 5;
+		damage = 7;
+		SetHitBox(sf::Vector2f(6, 6));
 		health = 1;
 
 	}
@@ -3297,11 +3330,11 @@ namespace Entity
         
     }
     
-    PlayerRepeater::PlayerRepeater() : Projectile()
+    PlayerRepeater1::PlayerRepeater1() : Projectile()
     {
         objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
-        objectSprite.setTextureRect(sf::IntRect(0, 224, 5, 14));
-        objectSprite.setOrigin(2.5,2);
+        objectSprite.setTextureRect(sf::IntRect(0, 303, 5, 5));
+        objectSprite.setOrigin(2.5,2.5);
         SetEffectOrigin();
         vel.y = 4;
         damage = 4;
@@ -3314,8 +3347,23 @@ namespace Entity
 	{
 
 		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
-		objectSprite.setTextureRect(sf::IntRect(0, 228, 5, 7));
-		objectSprite.setOrigin(2.5, 2);
+		objectSprite.setTextureRect(sf::IntRect(0, 308, 5, 9));
+		objectSprite.setOrigin(2.5, 5);
+		SetEffectOrigin();
+		vel.y = 3;
+		damage = 3;
+		maxFrame = 2;
+		SetHitBox(sf::Vector2f(3, 3));
+		health = 2;
+
+	}
+
+	PlayerRepeater3::PlayerRepeater3() : Projectile()
+	{
+
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		objectSprite.setTextureRect(sf::IntRect(0, 317, 5, 14));
+		objectSprite.setOrigin(2.5, 7);
 		SetEffectOrigin();
 		vel.y = 3;
 		damage = 3;
@@ -3820,9 +3868,19 @@ namespace Entity
 			proj.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
 			proj.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
 			proj.properties["Direction"] = std::to_string(shootDirection);
-			proj.properties["itemType"] = "PlayerLaser2";
+			proj.properties["itemType"] = World::GetInstance()->GlobalMembers.WeaponNames.at(World::GetInstance()->GlobalMembers.currentWeapon) + std::to_string(World::GetInstance()->GlobalMembers.currentPowerLevel);
+			if (World::GetInstance()->GlobalMembers.currentWeapon == 1) {
+
+				proj.properties["Direction"] = std::to_string((shootDirection * 45));
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+				proj.properties["Direction"] = std::to_string((shootDirection * 45) + 15);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+				proj.properties["Direction"] = std::to_string((shootDirection * 45) - 15);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+			}
+			else World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+
 			World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
-			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
 		}
 	}
@@ -4273,7 +4331,7 @@ namespace Entity
 
 	}
     
-    void PlayerLaser::isCollided(int var){
+    void PlayerLaser1::isCollided(int var){
         
         misDestroyed = true;
         
@@ -4284,7 +4342,7 @@ namespace Entity
 
 	}
     
-    void PlayerRepeater::isCollided(int var){
+    void PlayerRepeater1::isCollided(int var){
         
         misDestroyed = true;
         
@@ -5007,8 +5065,6 @@ namespace Entity
 		World::GetInstance()->WorldScene.hudPtr->newAbility = thisWeapon;
 		World::GetInstance()->worldShader = 0;
 
-
-
 	}
     
     Fixed::~Fixed(){
@@ -5093,7 +5149,7 @@ namespace Entity
         
     }
     
-    PlayerLaser::~PlayerLaser()
+    PlayerLaser1::~PlayerLaser1()
     {
         
     }
@@ -5112,8 +5168,23 @@ namespace Entity
 	{
 
 	}
+
+	PlayerLaser3::~PlayerLaser3()
+	{
+
+	}
+
+	PlayerLaser4::~PlayerLaser4()
+	{
+
+	}
+
+	PlayerLaser5::~PlayerLaser5()
+	{
+
+	}
     
-    PlayerRepeater::~PlayerRepeater()
+    PlayerRepeater1::~PlayerRepeater1()
     {
         
     }
@@ -5122,6 +5193,12 @@ namespace Entity
 	{
 
 	}
+
+	PlayerRepeater3::~PlayerRepeater3()
+	{
+
+	}
+
 
 	PlayerRepeater6::~PlayerRepeater6()
 	{
@@ -5214,58 +5291,70 @@ namespace Entity
     std::array<std::string,26> LevelManager::enemyList;
 	int Enemy::spriteSheetHeight = 424;
     
-    LevelManager::LevelManager() : Object(){
-        
+	LevelManager::LevelManager() : Object() {
+
 		World::GetInstance()->WorldScene.levelContainer->levelManagerPtr = this;
 
-        objectSprite.setTextureRect(sf::IntRect(0,0,0,0));
+		objectSprite.setTextureRect(sf::IntRect(0, 0, 0, 0));
 
 		std::string level = std::to_string(World::GetInstance()->GlobalMembers.currentLevel);
-    
+
 		bgwall.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_wall"));
 		bgwall.setTextureRect(sf::IntRect(0, 0, 480, 270));
-        bg.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_bg_" + level + ""));
-        bg.setTextureRect(sf::IntRect (0,0,2000,2000));
-        bg.setOrigin(2000/2,2000/2);
 
-        if(enemyList[0] == ""){
-            
-            enemyList[0] = "Djinn";
-            enemyList[1] = "Squid";
-            enemyList[2] = "Slime";
+		if (World::GetInstance()->GlobalMembers.currentLevel >= 6) {
 
-            enemyList[3] = "Mask";
-            enemyList[4] = "Spore";
-            enemyList[5] = "Roach";
+			//bg.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_battle_bg_" + level + ""));
+			bg.setTextureRect(sf::IntRect(0, 0, 2000, 2000));
+			bg.setOrigin(2000 / 2, 2000 / 2);
 
-            enemyList[6] = "";
-            enemyList[7] = "";
-            enemyList[8] = "";
+		}
 
-            enemyList[9] = "Mozza";
-            enemyList[10] = "Mozza";
-            enemyList[11] = "Mozza";
+		if (enemyList[0] == "") {
 
-            enemyList[12] = "Tower";
-            enemyList[13] = "Family";
-            enemyList[14] = "Bricky";
+			//bosses start at 0
 
-            enemyList[15] = "Mozza";
-            enemyList[16] = "Mozza";
-            enemyList[17] = "Mozza";
-            enemyList[18] = "Mozza";
-            
-            //bosses start at 19
-            
-            enemyList[19] = "Mozza";
-            enemyList[20] = "Hauzer";
-            enemyList[21] = "Lim";
-            enemyList[22] = "Boss4";
-            enemyList[23] = "Boss5";
-            enemyList[24] = "Boss6";
-            enemyList[25] = "Boss7";
-            
-        }
+			enemyList[0] = "Mozza";
+			enemyList[1] = "Hauzer";
+			enemyList[2] = "Lim";
+			enemyList[3] = "Boss4";
+			enemyList[4] = "Boss5";
+			enemyList[5] = "Boss6";
+			enemyList[6] = "Boss7";
+
+			//enemies start at 7
+
+			// level1
+			enemyList[7] = "Djinn";
+			enemyList[8] = "Squid";
+			enemyList[9] = "Slime";
+
+			//level2
+			enemyList[10] = "Mask";
+			enemyList[11] = "Spore";
+			enemyList[12] = "Roach";
+
+			//level3
+			enemyList[13] = "";
+			enemyList[14] = "";
+			enemyList[15] = "";
+
+			//level4
+			enemyList[16] = "Mozza";
+			enemyList[17] = "Mozza";
+			enemyList[18] = "Mozza";
+
+			//level5
+			enemyList[19] = "Tower";
+			enemyList[20] = "Family";
+			enemyList[21] = "Bricky";
+
+			//level6
+			enemyList[22] = "Mozza";
+			enemyList[23] = "Mozza";
+			enemyList[24] = "Mozza";
+
+		}
         
         type = "BG";
 
@@ -5290,7 +5379,7 @@ namespace Entity
 		std::uniform_int_distribution<int> randomTopheight(0, lvlheight);
 
 		Entity::itemQueue ienemy;
-		ienemy.properties["itemType"] = enemyList[3 * World::GetInstance()->GlobalMembers.currentLevel + enemy];
+		ienemy.properties["itemType"] = enemyList[(3 * World::GetInstance()->GlobalMembers.currentLevel + enemy)+1];
 		ienemy.properties["PosX"] = std::to_string(randomLeftwidth(mt));
 		ienemy.properties["PosY"] = std::to_string(randomTopheight(mt));
 		World::GetInstance()->WorldScene.objectContainer->Queue.push_back(ienemy);
@@ -5300,55 +5389,45 @@ namespace Entity
 
     void LevelManager::Update(){
        
-		if (World::GetInstance()->Timer(*this, 5000000.0)) {
+		//if this is a boss level
 
+		if (World::GetInstance()->GlobalMembers.currentLevel < 6) {
 
-			//std::cout << lvlEnemyBank[0] << ".. " << lvlEnemyBank[1] << ".. " << lvlEnemyBank[2] << std::endl;
+			if (bossIsCreated == false) {
 
+				Entity::itemQueue boss;
+				boss.properties["PosX"] = std::to_string(600 / 2);
+				boss.properties["PosY"] = std::to_string(600 / 2);
+				boss.properties["itemType"] = enemyList[World::GetInstance()->GlobalMembers.currentLevel];
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(boss);
+				World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_boss");
+				bossIsCreated = true;
+
+			}
 
 		}
-			
 
-        if(lvlEnemyBank[0] != 0 || lvlEnemyBank[1] != 0 || lvlEnemyBank[2] != 0){
-        
-			// need to figure out the correct intervals to spawn enemies
-			// big enemies should take a while to respond
-			// mid and low enemies should be intervals of big enemies.
-			// we should figure out how to end up with a big enemy spawned before all the smaller enemies 
-			// (i.e., smaller enemies should still be spawning after LAST big enemy is spawned
+		//if it is not
+		
+		else {
 
-			if (lvlEnemyBank[0] != 0 && World::GetInstance()->Timer(*this, 20000000.0,NODELAY)) CreateEnemy(0);
-			if (lvlEnemyBank[1] != 0 && World::GetInstance()->Timer(*this, 5000000.0, NODELAY)) CreateEnemy(1);
-			if (lvlEnemyBank[2] != 0 && World::GetInstance()->Timer(*this, 600000.0, NODELAY)) CreateEnemy(2);
-           
-        }
-        
-        else if( int(bg.getColor().a) != 0 ){
-            
-            if(World::GetInstance()->Timer(*this,FAST,NODELAY)){
-                
-                if(int(bg.getColor().a)-2 < 0) bg.setColor(sf::Color(255,255,255,0));     
-                else bg.setColor(sf::Color(255,255,255,int(bg.getColor().a)-2));
-                World::GetInstance()->WorldScene.audioContainer.music.setVolume(World::GetInstance()->WorldScene.audioContainer.music.getVolume()-0.5);
-                
-            }
-            
-        }
-        
-        else if (bossIsCreated == false) {
-            
-            Entity::itemQueue boss;
-            boss.properties["PosX"] = std::to_string(600/2);
-            boss.properties["PosY"] = std::to_string(600/2);
-            boss.properties["itemType"] = enemyList[19 + World::GetInstance()->GlobalMembers.currentLevel];;
-            //std::cout << "enemys left: " << maxEnemies << std:: endl;
-            World::GetInstance()->WorldScene.objectContainer->Queue.push_back(boss);
-            World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_boss");
-			bossIsCreated = true;
-                
-        }
-        
-        bg.rotate(0.05);
+			if (lvlEnemyBank[0] != 0 || lvlEnemyBank[1] != 0 || lvlEnemyBank[2] != 0) {
+
+				// need to figure out the correct intervals to spawn enemies
+				// big enemies should take a while to respond
+				// mid and low enemies should be intervals of big enemies.
+				// we should figure out how to end up with a big enemy spawned before all the smaller enemies 
+				// (i.e., smaller enemies should still be spawning after LAST big enemy is spawned
+
+				if (lvlEnemyBank[0] != 0 && World::GetInstance()->Timer(*this, 20000000.0, NODELAY)) CreateEnemy(0);
+				if (lvlEnemyBank[1] != 0 && World::GetInstance()->Timer(*this, 5000000.0, NODELAY)) CreateEnemy(1);
+				if (lvlEnemyBank[2] != 0 && World::GetInstance()->Timer(*this, 600000.0, NODELAY)) CreateEnemy(2);
+
+			}
+		}
+
+		bg.rotate(0.05);
+
 
     }
     
@@ -6989,17 +7068,7 @@ namespace Entity
 	Enemy::~Enemy()
 	{
 
-		itemQueue pt;
-		pt.properties["itemType"] = "PlayerPoint";
-		int maxPoints = int(ceil(maxHealth * 0.2));
 
-		for (int i = 0; i < maxPoints; i++) {
-
-			pt.properties["PosX"] = std::to_string((objectSprite.getPosition().x - 10) + RandomNumber(20));
-			pt.properties["PosY"] = std::to_string((objectSprite.getPosition().y - 10) + RandomNumber(20));
-			//World::GetInstance()->WorldScene.objectContainer->Queue.push_back(pt);
-
-	    }
     }
     
     Boss::~Boss(){

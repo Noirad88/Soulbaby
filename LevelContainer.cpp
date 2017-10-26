@@ -229,7 +229,11 @@ namespace Level
 		}
         
         CreateBG();
-        if(sceneName == "battle") World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_" + sceneName + std::to_string(World::GetInstance()->GlobalMembers.currentLevel));
+		if (sceneName == "battle") {
+
+			//World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_" + sceneName + std::to_string(World::GetInstance()->GlobalMembers.currentLevel));
+
+		}
 		
 		else if (sceneName == "map2_1") {
 

@@ -562,10 +562,10 @@ void Container::AddObjects()
 
 			}
             
-            else if((QI)->properties["itemType"] == "PlayerLaser")
+            else if((QI)->properties["itemType"] == "PlayerLaser1")
             {
 
-                    std::unique_ptr<Entity::PlayerLaser> ptr(new Entity::PlayerLaser);
+                    std::unique_ptr<Entity::PlayerLaser1> ptr(new Entity::PlayerLaser1);
                     ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]),stoi((QI)->properties["PosY"]));
                     
                     // multiplying direction by 45 degrees gets us the direction player is shooting
@@ -590,6 +590,48 @@ void Container::AddObjects()
 			{
 
 				std::unique_ptr<Entity::PlayerLaser2> ptr(new Entity::PlayerLaser2);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "PlayerLaser3")
+			{
+
+				std::unique_ptr<Entity::PlayerLaser3> ptr(new Entity::PlayerLaser3);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "PlayerLaser4")
+			{
+
+				std::unique_ptr<Entity::PlayerLaser4> ptr(new Entity::PlayerLaser4);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "PlayerLaser5")
+			{
+
+				std::unique_ptr<Entity::PlayerLaser5> ptr(new Entity::PlayerLaser5);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
 
 				// multiplying direction by 45 degrees gets us the direction player is shooting
@@ -647,7 +689,7 @@ void Container::AddObjects()
             else if((QI)->properties["itemType"] == "PlayerRepeater")
             {
                 
-                std::unique_ptr<Entity::PlayerRepeater> ptr(new Entity::PlayerRepeater);
+                std::unique_ptr<Entity::PlayerRepeater1> ptr(new Entity::PlayerRepeater1);
                 ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]),stoi((QI)->properties["PosY"]));
 
 				// multiplying direction by 45 degrees gets us the direction player is shooting
@@ -666,25 +708,27 @@ void Container::AddObjects()
 
 				// multiplying direction by 45 degrees gets us the direction player is shooting
 
-				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
-				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				RotateVector(ptr->vel, (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation((stoi((QI)->properties["Direction"])));
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
 
-			else if ((QI)->properties["itemType"] == "PlayerRepeater6")
+
+			else if ((QI)->properties["itemType"] == "PlayerRepeater3")
 			{
 
-				std::unique_ptr<Entity::PlayerRepeater6> ptr(new Entity::PlayerRepeater6);
+				std::unique_ptr<Entity::PlayerRepeater3> ptr(new Entity::PlayerRepeater3);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
 
 				// multiplying direction by 45 degrees gets us the direction player is shooting
 
-				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
-				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				RotateVector(ptr->vel, (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation((stoi((QI)->properties["Direction"])));
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
+
             
             else if((QI)->properties["itemType"] == "PlayerBombExp")
             {

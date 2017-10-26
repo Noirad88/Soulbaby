@@ -636,16 +636,47 @@ namespace Entity
 		static int Bombcount;
 	};
 
-	class PlayerLaser : public Projectile {
+	class PlayerLaser1 : public Projectile {
 
 	public:
-		PlayerLaser();
+		PlayerLaser1();
 		void isCollided(int var = 0);
-		~PlayerLaser();
+		~PlayerLaser1();
 
 	};
 
-	
+	class PlayerLaser2 : public PlayerLaser1 {
+
+	public:
+		PlayerLaser2();
+		~PlayerLaser2();
+	};
+
+	class PlayerLaser3 : public PlayerLaser1 {
+
+	public:
+		PlayerLaser3();
+		~PlayerLaser3();
+
+	};
+
+	class PlayerLaser4 : public PlayerLaser1 {
+
+	public:
+		PlayerLaser4();
+		~PlayerLaser4();
+
+	};
+
+	class PlayerLaser5 : public PlayerLaser1 {
+
+	public:
+		PlayerLaser5();
+		~PlayerLaser5();
+
+	};
+
+
 
 	class ElectricNode : public Projectile {
 
@@ -664,12 +695,7 @@ namespace Entity
 
 	};
 
-	class PlayerLaser2 : public PlayerLaser {
 
-	public:
-		PlayerLaser2();
-		~PlayerLaser2();
-	};
 
 	class PlayerBoomerang : public Projectile {
 	public:
@@ -682,12 +708,12 @@ namespace Entity
 
 	};
 
-	class PlayerRepeater : public Projectile {
+	class PlayerRepeater1 : public Projectile {
 
 	public:
-		PlayerRepeater();
+		PlayerRepeater1();
 		void isCollided(int var = 0);
-		~PlayerRepeater();
+		~PlayerRepeater1();
 
 	};
 
@@ -696,6 +722,14 @@ namespace Entity
 	public:
 		PlayerRepeater2();
 		~PlayerRepeater2();
+
+	};
+
+	class PlayerRepeater3 : public Projectile {
+
+	public:
+		PlayerRepeater3();
+		~PlayerRepeater3();
 
 	};
 
@@ -795,6 +829,7 @@ namespace Entity
 		void Update();
 		~BounceCrawler();
 		int direction = 0;
+		static std::array<std::pair<int,float>,7> BehaviorsForWeapons;
 
 	};
 
