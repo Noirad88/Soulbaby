@@ -1180,6 +1180,7 @@ namespace Entity
         Actor(int actor,int script = 99);
         virtual ~Actor();
         void Update();
+		void Draw(sf::RenderTarget& window);
         void Move();
         int framePos = 0;
         void isCollided(int var = 0);

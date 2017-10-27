@@ -143,6 +143,16 @@ namespace Level
                     item.properties["itemType"] = it->getType();
                     
                 }
+
+				else if (it->getType() == "Note") {
+
+					item.properties["PosX"] = to_string(it->getXposition());
+					item.properties["PosY"] = to_string(it->getYposition());
+					item.properties["Name"] = to_string(6);
+					item.properties["Script"] =  it->getProperty("Note");
+					item.properties["itemType"] = "Actor";
+
+				}
                 
                 else if (it->getType() == "Player"){
 

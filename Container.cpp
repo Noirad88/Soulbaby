@@ -915,12 +915,23 @@ void Container::AddObjects()
 
             }
             
-            else if((QI)->properties["itemType"] == "Actor")
-            {
-                
-                std::unique_ptr<Entity::Actor> ptr(new Entity::Actor(stoi((QI)->properties["Name"])));
-                ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]),stoi((QI)->properties["PosY"]));
-                ObjectContainer.push_back(std::move(ptr));
+			else if ((QI)->properties["itemType"] == "Actor")
+			{
+				if (((QI)->properties.count("Script"))) {
+
+						std::unique_ptr<Entity::Actor> ptr(new Entity::Actor(stoi((QI)->properties["Name"]), stoi((QI)->properties["Script"])));
+						ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+						ObjectContainer.push_back(std::move(ptr));
+
+				}
+
+				else {
+
+					std::unique_ptr<Entity::Actor> ptr(new Entity::Actor(stoi((QI)->properties["Name"])));
+					ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+					ObjectContainer.push_back(std::move(ptr));
+
+				}
                 
             }
 

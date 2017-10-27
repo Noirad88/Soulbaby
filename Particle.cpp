@@ -53,7 +53,7 @@ namespace Entity
 	int Textbox::lineLength = 55;
 	int Textbox::maxLines = 3;
 	int Textbox::scriptLength = 0;
-	int Textbox::progressSpeed = 0;
+	int Textbox::progressSpeed = 6;
 	int Textbox::textboxCount = 0;
 	std::string Textbox::characters[11] = { "HAWZER","JIRA","DORAN","GURIAN","LIMA", "MOTHER", "NOTE", };
 
@@ -111,6 +111,8 @@ namespace Entity
 	void MenuItemStart::Action() {
 
 		World::GetInstance()->ReadyScene("map2_1");
+		//World::GetInstance()->ReadyScene("intro0");
+
 
 	}
 
@@ -859,7 +861,6 @@ namespace Entity
 		//std::cout << scriptNumber << " \ " << characterNamePos;
 
 		characterName = characters[characterNamePos];
-        
         script = World::GetInstance()->CharacterScripts.at(characterName + std::to_string(scriptNumber));
         
         int lineCount = 0;
@@ -1029,7 +1030,7 @@ namespace Entity
 		World::GetInstance()->WorldScene.UIPtr = nullptr;
         scriptLength = 0;
         textboxCount = 0;
-        //World::GetInstance()->ResetCamera();
+        World::GetInstance()->ResetCamera();
     }
     
     void Textbox::Update(){
@@ -1559,7 +1560,7 @@ namespace Entity
 
 			itemQueue textbox;
 			textbox.properties["itemType"] = "Textbox";
-			textbox.properties["ActorName"] = std::to_string(5);
+			textbox.properties["ActorName&Script"] = std::to_string(50);
 			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(textbox);
 			textboxCreated = true;
 
@@ -5461,8 +5462,9 @@ namespace Entity
     Actor::Actor(int actor,int script) : characterName(actor), Object()
     {
         
-        objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_actors"));
-        objectSprite.setTextureRect(sf::IntRect ((1 + actor) * 16,0 * 24,16,24));
+		objectSprite.setTexture(World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_actors"));
+		objectSprite.setTextureRect(sf::IntRect((1 + actor) * 16, 0 * 24, 16, 24));
+
 		characterName = actor;
 
 		//if we have not forced specific dialogue, choose the script set for this character
@@ -5495,6 +5497,12 @@ namespace Entity
         Move();
         UpdateShadow();
     }
+
+	void Actor::Draw(sf::RenderTarget& window) {
+
+		if(characterName != 6) World::GetInstance()->DrawObject(objectSprite);
+
+	}
 
 	void SoulOrb::Update() {
 

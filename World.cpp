@@ -241,7 +241,7 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
 	//GlobalMembers.levelsCompleted.at(0) = 1;
 
 	GlobalMembers.gateKeepersSaved.fill(0);
-	//GlobalMembers.gateKeepersSaved.at(0) = 1;
+	GlobalMembers.gateKeepersSaved.at(0) = 1;
 	GlobalMembers.currentCharacterScripts.fill(0);
 
 
@@ -664,8 +664,8 @@ void World::CreateCharacterScripts(){
     std::string lima0 = "FUCK ... OFF";
 	std::string mother0 = "...>Ahh!>So, you're here ... I'm sure you have questions. There is a lot going on.>My journey has come to an unexpected end. I will tell you my story.";
 	std::string note0 = "Learned Weapon2!";
-	std::string note1 = "Learned Weapon3!";
-	std::string note2 = "Learned Weapon4!";
+	std::string note1 = "The statue reads 'Cleric'";
+	std::string note2 = "The statue reads 'Mozza'";
 	std::string note3 = "Learned Weapon5!";
 	std::string note4 = "Learned Weapon6!";
 	std::string note5 = "Learned Weapon7!";
