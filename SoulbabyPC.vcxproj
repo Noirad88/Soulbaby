@@ -181,7 +181,9 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <None Include="music\battle1.ogg" />
     <None Include="music\battle4.ogg" />
     <None Include="music\battle5.ogg" />
+    <None Include="music\battleAll.ogg" />
     <None Include="music\boss.ogg" />
+    <None Include="music\boss_fm.ogg" />
     <None Include="music\map2_1.ogg" />
     <None Include="music\menu.ogg" />
     <None Include="packages.config" />
@@ -209,9 +211,18 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
   <ItemGroup>
     <Image Include="levels\tx_battle_bg_0.png" />
     <Image Include="levels\tx_battle_bg_1.png" />
+    <Image Include="levels\tx_battle_bg_10.png" />
+    <Image Include="levels\tx_battle_bg_11.png" />
     <Image Include="levels\tx_battle_bg_2.png" />
     <Image Include="levels\tx_battle_bg_3.png" />
     <Image Include="levels\tx_battle_bg_4.png" />
+    <Image Include="levels\tx_battle_bg_5.png" />
+    <Image Include="levels\tx_battle_bg_6.png" />
+    <Image Include="levels\tx_battle_bg_7 - Copy.png" />
+    <Image Include="levels\tx_battle_bg_7.png" />
+    <Image Include="levels\tx_battle_bg_8 - Copy.png" />
+    <Image Include="levels\tx_battle_bg_8.png" />
+    <Image Include="levels\tx_battle_bg_9.png" />
     <Image Include="levels\tx_battle_wall.png" />
     <Image Include="levels\tx_gamescene0_bg_0.png" />
     <Image Include="levels\tx_map2_1_bg_0.png" />

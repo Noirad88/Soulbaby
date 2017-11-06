@@ -146,7 +146,7 @@ namespace Level
 
 				else if (it->getType() == "Note") {
 
-					item.properties["PosX"] = to_string(it->getXposition());
+					item.properties["PosX"] = to_string(it->getXposition()+8);
 					item.properties["PosY"] = to_string(it->getYposition());
 					item.properties["Name"] = to_string(6);
 					item.properties["Script"] =  it->getProperty("Note");
@@ -241,7 +241,7 @@ namespace Level
         CreateBG();
 		if (sceneName == "battle") {
 
-			//World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_" + sceneName + std::to_string(World::GetInstance()->GlobalMembers.currentLevel));
+			World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_" + sceneName + "_all");
 
 		}
 		
@@ -254,6 +254,9 @@ namespace Level
 		//else if (sceneName == "menu") World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_" + sceneName);
 
         else World::GetInstance()->WorldScene.audioContainer.music.stop();
+
+		World::GetInstance()->WorldScene.objectContainer->zonesPerScreen = ceil(World::GetInstance()->WorldScene.levelContainer->lvlSize.x / World::GetInstance()->WorldScene.objectContainer->zoneSize);
+
         
     }
     
@@ -315,6 +318,7 @@ namespace Level
         Entity::itemQueue menu;
         menu.properties["itemType"] = "Menu";
         World::GetInstance()->WorldScene.objectContainer->Queue.push_back(menu);
+
         
     }
     

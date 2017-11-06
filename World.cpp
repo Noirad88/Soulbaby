@@ -217,8 +217,15 @@ World::World(){
 	GlobalMembers.weapons.push_back(0);
 	GlobalMembers.weapons.push_back(0);
 
+	//gateKeepers: 0 = not got; 1 = got
+	//weapons: 0 = not got; 1 = got
+
 	GlobalMembers.weapons.at(0) = 1;
 	GlobalMembers.weapons.at(1) = 1;
+	GlobalMembers.weapons.at(4) = 1;
+	GlobalMembers.weapons.at(5) = 1;
+
+	//Power level: shared by all weapons
 	GlobalMembers.currentPowerLevel = 3;
 
 }
@@ -240,8 +247,8 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
     GlobalMembers.levelsCompleted.fill(0);
 	//GlobalMembers.levelsCompleted.at(0) = 1;
 
+	//gateKeepers: 0 = not created; 1 = created
 	GlobalMembers.gateKeepersSaved.fill(0);
-	GlobalMembers.gateKeepersSaved.at(0) = 1;
 	GlobalMembers.currentCharacterScripts.fill(0);
 
 
@@ -664,8 +671,8 @@ void World::CreateCharacterScripts(){
     std::string lima0 = "FUCK ... OFF";
 	std::string mother0 = "...>Ahh!>So, you're here ... I'm sure you have questions. There is a lot going on.>My journey has come to an unexpected end. I will tell you my story.";
 	std::string note0 = "Learned Weapon2!";
-	std::string note1 = "The statue reads 'Cleric'";
-	std::string note2 = "The statue reads 'Mozza'";
+	std::string note1 = "The statue has a plaque on it that says 'Clerics were the first beings that appeared after the galaxy war, created from the core of the astral planets.>The scent of the Naval - a resivoir which molts mothers - attracts them where they wait 100 years for Mother to hatch and create the Nexus.>Their existence relies on the protection of Mother, at all costs.'";
+	std::string note2 = "'Mozza - the first child of the 44th Nexus: The first children have the strongest maternal connection with mothers. Mood swings are typical, but more extreme personalities can emerage if ... '";
 	std::string note3 = "Learned Weapon5!";
 	std::string note4 = "Learned Weapon6!";
 	std::string note5 = "Learned Weapon7!";

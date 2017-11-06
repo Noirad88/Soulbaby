@@ -13,12 +13,7 @@
 
 Container::Container()
 {
-    
-    posX = 400;
-    posY = 200;
-    SpawnPoint.move(posX,posY);
-    //std::cout << "Spawn Point created at " << posX << ", " << posY << std::endl;
-    
+
 }
 
 bool normalSort (int i,int j) { return (i<j); }
@@ -114,6 +109,14 @@ void Container::AddObjects()
                 ObjectContainer.push_back(std::move(ptr));
                 
             }
+
+			else if ((QI)->properties["itemType"] == "MouseTest")
+			{
+
+				std::unique_ptr<Entity::MouseTest> ptr(new Entity::MouseTest);
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             // Effects
         
@@ -478,6 +481,15 @@ void Container::AddObjects()
 
             }
 
+			else if ((QI)->properties["itemType"] == "EnemyMine")
+			{
+
+				std::unique_ptr<Entity::EnemyMine> ptr(new Entity::EnemyMine);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "EnemyLaser")
 			{
 
@@ -686,7 +698,7 @@ void Container::AddObjects()
                 
             }
             
-            else if((QI)->properties["itemType"] == "PlayerRepeater")
+            else if((QI)->properties["itemType"] == "PlayerRepeater1")
             {
                 
                 std::unique_ptr<Entity::PlayerRepeater1> ptr(new Entity::PlayerRepeater1);
@@ -695,7 +707,7 @@ void Container::AddObjects()
 				// multiplying direction by 45 degrees gets us the direction player is shooting
 
 				RotateVector(ptr->vel,(stoi((QI)->properties["Direction"])));
-				ptr->objectSprite.setRotation((stoi((QI)->properties["Direction"])));
+				//ptr->objectSprite.setRotation((stoi((QI)->properties["Direction"])));
 				ObjectContainer.push_back(std::move(ptr));
                 
             }
@@ -789,6 +801,33 @@ void Container::AddObjects()
                 
             }
 
+			else if ((QI)->properties["itemType"] == "Sprite")
+			{
+
+				std::unique_ptr<Entity::Sprite> ptr(new Entity::Sprite);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "HorseKnight")
+			{
+
+				std::unique_ptr<Entity::HorseKnight> ptr(new Entity::HorseKnight);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "Tomb")
+			{
+
+				std::unique_ptr<Entity::Tomb> ptr(new Entity::Tomb);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "Roach")
 			{
 
@@ -802,6 +841,15 @@ void Container::AddObjects()
 			{
 
 				std::unique_ptr<Entity::Djinn> ptr(new Entity::Djinn);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "BabyDemon")
+			{
+
+				std::unique_ptr<Entity::BabyDemon> ptr(new Entity::BabyDemon);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
 				ObjectContainer.push_back(std::move(ptr));
 
@@ -1009,7 +1057,8 @@ void Container::UpdateObjects()
             (*it)->Update();
             (*it)->UpdateHitBox();
             
-            // this should set the objects zone for its new vector (position)
+			// We run GetZone() to store which portion of the screen the object is at, currently. We can call these 'zones'
+			// Later, in CheckCollisons() we retrieve the stored zone number + all of the objects which are in that same zone - this prevents us from checking every object
             
             (*it)->GetZone(i);
             i++;
@@ -1135,37 +1184,6 @@ void Container::CheckCollisions(){
 			if ((*enemy)->objectHitBox.getGlobalBounds().intersects(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getGlobalBounds()) && (*enemy)->active && World::GetInstance()->WorldScene.playerPtr->dashing == false) PlayerDamaged();
 
 		}
-
-		/*// check enemies in zone for collision
-
-		typeInZone = GetEnemyObjects(objectsInZone);
-
-		if (typeInZone.size() != 0) 
-		{
-
-			for (int i = 0; i != typeInZone.size(); i++)
-			{
-				if (*enemy != ObjectContainer.at(typeInZone.at(i))) {
-
-					if (GetDistance((*enemy)->objectHitBox.getPosition(), ObjectContainer.at(typeInZone.at(i))->objectHitBox.getPosition()) && (*enemy)->active && ObjectContainer.at(typeInZone.at(i))->active)
-					{
-
-						(*enemy)->objectSprite.move((*enemy)->vel);
-						if (GetDistance((*enemy)->objectHitBox.getPosition(), ObjectContainer.at(typeInZone.at(i))->objectHitBox.getPosition())) 
-						{
-							(*enemy)->objectSprite.move(-(*enemy)->vel);
-							(*enemy)->objectSprite.move(-(*enemy)->vel);
-
-						}
-
-					}
-
-				}
-
-			}
-
-		}
-        */
         
     }
     
@@ -1208,7 +1226,6 @@ void Container::CheckCollisions(){
 		}
 
 	}
-    
     
     //check prop/actor collison
     

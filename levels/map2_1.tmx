@@ -27703,25 +27703,25 @@
     <property name="Path" value="battle_11"/>
    </properties>
   </object>
-  <object id="94" type="Note" gid="73" x="608" y="752" width="16" height="16">
+  <object id="94" type="Note" gid="73" x="592" y="752" width="16" height="16">
    <properties>
     <property name="Name" type="int" value="6"/>
     <property name="Note" value="1"/>
    </properties>
   </object>
-  <object id="95" type="Note" gid="73" x="448" y="752" width="16" height="16">
+  <object id="95" type="Note" gid="73" x="432" y="752" width="16" height="16">
    <properties>
     <property name="Name " type="int" value="6"/>
     <property name="Note" value="1"/>
    </properties>
   </object>
-  <object id="96" type="Note" gid="73" x="592" y="432" width="16" height="16">
+  <object id="96" type="Note" gid="73" x="576" y="432" width="16" height="16">
    <properties>
     <property name="Name" type="int" value="6"/>
     <property name="Note" value="1"/>
    </properties>
   </object>
-  <object id="99" type="Note" gid="73" x="464" y="432" width="16" height="16">
+  <object id="99" type="Note" gid="73" x="448" y="432" width="16" height="16">
    <properties>
     <property name="Name" value="6"/>
     <property name="Note" value="2"/>

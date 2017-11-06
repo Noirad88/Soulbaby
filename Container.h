@@ -68,13 +68,8 @@ public:
     std::vector<std::unique_ptr<Entity::Object>>::iterator Props;
     std::vector<int> objectsInZone;
     std::vector<int> typeInZone;
-    
-private:
-    
-    int posX = 0;
-    int posY = 0;
-    int totalP = 0;
-    sf::Sprite SpawnPoint;
+	int zoneSize = 150;
+	int zonesPerScreen = 0;
     
 };
 

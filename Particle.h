@@ -107,7 +107,7 @@ namespace Entity
 		virtual void CheckLvlCollision();
 		void UpdateShadow();
 		void GetZone(int vecPos);
-		void DrawShadow(sf::RenderTarget& window);
+		virtual void DrawShadow(sf::RenderTarget& window);
 		bool isDestroyed();
 		int damage;
 		bool misDestroyed = false;
@@ -144,6 +144,14 @@ namespace Entity
 			void Update();
 			~QuakeManager();
 
+	};
+
+	class MouseTest : public Object 
+	{
+	public: MouseTest();
+			void Update();
+			void Draw(sf::RenderTarget& window);
+			~MouseTest();
 	};
 
 	class MenuItem : public GUI
@@ -515,6 +523,7 @@ namespace Entity
 		int speed = 1;
 		int frame = 0;
 		int maxFrame = 0;
+		int maxTime = 0;
 		float time;
 		bool rotation = false;
 		bool followsPlayer = false;
@@ -586,6 +595,14 @@ namespace Entity
 
 	};
 
+	class EnemyMine : public EnemyProjectile {
+
+	public:
+		EnemyMine();
+		~EnemyMine();
+
+	};
+
 	class EnemyHomingBlip : public EnemyProjectile {
 
 	public:
@@ -633,6 +650,8 @@ namespace Entity
 		PlayerBombExp();
 		void Update();
 		~PlayerBombExp();
+	    void Draw(sf::RenderTarget& window);
+
 		static int Bombcount;
 	};
 
@@ -1181,6 +1200,7 @@ namespace Entity
         virtual ~Actor();
         void Update();
 		void Draw(sf::RenderTarget& window);
+		void DrawShadow(sf::RenderTarget& window);
         void Move();
         int framePos = 0;
         void isCollided(int var = 0);
@@ -1269,6 +1289,7 @@ namespace Entity
         int moveType = NORMAL;
         int enemyID = 0;
 		int shakey = 0;
+		sf::Vector2f prevPos;
 		bool attacking = false;
 		int flatAnimation = false;
 		int spriteDirection = 0;
@@ -1277,8 +1298,9 @@ namespace Entity
         bool hurt = false;
 		bool showHurt = false;
 		bool moveOnAttack = false;
-        bool targetPlayer = true;
+        bool alwaysTargetPlayer = true;
 		void OffsetPosition();
+		std::string create = "";
 
         sf::Vector2f hurtPos;
 		sf::Vector2f hotSpot;
@@ -1294,20 +1316,27 @@ namespace Entity
 		//List of functions
 
 		//Behaviors
+		void BehaveNone();
 		void FollowPlayer();
 		void LazyFollowPlayer();
 		void RandomPosition();
+		void Bounce();
+		void Sticky();
 
 		//Movements
 		void MoveJump();
 		void MoveWalk();
 		void MoveSlide();
+		void MoveCircle();
 
 		//Attacks
 		void Shoot();
+		void SporeShoot();
 		void CastShoot();
 		void SelfDestruct();
 		void Laser();
+		void LayFire();
+		void AroundShoot();
 		void DoubleCast();
 		void CircleShoot();
 
@@ -1345,11 +1374,35 @@ namespace Entity
 
 	};
 
+	class BabyDemon : public Enemy
+	{
+	public:
+		BabyDemon();
+		~BabyDemon();
+
+	};
+
+	class HorseKnight : public Enemy
+	{
+	public:
+		HorseKnight();
+		~HorseKnight();
+
+	};
+
 	class Mask : public Enemy
 	{
 	public:
 		Mask();
 		~Mask();
+
+	};
+
+	class Sprite : public Enemy
+	{
+	public:
+		Sprite();
+		~Sprite();
 
 	};
     
@@ -1360,6 +1413,14 @@ namespace Entity
         ~Slime();
         
     };
+
+	class Tomb : public Enemy
+	{
+	public:
+		Tomb();
+		~Tomb();
+
+	};
 
 	class Bricky : public Enemy
 	{
