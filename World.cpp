@@ -222,6 +222,7 @@ World::World(){
 
 	GlobalMembers.weapons.at(0) = 1;
 	GlobalMembers.weapons.at(1) = 1;
+	GlobalMembers.weapons.at(2) = 1;
 	GlobalMembers.weapons.at(4) = 1;
 	GlobalMembers.weapons.at(5) = 1;
 
@@ -244,8 +245,19 @@ void World::Setup(sf::Clock &clock, sf::RenderWindow &window, sf::Event &events)
 	Screen.setSize(480,270);
 
     CreateCharacterScripts();
+
+	//levelscompleted: 1 = level done, plays scene; 2 = level done, no scene
     GlobalMembers.levelsCompleted.fill(0);
-	//GlobalMembers.levelsCompleted.at(0) = 1;
+	GlobalMembers.levelsCompleted.at(2) = 2;
+	GlobalMembers.levelsCompleted.at(3) = 2;
+	GlobalMembers.levelsCompleted.at(4) = 2;
+	GlobalMembers.levelsCompleted.at(5) = 2;
+	GlobalMembers.levelsCompleted.at(8) = 2;
+	GlobalMembers.levelsCompleted.at(9) = 2;
+	GlobalMembers.levelsCompleted.at(10) = 2;
+	GlobalMembers.levelsCompleted.at(11) = 2;
+
+
 
 	//gateKeepers: 0 = not created; 1 = created
 	GlobalMembers.gateKeepersSaved.fill(0);

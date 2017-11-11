@@ -2443,9 +2443,9 @@ namespace Entity
 
 			// Laser 
 
-			else if (World::GetInstance()->GlobalMembers.currentWeapon == 2 && World::GetInstance()->Timer(*this, VERY_SLOW * 16, NODELAY)) {
+			else if (World::GetInstance()->GlobalMembers.currentWeapon == 2 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
 
-				proj.properties["itemType"] = "PlayerBeam";
+				proj.properties["itemType"] = "PlayerBeam1";
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
@@ -3352,6 +3352,32 @@ namespace Entity
 		damage = 7;
 		SetHitBox(sf::Vector2f(6, 6));
 		health = 1;
+	}
+
+	PlayerBeam1::PlayerBeam1() : Projectile()
+	{
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		objectSprite.setTextureRect(sf::IntRect(0, 178, 5, 7));
+		objectSprite.setOrigin(2, 7 / 2);
+		SetEffectOrigin();
+		vel.y = 5;
+		damage = 9;
+		maxFrame = 2;
+		SetHitBox(sf::Vector2f(16, 16));
+
+	}
+
+	PlayerBeamNode::PlayerBeamNode() : Projectile() 
+	{
+
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		objectSprite.setTextureRect(sf::IntRect(32, 58, 16, 16));
+		objectSprite.setOrigin(8, 8);
+		SetEffectOrigin();
+		vel.y = 16;
+		damage = 1;
+		SetHitBox(sf::Vector2f(16, 16));
+		destroyOnImpact = false;
 
 	}
     
@@ -3498,7 +3524,11 @@ namespace Entity
     
     // Update Functions
     
-    
+	int Object::Return(int p) {
+
+		return 0;
+	}
+
     void Object::Update()
     {
         
@@ -4311,6 +4341,80 @@ namespace Entity
         misDestroyed = true;
     }
 
+
+	void PlayerBeam1::Update() {
+
+		//reset our beam length every update
+		nodeCollided = length;
+
+		Projectile::Update();
+
+		//We can't create our nodes in the constructor because that changes the size of the ItemQueue iterator (bad access)
+
+		if (nodesCreated == false) {
+
+			int* nodePtr = &nodeCollided;
+			itemQueue node;
+			node.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
+			node.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
+			node.properties["itemType"] = "PlayerBeamNode";
+			node.parent = this;
+			
+			for (int i = 0; i != length; i++){
+			
+				// just pass the nod Slot here, otherwise will have to use a dynamic cast in Container::AddObject() and I hate that
+				node.properties["NodeSlot"] = std::to_string(i);
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(node);
+
+			}
+
+			nodesCreated =  true;
+
+		}
+
+		if(!parent || parent->type == "") misDestroyed = true;
+
+		//Drawing:
+		//beamnodes will check if nodeCollided is lower than its current number; if so then set it to its nodeSlot
+			//this way we can deactivate the collisions higher than it
+
+	}
+
+	void PlayerBeamNode::Update() {
+
+		vel.y = 16;
+		vel.x = 0;
+		RotateVector(vel, 45 * World::GetInstance()->WorldScene.playerPtr->fireDir);
+
+		Entity::Projectile* pPtr = static_cast<Entity::Projectile*>(parent->);
+
+		//Projectile::Update();
+
+		//check if our parent is alive
+		if (parent->type != ""){
+
+			// if this beam node is after the node that is currently collided, then set to inactive (ignore collision, don't update position)
+			if (nodeSlot > pPtr->nodeCollided){
+
+				active = false;
+			}
+			
+
+			else {
+
+				active = true;
+				objectSprite.setPosition(parent->objectHitBox.getPosition().x + (vel.x * nodeSlot), parent->objectHitBox.getPosition().y + (vel.y * nodeSlot));
+
+			}
+
+
+		}
+
+		else misDestroyed = true;
+
+	}
+
+
 	void PlayerDashBall::Update() {
 
 		Projectile::Update();
@@ -4372,7 +4476,6 @@ namespace Entity
                 anim_frameX++;
                 anim_frameY = 0;
             }
-            
             
         }
         
@@ -4564,6 +4667,33 @@ namespace Entity
 					World::GetInstance()->WorldScene.objectContainer->Queue.push_back(particles);
 
 
+		}
+
+	}
+
+	void PlayerBeamNode::HasCollided(const std::unique_ptr<Entity::Object>& a) {
+
+		//we call a dynamic cast to be able to call a specific function from the enemy class
+		Entity::Projectile* pPtr = dynamic_cast<Entity::Projectile*>(parent);
+
+
+		//and for the parent beam, because we need to get nodeColiided
+
+		//only if the enemy is in an active state (i.e., not currently in the middle of its spawn transition) should we confirm a collision 
+		if (a->active == true && active == true) {
+
+			//Call isCollided() to enemy to remove damage and respond to projectile
+			a->isCollided(damage);
+
+			// this detects if this should be our collision point for the laser; check our current collision node; if it is greater than this node, replace it with this node
+			if (pPtr->nodeCollided >= nodeSlot) {
+
+				pPtr->nodeCollided = nodeSlot;
+			}
+
+			//if this projectile should be destroyed if it collides with an enemy, destroy it
+			misDestroyed = destroyOnImpact;
+		
 		}
 
 	}
@@ -5154,6 +5284,16 @@ namespace Entity
 
 	}
 
+	PlayerBeam1::~PlayerBeam1()
+	{
+
+	}
+
+	PlayerBeamNode::~PlayerBeamNode()
+	{
+
+	}
+
 	PlayerLaser3::~PlayerLaser3()
 	{
 
@@ -5383,8 +5523,8 @@ namespace Entity
 			if (bossIsCreated == false) {
 
 				Entity::itemQueue boss;
-				boss.properties["PosX"] = std::to_string(600 / 2);
-				boss.properties["PosY"] = std::to_string(600 / 2);
+				boss.properties["PosX"] = std::to_string(World::GetInstance()->WorldScene.levelContainer->lvlSize.x);
+				boss.properties["PosY"] = std::to_string(World::GetInstance()->WorldScene.levelContainer->lvlSize.y);
 				boss.properties["itemType"] = enemyList[World::GetInstance()->GlobalMembers.currentLevel];
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(boss);
 				World::GetInstance()->WorldScene.audioContainer.PlayMusic("mus_boss_fm");
@@ -6756,10 +6896,12 @@ namespace Entity
 
 		if (hurt == true) {
 
-			if (World::GetInstance()->Timer(*this,400000.0)) {
+			if (World::GetInstance()->Timer(*this,21010.0)) {
+
 				hurt = false;
 				hurtPos.y = 0;
 				hurtPos.x = 0;
+
 			}
 
 			else {
@@ -7769,6 +7911,11 @@ namespace Entity
 				hurt = true;
 				showHurt = true;
     }
+
+	bool Enemy::isActive() {
+
+		return hurt;
+	}
     
 	void Enemy::isCollided(int var) {
 
@@ -7818,13 +7965,20 @@ namespace Entity
 		
 		//default - hitbox lives in left/top corner of sprit
 		else if (hitBoxType == 2) objectHitBox.setPosition(objectSprite.getPosition().x-objectSprite.getOrigin().x, objectSprite.getPosition().y - objectSprite.getOrigin().y);
-    }
+
+	
+	}
     
     void Object::isCollided(int var){
         
     
         
     }
+
+	bool Object::isActive() {
+	
+		return active;
+	}
     
     void CreateClone(sf::Sprite& sprite,std::string type, bool color){
         

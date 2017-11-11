@@ -668,19 +668,6 @@ void Container::AddObjects()
                 
             }
             
-            else if((QI)->properties["itemType"] == "PlayerBeam")
-            {
-                
-                std::unique_ptr<Entity::PlayerBeam> ptr(new Entity::PlayerBeam);
-                ptr->shaft.setPosition(stoi((QI)->properties["PosX"]),stoi((QI)->properties["PosY"]));
-                
-                // multiplying direction by 45 degrees gets us the direction player is shooting
-                
-                RotateVector(ptr->vel,45*(stoi((QI)->properties["Direction"])));
-                ptr->shaft.setRotation(45*(stoi((QI)->properties["Direction"])));
-                ObjectContainer.push_back(std::move(ptr));
-                
-            }
             
             else if((QI)->properties["itemType"] == "SpriteClone")
             {
@@ -741,6 +728,30 @@ void Container::AddObjects()
 
 			}
 
+			else if ((QI)->properties["itemType"] == "PlayerBeam1")
+			{
+
+				std::unique_ptr<Entity::PlayerBeam1> ptr(new Entity::PlayerBeam1);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				RotateVector(ptr->vel, 45 * (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation(45 * (stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "PlayerBeamNode")
+			{
+
+				std::unique_ptr<Entity::PlayerBeamNode> ptr(new Entity::PlayerBeamNode);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ptr->parent = (QI)->parent;
+				ptr->nodeSlot = stoi((QI)->properties["NodeSlot"]);
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
             
             else if((QI)->properties["itemType"] == "PlayerBombExp")
             {
@@ -1166,7 +1177,7 @@ void Container::CheckCollisions(){
 		for (int i = 0; i != typeInZone.size(); i++)
 		{
 
-			if ((*enemy)->objectHitBox.getGlobalBounds().intersects(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds()) && (*enemy)->active)
+			if ((*enemy)->objectHitBox.getGlobalBounds().intersects(ObjectContainer.at(typeInZone.at(i))->objectHitBox.getGlobalBounds()) && (*enemy)->active && (*enemy)->isActive() == false)
 			{
 
 				Entity::Object* obj = ObjectContainer.at(typeInZone.at(i)).get();

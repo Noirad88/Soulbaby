@@ -99,6 +99,8 @@ namespace Entity
 		virtual ~Object();
 		virtual void Update();
 		virtual void isCollided(int var = 0);
+		virtual bool isActive();
+		virtual int Return(int p);
 		virtual void Draw(sf::RenderTarget& window);
 		sf::IntRect GetObjectBounds();
 		float GetYPosition();
@@ -515,6 +517,11 @@ namespace Entity
 		virtual ~Projectile();
 		virtual int GetDamage();
 		void Update();
+
+		//only used for beam projectiles; beams are made of multple hitboxes; getcollidednode() returns the node collided closest to its parent
+		int GetCollidedNode();
+		int nodeCollided = 0;
+
 		virtual void HasCollided(const std::unique_ptr<Entity::Object>& a);
 		bool isCollided = false;
 		bool destroyOnImpact = true;
@@ -533,7 +540,6 @@ namespace Entity
 		float emitTime = 0;
 		bool emitScatter = false;
 		int emitCount = 1;
-
 		Object* parent = nullptr;
 
 
@@ -695,6 +701,29 @@ namespace Entity
 
 	};
 
+	class PlayerBeam1 : public Projectile {
+
+	public:
+		PlayerBeam1();
+		void Update();
+		~PlayerBeam1();
+		bool isFiring = false;
+		int length = 30;
+		bool nodesCreated = false;
+		int direction = 0;
+
+	};
+
+	class PlayerBeamNode : public Projectile {
+	
+	public:
+		PlayerBeamNode();
+		void Update();
+		void HasCollided(const std::unique_ptr<Entity::Object>& a);
+		~PlayerBeamNode();
+		int nodeSlot = 0;
+
+	};
 
 
 	class ElectricNode : public Projectile {
@@ -1258,6 +1287,7 @@ namespace Entity
         virtual void Move();
         void isDamaged(int damage = 0);
         void isCollided(int var);
+		bool isActive();
         void Act();
 		virtual void isHurt();
 		virtual void MoveElse();
