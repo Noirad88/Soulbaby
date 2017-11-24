@@ -3363,6 +3363,7 @@ namespace Entity
 		vel.y = 5;
 		damage = 9;
 		maxFrame = 2;
+		maxTime = VERY_SLOW * 5;
 		SetHitBox(sf::Vector2f(16, 16));
 
 	}
@@ -4347,18 +4348,18 @@ namespace Entity
 		//reset our beam length every update
 		nodeCollided = length;
 
-		Projectile::Update();
+		//Projectile::Update();
 
 		//We can't create our nodes in the constructor because that changes the size of the ItemQueue iterator (bad access)
 
 		if (nodesCreated == false) {
 
-			int* nodePtr = &nodeCollided;
 			itemQueue node;
 			node.properties["PosX"] = std::to_string(objectHitBox.getPosition().x);
 			node.properties["PosY"] = std::to_string(objectHitBox.getPosition().y);
 			node.properties["itemType"] = "PlayerBeamNode";
 			node.parent = this;
+			//type is not nil here
 			
 			for (int i = 0; i != length; i++){
 			
@@ -4372,12 +4373,11 @@ namespace Entity
 
 		}
 
-		if(!parent || parent->type == "") misDestroyed = true;
+		//if(!parent || parent->type == "") misDestroyed = true;
 
 		//Drawing:
 		//beamnodes will check if nodeCollided is lower than its current number; if so then set it to its nodeSlot
 			//this way we can deactivate the collisions higher than it
-
 	}
 
 	void PlayerBeamNode::Update() {
@@ -4386,27 +4386,27 @@ namespace Entity
 		vel.x = 0;
 		RotateVector(vel, 45 * World::GetInstance()->WorldScene.playerPtr->fireDir);
 
-		Entity::Projectile* pPtr = static_cast<Entity::Projectile*>(parent->);
+		Projectile::Update();
 
-		//Projectile::Update();
+		std::cout << "parent type update: " << beamParent->type << std::endl;
 
 		//check if our parent is alive
-		if (parent->type != ""){
+		if (beamParent->type != ""){
 
+			
 			// if this beam node is after the node that is currently collided, then set to inactive (ignore collision, don't update position)
-			if (nodeSlot > pPtr->nodeCollided){
+			if (nodeSlot > beamParent->nodeCollided){
 
 				active = false;
 			}
 			
-
 			else {
 
 				active = true;
-				objectSprite.setPosition(parent->objectHitBox.getPosition().x + (vel.x * nodeSlot), parent->objectHitBox.getPosition().y + (vel.y * nodeSlot));
+				objectSprite.setPosition(beamParent->objectHitBox.getPosition().x + (vel.x * nodeSlot), beamParent->objectHitBox.getPosition().y + (vel.y * nodeSlot));
 
 			}
-
+			
 
 		}
 
@@ -4674,9 +4674,7 @@ namespace Entity
 	void PlayerBeamNode::HasCollided(const std::unique_ptr<Entity::Object>& a) {
 
 		//we call a dynamic cast to be able to call a specific function from the enemy class
-		Entity::Projectile* pPtr = dynamic_cast<Entity::Projectile*>(parent);
-
-
+		//Entity::PlayerBeam1* pPtr = dynamic_cast<Entity::PlayerBeam1*>(parent);
 		//and for the parent beam, because we need to get nodeColiided
 
 		//only if the enemy is in an active state (i.e., not currently in the middle of its spawn transition) should we confirm a collision 
@@ -4685,11 +4683,14 @@ namespace Entity
 			//Call isCollided() to enemy to remove damage and respond to projectile
 			a->isCollided(damage);
 
+			/*
 			// this detects if this should be our collision point for the laser; check our current collision node; if it is greater than this node, replace it with this node
 			if (pPtr->nodeCollided >= nodeSlot) {
 
 				pPtr->nodeCollided = nodeSlot;
 			}
+			*/
+			
 
 			//if this projectile should be destroyed if it collides with an enemy, destroy it
 			misDestroyed = destroyOnImpact;

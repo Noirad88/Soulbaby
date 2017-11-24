@@ -541,7 +541,9 @@ namespace Entity
 		bool emitScatter = false;
 		int emitCount = 1;
 		Object* parent = nullptr;
-
+		//parent keeps a pointer to the objects parent, retriveving base (i.e., Object) class members
+		//what if we wanted to get a derive class members?
+		//a virtual function which can be overwritten
 
 	};
 
@@ -722,6 +724,7 @@ namespace Entity
 		void HasCollided(const std::unique_ptr<Entity::Object>& a);
 		~PlayerBeamNode();
 		int nodeSlot = 0;
+		PlayerBeam1* beamParent = nullptr;
 
 	};
 

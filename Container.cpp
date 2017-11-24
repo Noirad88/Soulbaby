@@ -747,8 +747,8 @@ void Container::AddObjects()
 
 				std::unique_ptr<Entity::PlayerBeamNode> ptr(new Entity::PlayerBeamNode);
 				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
-				ptr->parent = (QI)->parent;
 				ptr->nodeSlot = stoi((QI)->properties["NodeSlot"]);
+				ptr->beamParent = dynamic_cast<Entity::PlayerBeam1*>((QI)->parent);
 				ObjectContainer.push_back(std::move(ptr));
 
 			}
