@@ -114,6 +114,7 @@ namespace Entity
 		int damage;
 		bool misDestroyed = false;
 		bool active = false;
+		bool deleteOnOutOfBounds = true;
 		std::string type = "Object";
 		std::string zone;
 		void SetCharacterOrigin(sf::Sprite** object = NULL, bool center = false);
@@ -721,7 +722,7 @@ namespace Entity
 	public:
 		PlayerBeamNode();
 		void Update();
-		void HasCollided(const std::unique_ptr<Entity::Object>& a);
+		void Draw(sf::RenderTarget& window);
 		~PlayerBeamNode();
 		int nodeSlot = 0;
 		PlayerBeam1* beamParent = nullptr;

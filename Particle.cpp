@@ -2443,7 +2443,7 @@ namespace Entity
 
 			// Laser 
 
-			else if (World::GetInstance()->GlobalMembers.currentWeapon == 2 && World::GetInstance()->Timer(*this, SLOW, NODELAY)) {
+			else if (World::GetInstance()->GlobalMembers.currentWeapon == 2 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
 
 				proj.properties["itemType"] = "PlayerBeam1";
 				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_laser9");
@@ -3357,15 +3357,16 @@ namespace Entity
 	PlayerBeam1::PlayerBeam1() : Projectile()
 	{
 		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
-		objectSprite.setTextureRect(sf::IntRect(0, 178, 5, 7));
-		objectSprite.setOrigin(2, 7 / 2);
+		objectSprite.setTextureRect(sf::IntRect(0, 395, 7, 14));
+		objectSprite.setScale(sf::Vector2f(1, 50));
 		SetEffectOrigin();
+		objectSprite.setOrigin(7 / 2, -0.25);
 		vel.y = 5;
 		damage = 9;
 		maxFrame = 2;
 		maxTime = VERY_SLOW * 5;
 		SetHitBox(sf::Vector2f(16, 16));
-
+		parent = World::GetInstance()->WorldScene.playerPtr;
 	}
 
 	PlayerBeamNode::PlayerBeamNode() : Projectile() 
@@ -3376,9 +3377,10 @@ namespace Entity
 		objectSprite.setOrigin(8, 8);
 		SetEffectOrigin();
 		vel.y = 16;
-		damage = 1;
+		damage = 2;
 		SetHitBox(sf::Vector2f(16, 16));
 		destroyOnImpact = false;
+		deleteOnOutOfBounds = false;
 
 	}
     
@@ -3473,6 +3475,9 @@ namespace Entity
 
 	}
 
+	void PlayerBeamNode::Draw(sf::RenderTarget& window) {
+
+	}
     
     Explosion::Explosion() : Object ()
     {
@@ -4348,7 +4353,12 @@ namespace Entity
 		//reset our beam length every update
 		nodeCollided = length;
 
-		//Projectile::Update();
+
+		if (parent) {
+
+			objectSprite.setPosition(parent->objectSprite.getPosition());
+
+		}
 
 		//We can't create our nodes in the constructor because that changes the size of the ItemQueue iterator (bad access)
 
@@ -4369,15 +4379,33 @@ namespace Entity
 
 			}
 
-			nodesCreated =  true;
+			nodesCreated = true;
 
 		}
 
-		//if(!parent || parent->type == "") misDestroyed = true;
+		if (World::GetInstance()->Timer(*this, 20302.0)) {
+			objectSprite.setScale(sf::Vector2f(objectSprite.getScale().x*0.7, objectSprite.getScale().y));
+		}
 
-		//Drawing:
-		//beamnodes will check if nodeCollided is lower than its current number; if so then set it to its nodeSlot
-			//this way we can deactivate the collisions higher than it
+		if (World::GetInstance()->Timer(*this, VERY_FAST))
+		{
+
+			objectSprite.setTextureRect(sf::IntRect(frame * objectSprite.getTextureRect().width,
+				objectSprite.getTextureRect().top,
+				objectSprite.getTextureRect().width,
+				objectSprite.getTextureRect().height));
+			frame++;
+
+			if (frame > maxFrame)
+			{
+				frame = 0;
+
+			}
+
+		}
+
+		if (objectSprite.getScale().x < 0.02 || !parent || parent->type == "") misDestroyed = true;
+
 	}
 
 	void PlayerBeamNode::Update() {
@@ -4385,32 +4413,11 @@ namespace Entity
 		vel.y = 16;
 		vel.x = 0;
 		RotateVector(vel, 45 * World::GetInstance()->WorldScene.playerPtr->fireDir);
+		objectSprite.setPosition(beamParent->objectHitBox.getPosition().x + (vel.x * nodeSlot), beamParent->objectHitBox.getPosition().y + (vel.y * nodeSlot));
 
 		Projectile::Update();
 
-		std::cout << "parent type update: " << beamParent->type << std::endl;
-
-		//check if our parent is alive
-		if (beamParent->type != ""){
-
-			
-			// if this beam node is after the node that is currently collided, then set to inactive (ignore collision, don't update position)
-			if (nodeSlot > beamParent->nodeCollided){
-
-				active = false;
-			}
-			
-			else {
-
-				active = true;
-				objectSprite.setPosition(beamParent->objectHitBox.getPosition().x + (vel.x * nodeSlot), beamParent->objectHitBox.getPosition().y + (vel.y * nodeSlot));
-
-			}
-			
-
-		}
-
-		else misDestroyed = true;
+		if (!beamParent || beamParent->type == "") misDestroyed = true;
 
 	}
 
@@ -4671,33 +4678,6 @@ namespace Entity
 
 	}
 
-	void PlayerBeamNode::HasCollided(const std::unique_ptr<Entity::Object>& a) {
-
-		//we call a dynamic cast to be able to call a specific function from the enemy class
-		//Entity::PlayerBeam1* pPtr = dynamic_cast<Entity::PlayerBeam1*>(parent);
-		//and for the parent beam, because we need to get nodeColiided
-
-		//only if the enemy is in an active state (i.e., not currently in the middle of its spawn transition) should we confirm a collision 
-		if (a->active == true && active == true) {
-
-			//Call isCollided() to enemy to remove damage and respond to projectile
-			a->isCollided(damage);
-
-			/*
-			// this detects if this should be our collision point for the laser; check our current collision node; if it is greater than this node, replace it with this node
-			if (pPtr->nodeCollided >= nodeSlot) {
-
-				pPtr->nodeCollided = nodeSlot;
-			}
-			*/
-			
-
-			//if this projectile should be destroyed if it collides with an enemy, destroy it
-			misDestroyed = destroyOnImpact;
-		
-		}
-
-	}
     
     // Draw functions
     
@@ -5397,7 +5377,7 @@ namespace Entity
 
 		}
 
-		else if ((objectHitBox.getPosition().x < 0 || objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x || objectHitBox.getPosition().y < 0 || objectHitBox.getPosition().y > World::GetInstance()->WorldScene.levelContainer->lvlSize.y) && type != "GUI") misDestroyed = true;
+		else if ((objectHitBox.getPosition().x < 0 || objectHitBox.getPosition().x > World::GetInstance()->WorldScene.levelContainer->lvlSize.x || objectHitBox.getPosition().y < 0 || objectHitBox.getPosition().y > World::GetInstance()->WorldScene.levelContainer->lvlSize.y) && deleteOnOutOfBounds == true && type != "GUI") misDestroyed = true;
 
 
 		return misDestroyed;
