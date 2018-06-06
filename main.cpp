@@ -170,17 +170,6 @@ int main()
 
 	//videomode size doesn't matter when fullscreen
 
-	/*
-	
-	Collision notes
-	-testing with saw: the saw knows that it's collided with an enemy, but the enemy isn't responding to the saw
-	-tried rotation, still faulty
-	-more likely thinking now it's the enemy, not the projectile
-	-but main weapon never has collision issues?
-	
-
-	*/
-
     sf::RenderWindow window(sf::VideoMode(WINDOW_X,WINDOW_Y), "Soulbaby", sf::Style::Titlebar);
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);

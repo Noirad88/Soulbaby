@@ -253,6 +253,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Font Include="fonts\basis33.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <Media Include="..\..\..\..\..\Downloads\Bfxr_WIN\sfx_rapid4.wav" />
     <Media Include="sfx\sfx_attk.wav" />
     <Media Include="sfx\sfx_badhit2.wav" />
     <Media Include="sfx\sfx_bigbang.wav" />
@@ -318,6 +319,7 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Media Include="sfx\sfx_plrhurt.wav" />
     <Media Include="sfx\sfx_poplaser.wav" />
     <Media Include="sfx\sfx_quake.wav" />
+    <Media Include="sfx\sfx_rapid4.wav" />
     <Media Include="sfx\sfx_s.wav" />
     <Media Include="sfx\sfx_select.wav" />
     <Media Include="sfx\sfx_smallexp.wav" />
@@ -331,8 +333,10 @@ xcopy "$(ProjectDir)*.dll"  "$(OutDir)" /y
     <Media Include="sfx\sfx_superbeam2.wav" />
     <Media Include="sfx\sfx_twinkle.wav" />
     <Media Include="sfx\sfx_txt.wav" />
+    <Media Include="sfx\sfx_wavechirp.wav" />
     <Media Include="sfx\sfx_wigglyscrech.wav" />
     <Media Include="sfx\sfx_yes.wav" />
+    <Media Include="sfx\sf_homer5.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -71,6 +71,15 @@ void Audio::PlaySFX(std::string soundName, bool multipleInstances){
 
 }
 
+void Audio::StopSFX(std::string soundName) {
+
+	audioIter iter = AudioContainer.find(soundName);
+
+	iter->second.sample.stop();
+
+
+}
+
 void Audio::MusicFadeIn() {
 
 	if (mute == true) music.setVolume(0);
@@ -111,6 +120,8 @@ Audio::~Audio(){
 }
 
 void Audio::Update() {
+
+	//update music volume
 
 	if (mute == false && music.getVolume() != musicVolume) {
 

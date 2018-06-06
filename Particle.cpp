@@ -34,6 +34,8 @@ namespace Entity
 	int Object::topLeft = 2;
 	int PlayerBomb::totalBombs = 0;
 	int PlayerBoomerang::totalBoomerangs = 0;
+	int PlayerHoming1::count = 0;
+	Object* Enemy::closestEnemy = nullptr;
 
 	// array used for wall shooters to call the correct projectile and its behaviors
 	// first = speed
@@ -2325,10 +2327,23 @@ namespace Entity
 		
 
 
-		else if (movement != idle && dashing == false) {
+			else if (movement != idle && dashing == false) {
 
-			vel.y = 2;
-			vel.x = 0;
+				//weapon 3 slows down the player when firing, so we need to check this
+
+				if (World::GetInstance()->PlayerPressedActionButton() && World::GetInstance()->GlobalMembers.currentWeapon == 3) {
+
+					vel.y = 1;
+					vel.x = 0;
+
+				}
+
+				else {
+
+				vel.y = 2;
+				vel.x = 0;
+
+				}
 
 			if (World::GetInstance()->Timer(*this, FAST, NODELAY)) {
 
@@ -2402,11 +2417,26 @@ namespace Entity
 
 		*/
 
+		//targeter is always active; doesn't require player to shoot
 
-		if (World::GetInstance()->PlayerPressedButton(controlsShootLeft)||
+		if (World::GetInstance()->GlobalMembers.currentWeapon == 5 && PlayerHoming1::count == 0) {
+
+			itemQueue proj;
+			proj.properties["itemType"] = "PlayerHoming1";
+			proj.properties["PosX"] = std::to_string(hotSpot.x);
+			proj.properties["PosY"] = std::to_string(hotSpot.y);
+			proj.properties["Direction"] = std::to_string(fireDir);
+			proj.properties["VelX"] = std::to_string(vel.x);
+			proj.properties["VelY"] = std::to_string(vel.y);
+			World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+
+		}
+
+
+		if ((World::GetInstance()->PlayerPressedButton(controlsShootLeft)||
 			World::GetInstance()->PlayerPressedButton(controlsShootRight)||
 			World::GetInstance()->PlayerPressedButton(controlsShootUp)||
-			World::GetInstance()->PlayerPressedButton(controlsShootDown)) {
+			World::GetInstance()->PlayerPressedButton(controlsShootDown)) && dashing == false) {
 			
 			itemQueue proj;
 			proj.properties["PosX"] = std::to_string(hotSpot.x);
@@ -2452,20 +2482,28 @@ namespace Entity
 			}
 
 
+			// shotgun
+
+			else if (World::GetInstance()->GlobalMembers.currentWeapon == 3 && World::GetInstance()->Timer(*this, 45210.0, NODELAY)) {
+
+				proj.properties["itemType"] = "PlayerShotgun1";
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_rapid4");
+				proj.properties["Direction"] = std::to_string((fireDir * 45));
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+				proj.properties["Direction"] = std::to_string((fireDir * 45) + (RandomNumber(10)));
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+				proj.properties["Direction"] = std::to_string((fireDir * 45) - (RandomNumber(10)));
+				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
+
+
+			}
+
+
 			// cannon
 
 			else if (World::GetInstance()->GlobalMembers.currentWeapon == 4 && World::GetInstance()->Timer(*this, VERY_SLOW, NODELAY)) {
 
 				proj.properties["itemType"] = "PlayerBomb";
-				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
-
-			}
-
-			// boomerang
-
-			else if (World::GetInstance()->GlobalMembers.currentWeapon == 5 && World::GetInstance()->Timer(*this, VERY_SLOW*2, NODELAY)) {
-
-				proj.properties["itemType"] = "PlayerBoomerang";
 				World::GetInstance()->WorldScene.objectContainer->Queue.push_back(proj);
 
 			}
@@ -3273,6 +3311,42 @@ namespace Entity
         
     }
 
+	PlayerShotgun1::PlayerShotgun1() : Projectile()
+	{
+
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		objectSprite.setTextureRect(sf::IntRect(0, 417, 9, 18));
+		objectSprite.setOrigin(9/2, 18 / 2);
+
+		SetEffectOrigin();
+		vel.y = 10;
+		damage = 4;
+		maxFrame = 2;
+		SetHitBox(sf::Vector2f(16, 16));
+		maxTime = SLOW*2;
+
+	}
+
+	PlayerHoming1::PlayerHoming1() : Projectile()
+	{
+
+		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		objectSprite.setTextureRect(sf::IntRect(0, 435, 20, 20));
+		objectSprite.setOrigin(20/2, 20/2);
+		linkSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
+		linkSprite.setTextureRect(sf::IntRect((RandomNumber(2) * 10), 455, 10, 16));
+		linkSprite.setOrigin(10/2, 16/2);
+		SetEffectOrigin();
+		vel.y = 0;
+		damage = 2;
+		maxFrame = 0;
+		SetHitBox(sf::Vector2f(16, 16));
+		health = 10;
+		destroyOnImpact = false;
+		count = 1;
+
+	}
+
 	ElectricNode::ElectricNode() : Projectile()
 	{
 		objectSprite.setTexture((World::GetInstance()->WorldScene.textureContainer.SetTexture("tx_projectiles")));
@@ -3362,7 +3436,7 @@ namespace Entity
 		SetEffectOrigin();
 		objectSprite.setOrigin(7 / 2, -0.25);
 		vel.y = 5;
-		damage = 9;
+		damage = 16;
 		maxFrame = 2;
 		maxTime = VERY_SLOW * 5;
 		SetHitBox(sf::Vector2f(16, 16));
@@ -3476,6 +3550,18 @@ namespace Entity
 	}
 
 	void PlayerBeamNode::Draw(sf::RenderTarget& window) {
+
+	}
+
+	void PlayerHoming1::Draw(sf::RenderTarget& window) {
+
+		if (isAttacking == true) {
+
+			linkSprite.setRotation(RandomNumber(3) * 90);
+			World::GetInstance()->DrawObject(linkSprite);
+		}
+
+		World::GetInstance()->DrawObject(objectSprite);
 
 	}
     
@@ -4421,6 +4507,84 @@ namespace Entity
 
 	}
 
+	void PlayerHoming1::Update() {
+
+		Projectile::Update();
+			//cursor position
+
+			if (Enemy::closestEnemy && World::GetInstance()->WorldScene.playerPtr) {
+
+				if (GetDistance(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition(), Enemy::closestEnemy->objectHitBox.getPosition()) <= 150) {
+
+					isAttacking = true;
+					cursorSpeed = 5;
+
+				}
+
+				else {
+
+					isAttacking = false;
+					cursorSpeed = 20;
+				}
+
+			}
+
+			else {
+
+				misDestroyed = true;
+				
+			}
+
+			//if the closest enemy is within range, then attack it
+
+			if (isAttacking == true) {
+
+				objectSprite.setTextureRect(sf::IntRect(0, 435, 20, 20));
+				targetPosition = Enemy::closestEnemy->objectHitBox.getPosition();
+				float oldx = objectSprite.getPosition().x;
+				float oldy = objectSprite.getPosition().y;
+				oldx += ((targetPosition.x - oldx) / cursorSpeed);
+				oldy += ((targetPosition.y - oldy) / cursorSpeed);
+				objectSprite.setPosition(oldx, oldy);
+
+				//particle position
+
+				midPosition.x = RandomNumber(20);
+				midPosition.y = RandomNumber(20);
+
+				float xa = GetPoint(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition().x, objectSprite.getPosition().x + midPosition.x, timeline);
+				float ya = GetPoint(World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition().y, objectSprite.getPosition().y + midPosition.y, timeline);
+				float xb = GetPoint(objectSprite.getPosition().x + midPosition.x, objectSprite.getPosition().x, timeline);
+				float yb = GetPoint(objectSprite.getPosition().y + midPosition.y, objectSprite.getPosition().y, timeline);
+
+				float newX = GetPoint(xa, xb, timeline);
+				float newY = GetPoint(ya, yb, timeline);
+				linkSprite.setPosition(newX, newY);
+				linkSprite.setTextureRect(sf::IntRect((RandomNumber(2) * 10), 455, 10, 16));
+				timeline = RandomNumber(100) * 0.01;
+
+				World::GetInstance()->WorldScene.audioContainer.PlaySFX("sfx_homer5", false);
+
+			}
+
+			//if there are no enemys within range, then don't
+
+			else if (isAttacking == false) {
+
+				objectSprite.setTextureRect(sf::IntRect(21, 435, 20, 20));
+				World::GetInstance()->WorldScene.audioContainer.StopSFX("sfx_homer5");
+
+				targetPosition = World::GetInstance()->WorldScene.playerPtr->objectHitBox.getPosition();
+				float oldx = objectSprite.getPosition().x;
+				float oldy = objectSprite.getPosition().y;
+				oldx += ((targetPosition.x - oldx) / cursorSpeed);
+				oldy += ((targetPosition.y - oldy) / cursorSpeed);
+				objectSprite.setPosition(oldx, oldy);
+
+			}
+
+	
+	}
 
 	void PlayerDashBall::Update() {
 
@@ -5250,6 +5414,16 @@ namespace Entity
         
     }
 
+	PlayerShotgun1::~PlayerShotgun1() {
+
+
+	}
+
+	PlayerHoming1::~PlayerHoming1() {
+
+		count = 0;
+	}
+
 	ElectricNode::~ElectricNode() {
 
 
@@ -5318,7 +5492,7 @@ namespace Entity
             itemQueue bomb;
             bomb.properties["PosX"] = std::to_string(object.objectSprite.getPosition().x + 5);
             bomb.properties["PosY"] = std::to_string(object.objectSprite.getPosition().y + 5);
-            bomb.properties["itemType"] = "Explosion";
+            bomb.properties["itemType"] = "BlockedEffect";
             World::GetInstance()->WorldScene.objectContainer->Queue.push_back(bomb);
             
             object.misDestroyed = true;
@@ -6901,8 +7075,30 @@ namespace Entity
                  
     {
         
-        if(!World::GetInstance()->WorldScene.playerPtr->dead)Act();
-        
+		if (!World::GetInstance()->WorldScene.playerPtr->dead) {
+
+			Act();
+
+			// Check which enemy is closests to the player (for homing weapon)
+
+			if (active && World::GetInstance()->WorldScene.playerPtr) {
+
+				if (closestEnemy){
+
+					if (closestEnemy->misDestroyed == true) closestEnemy = nullptr;
+				}
+
+				if (!closestEnemy) closestEnemy = this;
+
+				else {
+
+					if (GetDistance(objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition()) <
+						GetDistance(closestEnemy->objectSprite.getPosition(), World::GetInstance()->WorldScene.playerPtr->objectSprite.getPosition()))
+						closestEnemy = this;
+				}
+			}
+
+		}
     }
     
 	void Enemy::Attack() {
@@ -6913,7 +7109,7 @@ namespace Entity
     
 	void Enemy::DrawChild() {
 
-
+		  
 
 	}
 

@@ -704,6 +704,13 @@ namespace Entity
 
 	};
 
+	class PlayerShotgun1 : public Projectile {
+
+	public:
+		PlayerShotgun1();
+		~PlayerShotgun1();
+	};
+
 	class PlayerBeam1 : public Projectile {
 
 	public:
@@ -726,6 +733,22 @@ namespace Entity
 		~PlayerBeamNode();
 		int nodeSlot = 0;
 		PlayerBeam1* beamParent = nullptr;
+
+	};
+
+	class PlayerHoming1 : public Projectile {
+	public:
+		PlayerHoming1();
+		void Update();
+		~PlayerHoming1();
+		void Draw(sf::RenderTarget& window);
+		sf::Vector2f midPosition;
+		sf::Vector2f targetPosition;
+		sf::Sprite linkSprite;
+		float timeline = 0;
+		float cursorSpeed = 5;
+		bool isAttacking = false;
+		static int count;
 
 	};
 
@@ -1304,6 +1327,7 @@ namespace Entity
 		void SetSpriteRedForHealth();
         void Damaged();
 		static int spriteSheetHeight;
+		static Object* closestEnemy;
         int hasAttack = 0;
         float health = 3;
         float maxHealth = 3;

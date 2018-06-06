@@ -349,6 +349,7 @@ void RotateVector(sf::Vector2f& coords,int degree = 45);
 bool IsOverlapping(int minA, int maxA, int minB, int maxB);
 float GetAngle(sf::Vector2f a, sf::Vector2f b);
 int RandomNumber(int max, int min = 0);
+float GetPoint(float n1, float n2, float perc);
 bool IfDistance(sf::Vector2f a, sf::Vector2f b, int distance = 15);
 float GetDistance(sf::Vector2f a, sf::Vector2f b);
 

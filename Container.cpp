@@ -588,6 +588,29 @@ void Container::AddObjects()
                 
             }
 
+			else if ((QI)->properties["itemType"] == "PlayerShotgun1")
+			{
+
+				std::unique_ptr<Entity::PlayerShotgun1> ptr(new Entity::PlayerShotgun1);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+
+				// multiplying direction by 45 degrees gets us the direction player is shooting
+
+				RotateVector(ptr->vel, (stoi((QI)->properties["Direction"])));
+				ptr->objectSprite.setRotation((stoi((QI)->properties["Direction"])));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
+			else if ((QI)->properties["itemType"] == "PlayerHoming1")
+			{
+
+				std::unique_ptr<Entity::PlayerHoming1> ptr(new Entity::PlayerHoming1);
+				ptr->objectSprite.setPosition(stoi((QI)->properties["PosX"]), stoi((QI)->properties["PosY"]));
+				ObjectContainer.push_back(std::move(ptr));
+
+			}
+
 			else if ((QI)->properties["itemType"] == "PlayerDashBall")
 			{
 

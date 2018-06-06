@@ -479,5 +479,17 @@
     <Media Include="sfx\sfx_longring.wav">
       <Filter>Assets</Filter>
     </Media>
+    <Media Include="sfx\sfx_wavechirp.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="..\..\..\..\..\Downloads\Bfxr_WIN\sfx_rapid4.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sfx_rapid4.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="sfx\sf_homer5.wav">
+      <Filter>Assets</Filter>
+    </Media>
   </ItemGroup>
 </Project>

@@ -29,6 +29,7 @@ class Audio
         Audio();
         ~Audio();
         void PlaySFX(std::string soundName, bool multipleInstances = 1);
+		void StopSFX(std::string soundName);
         void PlayMusic(std::string musicName = "map1");
 		void MusicFadeOut();
 		void MusicFadeIn();

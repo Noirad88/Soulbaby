@@ -223,11 +223,15 @@ World::World(){
 	GlobalMembers.weapons.at(0) = 1;
 	GlobalMembers.weapons.at(1) = 1;
 	GlobalMembers.weapons.at(2) = 1;
+	GlobalMembers.weapons.at(3) = 1;
 	GlobalMembers.weapons.at(4) = 1;
 	GlobalMembers.weapons.at(5) = 1;
+	GlobalMembers.weapons.at(6) = 1;
+
+
 
 	//Power level: shared by all weapons
-	GlobalMembers.currentPowerLevel = 3;
+	GlobalMembers.currentPowerLevel = 2;
 
 }
 
@@ -899,6 +903,13 @@ int RandomNumber(int max, int min){
     std::uniform_int_distribution<int> rand(min,max);
     return rand(mt);
     
+}
+
+float GetPoint(float n1, float n2, float perc) {
+
+	float diff = n2 - n1;
+
+	return n1 + (diff * perc);
 }
 
 bool IfDistance(sf::Vector2f a, sf::Vector2f b, int distance) {
